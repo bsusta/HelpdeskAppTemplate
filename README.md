@@ -9,7 +9,7 @@ An example app with all the UI components of NativeBase
 On the command prompt run the following commands
 
 ```sh
-$ git clone git@github.com:bsusta/NativeBase-HelpdeskAppTemplate.git
+$ git clone git@github.com:bsusta/HelpdeskAppTemplate.git
 
 $ cd HelpdeskAppTemplate/
 
