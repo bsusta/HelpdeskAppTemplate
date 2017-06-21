@@ -1,25 +1,23 @@
 
 import React, { Component } from 'react';
-import { Provider } from 'react-redux';
+import { AsyncStorage } from 'react-native';
 import App from './App';
-import configureStore from './configureStore';
+
+import { ApolloProvider } from 'react-apollo';
+import client from './apollo/client';
+import createStore from './apollo/store';
 
 function setup():React.Component {
+  const store = createStore(client);
   class Root extends Component {
-
-    constructor() {
-      super();
-      this.state = {
-        isLoading: false,
-        store: configureStore(() => this.setState({ isLoading: false })),
-      };
-    }
-
     render() {
       return (
-        <Provider store={this.state.store}>
+        <ApolloProvider
+          client={ client }
+          store={ store }
+        >
           <App />
-        </Provider>
+        </ApolloProvider>
       );
     }
   }
