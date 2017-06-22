@@ -5,9 +5,6 @@ import { actions } from 'react-native-navigation-redux-helpers';
 import { Tab, Tabs, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import TabAtributes from './tabAtributes';
-import TabComments from './tabComments';
-import TabItems from './tabItems';
-
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 
@@ -17,7 +14,7 @@ const {
 const datas = [
 ];
 
-class TaskAdd extends Component {
+class TaskEdit extends Component {
 
   static propTypes = {
     openDrawer: React.PropTypes.func,
@@ -41,19 +38,13 @@ class TaskAdd extends Component {
           </Button>
           </Left>
           <Body>
-            <Title>Edit task</Title>
+            <Title>Add task</Title>
           </Body>
           <Right />
         </Header>
            <Tabs>
                <Tab heading="Attributes">
                    <TabAtributes />
-               </Tab>
-               <Tab heading="Comments">
-                   <TabComments />
-               </Tab>
-               <Tab heading="Items">
-                   <TabItems />
                </Tab>
            </Tabs>
       </Container>
@@ -74,4 +65,4 @@ const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
 });
 
-export default connect(mapStateToProps, bindAction)(TaskAdd);
+export default connect(mapStateToProps, bindAction)(TaskEdit);

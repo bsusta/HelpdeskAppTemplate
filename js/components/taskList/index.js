@@ -34,8 +34,6 @@ class TaskList extends Component {
     this.props.refetch().then(()=>{
       this.props.refetch().then(()=>{
         this.setState({tasks:this.props.tasks});
-        console.log('nacitane');
-        console.log(this.state.tasks);
     })
   });
   }
@@ -52,7 +50,6 @@ class TaskList extends Component {
   }
 
   render() {
-    console.log(this.state.tasks);
     return (
       <Container style={styles.container}>
         <Header>
@@ -81,7 +78,7 @@ class TaskList extends Component {
 
         <Content>
           <List dataArray={this.state.tasks} renderRow={data =>
-            <TaskListRow taskName={data.title} folder={data.description} personName="Ladislav" date={data.deadlineAt} />
+            <TaskListRow taskName={data.title} folder={data.description} personName={data.assignedUser?data.assignedUser.firstName:'Nikto'} date={data.deadlineAt} />
           }
           />
         </Content>
@@ -101,7 +98,7 @@ class TaskList extends Component {
           </FooterTab>
 
           <FooterTab>
-            <Button vertical onPress={Actions.taskEdit}>
+            <Button vertical onPress={Actions.taskAdd}>
               <Icon name="md-add" style={{ color: 'white' }} />
               <Text style={{ color: 'white' }} >Task</Text>
             </Button>

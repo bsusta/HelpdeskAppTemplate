@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export const tasks = gql`
   query Tasks {
-       allTasks (orderBy: createdAt_DESC) {
+       allTasks (orderBy: id_DESC) {
 		id
 		key: id
 		title

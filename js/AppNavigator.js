@@ -13,6 +13,7 @@ import Home from './components/home/';
 import SideBar from './components/sidebar';
 import TaskList from './components/taskList/';
 import TaskEdit from './components/taskEdit/';
+import TaskAdd from './components/taskAdd/';
 import Search from './components/search/';
 import Settings from './components/settings/';
 import Messages from './components/messages/';
@@ -98,6 +99,7 @@ class AppNavigator extends Component {
               <Scene key="home" component={Home} hideNavBar initial={true} />
               <Scene key="taskList" component={TaskList} />
               <Scene key="taskEdit" component={TaskEdit} />
+              <Scene key="taskAdd" component={TaskAdd} />
               <Scene key="search" component={Search} />
               <Scene key="messages" component={Messages} />
               <Scene key="settings" component={Settings} />
