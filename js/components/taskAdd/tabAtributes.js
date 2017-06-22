@@ -5,6 +5,7 @@ import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Labe
 import { withApollo } from 'react-apollo';
 import styles from './styles';
 import { createTask } from './taskAdd.gquery';
+import { Actions } from 'react-native-router-flux';
 
 class TabAtributes extends Component { // eslint-disable-line
   constructor(props) {
@@ -32,7 +33,7 @@ class TabAtributes extends Component { // eslint-disable-line
     client.mutate({
           mutation: createTask,
           variables: { title, description },
-        }).then(console.log('Pridane'));
+        }).then(Actions.taskList());
   }
 
   render() { // eslint-disable-line
