@@ -4,26 +4,41 @@ import { connect } from 'react-redux';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import { graphql } from 'react-apollo';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
+import TaskListRow from './taskListRow';
 import styles from './styles';
+import { tasks } from './taskList.gquery';
 
 const {
   pushRoute,
 } = actions;
-const datas = [
-  {
-    route: 'taskEdit',
-    text: 'Task name 1',
-  },
-  {
-    route: 'taskEdit',
-    text: 'Task name 2',
-  },
-];
+
+const withData = graphql(tasks, {
+  props: ({ data: { loading, allTasks, error, refetch, subscribeToMore } }) => ({
+    loadingTasks: loading,
+    tasks: allTasks,
+    tasksError: error,
+    refetch,
+    subscribeToMore,
+  }),
+});
 
 class TaskList extends Component {
-
+  constructor(props){
+    super(props);
+    this.state={tasks:[]};
+  }
+  componentDidMount(){
+    this.props.refetch().then(()=>{
+      this.props.refetch().then(()=>{
+        this.setState({tasks:this.props.tasks});
+        console.log('nacitane');
+        console.log(this.state.tasks);
+    })
+  });
+  }
   static propTypes = {
     openDrawer: React.PropTypes.func,
     pushRoute: React.PropTypes.func,
@@ -37,6 +52,7 @@ class TaskList extends Component {
   }
 
   render() {
+    console.log(this.state.tasks);
     return (
       <Container style={styles.container}>
         <Header>
@@ -64,20 +80,8 @@ class TaskList extends Component {
         </Header>
 
         <Content>
-          <List dataArray={datas} renderRow={data =>
-            <ListItem button onPress={() => { Actions[data.route](); this.props.closeDrawer() }} >
-              <Body>
-                <Text>{data.text}</Text>
-                <Text numberOfLines={1} note>
-                  Folder: Folder 1
-                </Text>
-                <Text numberOfLines={1} note>Assigned: Branislav Susta</Text>
-                <Text numberOfLines={1} note>Deadline: 9:00 27.5.2017</Text>
-              </Body>
-              <Right>
-                <Icon name="arrow-forward" />
-              </Right>
-            </ListItem>
+          <List dataArray={this.state.tasks} renderRow={data =>
+            <TaskListRow taskName={data.title} folder={data.description} personName="Ladislav" date={data.deadlineAt} />
           }
           />
         </Content>
@@ -121,4 +125,4 @@ const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
 });
 
-export default connect(mapStateToProps, bindAction)(TaskList);
+export default withData(connect(mapStateToProps, bindAction)(TaskList));

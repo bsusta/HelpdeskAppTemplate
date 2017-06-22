@@ -5,7 +5,9 @@ import { Container, Button, Text, Content, Item, Form, Input, Label, Header, Bod
 import { Actions } from 'react-native-router-flux';
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
+import { withApollo } from 'react-apollo';
 
+import { setLoggedUser } from './actions';
 import { addTokenToUse } from '../../tokens/tokenHandling';
 import { signinUser } from './user.gquery';
 
@@ -25,33 +27,32 @@ class Home extends Component { // eslint-disable-line
   }
 
   async submitLogin(){
-    let mail=this.state.email;
-    let pass=this.state.pass;
-
-    const loggedUserData = await this.props.client.mutate({
+    let email=this.state.email;
+    let password = this.state.pass;
+    let client = this.props.client;
+    client.mutate({
       mutation: signinUser,
       variables: { email, password }
-    });
-    const signedUser = loggedUserData.data.signinUser;
+    }).then(
+      (loggedUserData)=>{
+        const signedUser = loggedUserData.data.signinUser;
 
-    const token = signedUser.token;
-    const userId = signedUser.user.id;
+        const token = signedUser.token;
+        const userId = signedUser.user.id;
 
-    addTokenToUse(client, token);
-    console.log("Mám token");
-    console.log(token);
-    setLoggedUser({
-      id: userId,
-      email: signedUser.user.email
-    });
-
-
-    console.log(this.props);
-
-    this.setState({errorMessage:'Zlé meno alebo heslo!'});
-    setTimeout(()=>this.setState({errorMessage:''}), 1500);
-    return;
-    Actions.taskList();
+        addTokenToUse(client, token);
+        setLoggedUser({
+          id: userId,
+          email: signedUser.user.email
+        });
+        Actions.taskList();
+      }
+    ).catch(
+      ()=>{
+        this.setState({errorMessage:'Zlé meno alebo heslo!'});
+        setTimeout(()=>this.setState({errorMessage:''}), 1500);
+      }
+    );
   }
   render() {
     return (
@@ -108,4 +109,4 @@ const mapStateToProps = state => ({
   routes: state.drawer.routes,
 });
 
-export default connect(mapStateToProps, bindActions)(Home);
+export default withApollo(connect(mapStateToProps, bindActions)(Home));

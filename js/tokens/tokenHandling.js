@@ -48,10 +48,10 @@ export const removeTokenFromAsyncStorage = () =>
 
 export const addTokenToUse = (client, token) => {
   addTokenInMiddleware(client, token);
-  storeTokenToLocalStorage(token);
+  storeTokenToAsyncStorage(token);
 };
 
 export const removeTokenFromUse = (client) => {
   removeTokenInMiddleware(client);
-  removeTokenFromLocalStorage();
+  removeTokenFromAsyncStorage();
 };
