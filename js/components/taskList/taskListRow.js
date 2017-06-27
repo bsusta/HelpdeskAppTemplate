@@ -10,7 +10,7 @@ import styles from './styles';
 class TaskListRow extends Component {
   render() {
     return (
-      <ListItem button onPress={Actions.taskEdit} >
+      <ListItem button onPress={()=>Actions.taskEdit({data:this.props})} >
               <Body>
                 <Text>{this.props.taskName}</Text>
                 <Text numberOfLines={1} note>

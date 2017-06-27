@@ -18,7 +18,9 @@ const datas = [
 ];
 
 class TaskAdd extends Component {
-
+  constructor(props){
+    super(props);
+  }
   static propTypes = {
     openDrawer: React.PropTypes.func,
     pushRoute: React.PropTypes.func,
@@ -47,7 +49,7 @@ class TaskAdd extends Component {
         </Header>
            <Tabs>
                <Tab heading="Attributes">
-                   <TabAtributes />
+                   <TabAtributes data={this.props.data} />
                </Tab>
                <Tab heading="Comments">
                    <TabComments />

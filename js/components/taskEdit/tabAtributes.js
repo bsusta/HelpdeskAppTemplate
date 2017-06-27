@@ -5,10 +5,17 @@ import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Labe
 
 import styles from './styles';
 
+/*
+
+
+*/
+
 export default class TabAtributes extends Component { // eslint-disable-line
   constructor(props) {
     super(props);
     this.state = {
+      taskName:this.props.data.taskName,
+      taskDescription:this.props.data.folder,
       selectedItem: undefined,
       selected1: 'key1',
       results: {
@@ -18,8 +25,18 @@ export default class TabAtributes extends Component { // eslint-disable-line
   }
    onValueChange (value: string) {
      this.setState({
-         selected1 : value
+         selected1 : value,
      });
+   }
+   submitForm(){
+     return;
+     let title = this.state.taskName;
+     let description = this.state.taskDescription;
+     let client = this.props.client;
+     client.mutate({
+           mutation: createTask,
+           variables: { title, description },
+         }).then(Actions.taskList());
    }
 
   render() { // eslint-disable-line
@@ -28,11 +45,19 @@ export default class TabAtributes extends Component { // eslint-disable-line
         <Content style={{ padding: 15 }}>
           <Text note> Task Name</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Input />
+            <Input
+              placeholder={ 'Zadajte názov' }
+              value={ this.state.taskName }
+              onChangeText={ value => this.setState({taskName:value}) }
+            />
           </View>
           <Text note>Descrition</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Input />
+            <Input
+              placeholder={ 'Zadajte popis' }
+              value={ this.state.taskDescription }
+              onChangeText={ value => this.setState({taskDescription:value}) }
+            />
           </View>
           <Text note>Work hours</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
@@ -96,16 +121,15 @@ export default class TabAtributes extends Component { // eslint-disable-line
         </FooterTab>
 
         <FooterTab>
-          <Button iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+          <Button iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}
+          onPress={this.submitForm.bind(this)}
+          >
             <Icon active name="md-add" style={{ color: 'white' }} />
             <Text style={{ color: 'white' }} >Save</Text>
           </Button>
         </FooterTab>
     </Footer>
     </Container>
-
-
-
     );
   }
 }
