@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View,ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Button, Text, Content, Item, Form, Input, Label, Header, Body, Title } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -19,7 +19,8 @@ class Home extends Component { // eslint-disable-line
     this.state={
       email:'test@test.sk',
       pass:'test',
-      errorMessage:''
+      errorMessage:'',
+      working:false,
     }
   }
   static propTypes = {
@@ -27,6 +28,9 @@ class Home extends Component { // eslint-disable-line
   }
 
   async submitLogin(){
+    this.setState(
+      {working:true}
+    );
     let email=this.state.email;
     let password = this.state.pass;
     let client = this.props.client;
@@ -45,12 +49,18 @@ class Home extends Component { // eslint-disable-line
           id: userId,
           email: signedUser.user.email
         });
+        this.setState(
+          {working:false}
+        );
         Actions.taskList();
       }
     ).catch(
       ()=>{
         this.setState({errorMessage:'Zlé meno alebo heslo!'});
         setTimeout(()=>this.setState({errorMessage:''}), 1500);
+        this.setState(
+          {working:false}
+        );
       }
     );
   }
@@ -85,11 +95,13 @@ class Home extends Component { // eslint-disable-line
               primary
               style={styles.mb15}
               onPress={this.submitLogin.bind(this)}
+              disabled={this.state.working}
             >
-              <Text>Login</Text>
+            {
+              this.state.working? <ActivityIndicator animating size={ 'large' } color='#007299' /> : <Text>Login</Text>
+            }
             </Button>
           <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
-
           </View>
         </Content>
       </Container>
