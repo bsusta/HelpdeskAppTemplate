@@ -86,3 +86,7 @@ export default function configureStore(onCompletion: () => void): any {
     return store;
 }
 ```
+
+Spustenie redux remote debbuger cez prehliadač po spustení simlulátora na adrese:
+http://localhost:8081/debugger-ui
+
