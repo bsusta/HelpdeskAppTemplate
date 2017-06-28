@@ -16,6 +16,7 @@ $ npm install
 $ react-native upgrade
 
 $ react-native link
+
 ```
 
 #### 2. Simulate for iOS
@@ -65,9 +66,10 @@ Add command to your project's package.json:
 }
 ```
 
-```sh
-npm install
-```
+
+$ npm install
+$ npm install -g react-native-cli
+
 
 Napojenie devTools na configureStore.js
 
