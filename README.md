@@ -66,10 +66,10 @@ Add command to your project's package.json:
 }
 ```
 
-
+```sh
 $ npm install
 $ npm install -g react-native-cli
-
+```
 
 Napojenie devTools na configureStore.js
 
