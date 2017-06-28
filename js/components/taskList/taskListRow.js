@@ -16,7 +16,7 @@ class TaskListRow extends Component {
                   Folder: {this.props.data.description}
                 </Text>
                 <Text numberOfLines={1} note>Assigned: {this.props.data.assignedUser?this.props.data.assignedUser.firstName:'Nikto'}</Text>
-                <Text numberOfLines={1} note>Deadline: {this.props.data.deadlineAt}</Text>
+                <Text numberOfLines={1} note>Deadline: {this.props.data.deadlineAt?this.props.data.deadlineAt:'No date'}</Text>
               </Body>
               <Right>
                 <Icon name="arrow-forward" />
