@@ -124,7 +124,7 @@ class TabAtributes extends Component { // eslint-disable-line
               selectedValue={this.state.assignedUserId}
               onValueChange={this.pickedAssigned.bind(this)}>
               {
-                this.props.users.concat([{id:'',key:'',firstName:'Nikto'}]).map((user)=>
+                [{id:'',key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
                     (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
                   )
               }

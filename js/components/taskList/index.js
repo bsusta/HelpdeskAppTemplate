@@ -71,7 +71,7 @@ class TaskList extends Component {
 
         <Content>
           <List dataArray={this.props.tasks} renderRow={data =>
-            <TaskListRow taskName={data.title} folder={data.description} personName={data.assignedUser?data.assignedUser.firstName:'Nikto'} date={data.deadlineAt} id={data.id} />
+            <TaskListRow data={data} />
           }
           />
         </Content>

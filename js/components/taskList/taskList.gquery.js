@@ -9,7 +9,8 @@ export const tasks = gql`
 		deadlineAt
     description
     assignedUser{
-      firstName
+      firstName,
+      id
     }
 	 }
   }

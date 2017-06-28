@@ -2,19 +2,31 @@
 import React, { Component } from 'react';
 
 import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker } from 'native-base';
-
+import { ActivityIndicator } from 'react-native';
 import styles from './styles';
-import { updateTask } from './taskEdit.gquery';
+import { updateTask , users } from './taskEdit.gquery';
 import { Actions } from 'react-native-router-flux';
-import { withApollo } from 'react-apollo';
+import { withApollo, graphql } from 'react-apollo';
+
+const withData = graphql(users, {
+  props: ({ data: { loading, allUsers, error, refetch, subscribeToMore } }) => ({
+    loadingUsers: loading,
+    users: allUsers,
+    usersError: error,
+    refetch,
+    subscribeToMore,
+  }),
+});
+
 class TabAtributes extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      taskName:this.props.data.taskName,
-      taskDescription:this.props.data.folder,
+      taskName:this.props.data.title,
+      taskDescription:this.props.data.description,
       selectedItem: undefined,
       selected1: 'key1',
+      assignedUserId:this.props.data.assignedUser?this.props.data.assignedUser.id:'',
       results: {
         items: []
      }
@@ -25,18 +37,28 @@ class TabAtributes extends Component {
          selected1 : value,
      });
    }
+   pickedAssigned(value:string){
+     this.setState({
+         assignedUserId : value
+     });
+   }
    submitForm(){
      let title = this.state.taskName;
      let description = this.state.taskDescription;
      let client = this.props.client;
      let id = this.props.data.id;
+     let assignedUserId = this.state.assignedUserId==''?null:this.state.assignedUserId;
      client.mutate({
            mutation: updateTask,
-           variables: { title, description, id },
+           variables: { title, description, id, assignedUserId},
          }).then(Actions.taskList());
    }
 
   render() {
+    if(this.props.loadingUsers){
+      return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
+    }
+
     return (
       <Container>
         <Content style={{ padding: 15 }}>
@@ -98,15 +120,18 @@ class TabAtributes extends Component {
           </View>
           <Text note>Assigned</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader="Select one"
-              mode="dropdown"
-              selectedValue={this.state.selected1}
-              onValueChange={this.onValueChange.bind(this)}>
-              <Item label="User 2" value="key0" />
-              <Item label="Company 2" value="key1" />
-            </Picker>
+          <Picker
+            supportedOrientations={['portrait', 'landscape']}
+            iosHeader="Select one"
+            mode="dropdown"
+            selectedValue={this.state.assignedUserId}
+            onValueChange={this.pickedAssigned.bind(this)}>
+            {
+              [{id:'',key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
+                  (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
+                )
+            }
+          </Picker>
           </View>
         </Content>
       <Footer>
@@ -130,4 +155,4 @@ class TabAtributes extends Component {
     );
   }
 }
-export default withApollo(TabAtributes);
+export default withData(withApollo(TabAtributes));
