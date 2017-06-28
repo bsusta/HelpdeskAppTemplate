@@ -1,8 +1,6 @@
 # NativeBase HelpdeskAppTemplate v2.0
-An example app with all the UI components of NativeBase
 
 ## Get Started
-
 
 #### 1. Installation
 
@@ -18,6 +16,7 @@ $ npm install
 $ react-native upgrade
 
 $ react-native link
+
 ```
 
 #### 2. Simulate for iOS
@@ -68,7 +67,12 @@ Add command to your project's package.json:
 ```
 
 ```sh
+<<<<<<< HEAD
 npm install
+=======
+$ npm install
+$ npm install -g react-native-cli
+>>>>>>> 19ea4ba7d31d081890d633ab292a9cf704f82e91
 ```
 
 Napojenie devTools na configureStore.js
@@ -89,5 +93,10 @@ export default function configureStore(onCompletion: () => void): any {
 }
 ```
 
+<<<<<<< HEAD
 
+=======
+Spustenie redux remote debbuger cez prehliadač po spustení simlulátora na adrese:
+http://localhost:8081/debugger-ui
+>>>>>>> 19ea4ba7d31d081890d633ab292a9cf704f82e91
 
