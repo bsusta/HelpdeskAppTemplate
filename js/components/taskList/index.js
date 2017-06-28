@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import { graphql } from 'react-apollo';
+import { graphql, withApollo } from 'react-apollo';
+import { ActivityIndicator } from 'react-native';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import TaskListRow from './taskListRow';
@@ -26,17 +27,6 @@ const withData = graphql(tasks, {
 });
 
 class TaskList extends Component {
-  constructor(props){
-    super(props);
-    this.state={tasks:[]};
-  }
-  componentDidMount(){
-    this.props.refetch().then(()=>{
-      this.props.refetch().then(()=>{
-        this.setState({tasks:this.props.tasks});
-    })
-  });
-  }
   static propTypes = {
     openDrawer: React.PropTypes.func,
     pushRoute: React.PropTypes.func,
@@ -50,6 +40,9 @@ class TaskList extends Component {
   }
 
   render() {
+    if(this.props.loadingTasks){
+      return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
+    }
     return (
       <Container style={styles.container}>
         <Header>
@@ -77,7 +70,7 @@ class TaskList extends Component {
         </Header>
 
         <Content>
-          <List dataArray={this.state.tasks} renderRow={data =>
+          <List dataArray={this.props.tasks} renderRow={data =>
             <TaskListRow taskName={data.title} folder={data.description} personName={data.assignedUser?data.assignedUser.firstName:'Nikto'} date={data.deadlineAt} id={data.id} />
           }
           />
@@ -85,7 +78,10 @@ class TaskList extends Component {
 
         <Footer>
           <FooterTab>
-            <Button vertical>
+            <Button
+             vertical
+             onPress={()=>this.props.refetch()}
+             >
               <Icon active style={{ color: 'white' }} name="refresh" />
               <Text style={{ color: 'white' }} >Reload</Text>
             </Button>
@@ -122,4 +118,4 @@ const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
 });
 
-export default withData(connect(mapStateToProps, bindAction)(TaskList));
+export default withApollo(withData(connect(mapStateToProps, bindAction)(TaskList)));

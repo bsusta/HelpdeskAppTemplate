@@ -1,11 +1,21 @@
 
 import React, { Component } from 'react';
-
 import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker } from 'native-base';
-import { withApollo } from 'react-apollo';
+import { withApollo, graphql } from 'react-apollo';
 import styles from './styles';
-import { createTask } from './taskAdd.gquery';
+import { createTask, users } from './taskAdd.gquery';
 import { Actions } from 'react-native-router-flux';
+import { ActivityIndicator } from 'react-native';
+
+const withData = graphql(users, {
+  props: ({ data: { loading, allUsers, error, refetch, subscribeToMore } }) => ({
+    loadingUsers: loading,
+    users: allUsers,
+    usersError: error,
+    refetch,
+    subscribeToMore,
+  }),
+});
 
 class TabAtributes extends Component { // eslint-disable-line
   constructor(props) {
@@ -15,6 +25,7 @@ class TabAtributes extends Component { // eslint-disable-line
       taskDescription:'',
       selectedItem: undefined,
       selected1: 'key1',
+      assignedUserId:'',
       results: {
         items: [],
      }
@@ -25,18 +36,26 @@ class TabAtributes extends Component { // eslint-disable-line
          selected1 : value
      });
    }
-
+  pickedAssigned(value:string){
+    this.setState({
+        assignedUserId : value
+    });
+  }
   submitForm(){
     let title = this.state.taskName;
     let description = this.state.taskDescription;
     let client = this.props.client;
+    let assignedUserId = this.state.assignedUserId==''?null:this.state.assignedUserId;
     client.mutate({
           mutation: createTask,
-          variables: { title, description },
-        }).then(Actions.taskList());
+          variables: { title, description, assignedUserId },
+        }).then(Actions.taskList);
   }
 
   render() { // eslint-disable-line
+    if(this.props.loadingUsers){
+      return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
+    }
     return (
       <Container>
         <Content style={{ padding: 15 }}>
@@ -102,10 +121,13 @@ class TabAtributes extends Component { // eslint-disable-line
               supportedOrientations={['portrait', 'landscape']}
               iosHeader="Select one"
               mode="dropdown"
-              selectedValue={this.state.selected1}
-              onValueChange={this.onValueChange.bind(this)}>
-              <Item label="User 2" value="key0" />
-              <Item label="Company 2" value="key1" />
+              selectedValue={this.state.assignedUserId}
+              onValueChange={this.pickedAssigned.bind(this)}>
+              {
+                this.props.users.concat([{id:'',key:'',firstName:'Nikto'}]).map((user)=>
+                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
+                  )
+              }
             </Picker>
           </View>
         </Content>
@@ -133,4 +155,4 @@ class TabAtributes extends Component { // eslint-disable-line
     );
   }
 }
-export default withApollo(TabAtributes);
+export default withData(withApollo(TabAtributes));

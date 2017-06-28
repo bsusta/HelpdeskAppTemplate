@@ -98,7 +98,11 @@ class Home extends Component { // eslint-disable-line
               disabled={this.state.working}
             >
             {
-              this.state.working? <ActivityIndicator animating size={ 'large' } color='#007299' /> : <Text>Login</Text>
+              this.state.working?
+              <ActivityIndicator
+              animating size={ 'large' }
+              color='#007299' /> :
+              <Text>Login</Text>
             }
             </Button>
           <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>

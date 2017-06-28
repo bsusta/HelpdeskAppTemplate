@@ -4,13 +4,10 @@ import React, { Component } from 'react';
 import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker } from 'native-base';
 
 import styles from './styles';
-
-/*
-
-
-*/
-
-export default class TabAtributes extends Component { // eslint-disable-line
+import { updateTask } from './taskEdit.gquery';
+import { Actions } from 'react-native-router-flux';
+import { withApollo } from 'react-apollo';
+class TabAtributes extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,17 +26,17 @@ export default class TabAtributes extends Component { // eslint-disable-line
      });
    }
    submitForm(){
-     return;
      let title = this.state.taskName;
      let description = this.state.taskDescription;
      let client = this.props.client;
+     let id = this.props.data.id;
      client.mutate({
-           mutation: createTask,
-           variables: { title, description },
+           mutation: updateTask,
+           variables: { title, description, id },
          }).then(Actions.taskList());
    }
 
-  render() { // eslint-disable-line
+  render() {
     return (
       <Container>
         <Content style={{ padding: 15 }}>
@@ -133,3 +130,4 @@ export default class TabAtributes extends Component { // eslint-disable-line
     );
   }
 }
+export default withApollo(TabAtributes);
