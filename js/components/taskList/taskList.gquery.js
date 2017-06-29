@@ -15,26 +15,7 @@ export const tasks = gql`
 	 }
   }
 `;
-export const newTasksSubscription = gql`
-	subscription {
-		Task(filter: {mutation_in: [CREATED]}) {
-			mutation
-			node {
-				id
-				key:id
-				title
-        deadlineAt
-        description
-        assignedUser{
-          firstName,
-          id
-        }
-				createdAt
-				active
-			}
-		}
-	}
-`;
+
 export const editedTasksSubscription = gql`
 	subscription {
 		Task(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {

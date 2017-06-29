@@ -5,14 +5,23 @@ import { Container, Button, Text, Content, Item, Form, Input, Label, Header, Bod
 import { Actions } from 'react-native-router-flux';
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
-import { withApollo } from 'react-apollo';
+import { withApollo,graphql } from 'react-apollo';
 
 import { setLoggedUser } from './actions';
 import { addTokenToUse } from '../../tokens/tokenHandling';
-import { signinUser } from './user.gquery';
+import { signinUser, editedTasksSubscription, tasks } from './user.gquery';
 
+const withData = graphql(tasks, {
+  props: ({ data: { loading, allTasks, error, refetch, subscribeToMore } }) => ({
+    loadingTasks: loading,
+    tasks: allTasks,
+    tasksError: error,
+    refetch,
+    subscribeToMore,
+  }),
+});
 
-class Home extends Component { // eslint-disable-line
+class Home extends Component {
 
   constructor(props){
     super(props);
@@ -40,10 +49,8 @@ class Home extends Component { // eslint-disable-line
     }).then(
       (loggedUserData)=>{
         const signedUser = loggedUserData.data.signinUser;
-
         const token = signedUser.token;
         const userId = signedUser.user.id;
-
         addTokenToUse(client, token);
         setLoggedUser({
           id: userId,
@@ -52,10 +59,23 @@ class Home extends Component { // eslint-disable-line
         this.setState(
           {working:false}
         );
+        this.props.updateTaskList(this.props.tasks);
+        this.props.subscribeToMore({
+          document: editedTasksSubscription,
+          updateQuery: () => {
+            this.props.refetch().then(
+              ()=>{
+                this.props.updateTaskList(this.props.tasks);
+              }
+            ).catch((error)=>{console.log(error)});
+            return;
+          },
+        });
+
         Actions.taskList();
       }
     ).catch(
-      ()=>{
+      (error)=>{
         this.setState({errorMessage:'Zlé meno alebo heslo!'});
         setTimeout(()=>this.setState({errorMessage:''}), 1500);
         this.setState(
@@ -116,6 +136,7 @@ class Home extends Component { // eslint-disable-line
 function bindActions(dispatch) {
   return {
     openDrawer: () => dispatch(openDrawer()),
+    updateTaskList: (data) => dispatch({type:'updateTaskList',taskList:data}),
   };
 }
 
@@ -123,6 +144,7 @@ const mapStateToProps = state => ({
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
   routes: state.drawer.routes,
+  taskList:state.updateTaskList.taskList,
 });
 
-export default withApollo(connect(mapStateToProps, bindActions)(Home));
+export default withData(withApollo(connect(mapStateToProps, bindActions)(Home)));

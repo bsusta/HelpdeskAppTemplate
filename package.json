@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "postinstall": "remotedev-debugger",
+    "postinstall": "remotedev-debugger [options]",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "eslint": "eslint",
     "test": "jest",
@@ -31,9 +31,13 @@
     "redux": "^3.5.2",
     "redux-form": "^6.2.0",
     "redux-persist": "^3.2.2",
+<<<<<<< HEAD
     "redux-thunk": "^2.1.0",
     "remote-redux-devtools": "^0.3.3",
     "subscriptions-transport-ws": "^0.7.3"
+=======
+    "redux-thunk": "^2.1.0"
+>>>>>>> refs/remotes/origin/master
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
@@ -50,7 +54,8 @@
     "jest-react-native": "16.1.0",
     "mocha": "^2.5.3",
     "react-test-renderer": "15.4.2",
-    "remote-redux-devtools-on-debugger": "^0.4.6",
+    "remote-redux-devtools": "^0.5.0",
+    "remote-redux-devtools-on-debugger": "^0.4.7",
     "remotedev-server": "^0.1.2"
   },
   "keywords": [

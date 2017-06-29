@@ -10,52 +10,17 @@ import { ActivityIndicator, RefreshControl } from 'react-native';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import TaskListRow from './taskListRow';
 import styles from './styles';
-import { tasks ,newTasksSubscription,editedTasksSubscription} from './taskList.gquery';
-
 const {
   pushRoute,
 } = actions;
 
-const withData = graphql(tasks, {
-  props: ({ data: { loading, allTasks, error, refetch, subscribeToMore } }) => ({
-    loadingTasks: loading,
-    tasks: allTasks,
-    tasksError: error,
-    refetch,
-    subscribeToMore,
-  }),
-});
-
 class TaskList extends Component {
-  constructor(props){
-    super(props);
-    this.state={refreshing:false}
-  }
-
-  async updateList(){
-    this.setState({refreshing:true});
-    this.props.refetch().then(this.setState({refreshing:false}));
-  }
-
-  componentWillMount() {
-    this.props.subscribeToMore({
-      document: editedTasksSubscription,
-      updateQuery: () => {
-        this.updateList();
-        return;
-      },
-    });
-  }
 
   pushRoute(route) {
     this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
   }
 
   render() {
-    if(this.props.loadingTasks){
-      return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
-    }
-
     return (
       <Container style={styles.container}>
         <Header>
@@ -82,21 +47,8 @@ class TaskList extends Component {
           </Right>
         </Header>
 
-        <Content
-        refreshControl={
-          <RefreshControl
-          refreshing={ this.state.refreshing }
-          onRefresh={ this.updateList.bind(this)}
-        />
-        }
-        >
-          <List dataArray={this.props.tasks}
-          refreshControl={
-            <RefreshControl
-            refreshing={ this.state.refreshing }
-            onRefresh={ this.updateList.bind(this)}
-          />
-          }
+        <Content>
+          <List dataArray={this.props.taskList}
           renderRow={data =>
             <TaskListRow data={data} />
           }
@@ -107,7 +59,6 @@ class TaskList extends Component {
           <FooterTab>
             <Button
              vertical
-             onPress={()=>this.props.refetch()}
              >
               <Icon active style={{ color: 'white' }} name="refresh" />
               <Text style={{ color: 'white' }} >Reload</Text>
@@ -143,6 +94,7 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
+  taskList: state.updateTaskList.taskList,
 });
 
-export default withApollo(withData(connect(mapStateToProps, bindAction)(TaskList)));
+export default connect(mapStateToProps, bindAction)(TaskList);

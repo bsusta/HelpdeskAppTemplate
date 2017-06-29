@@ -28,7 +28,7 @@ class TabAtributes extends Component {
       taskDescription:this.props.data.description,
       selectedItem: undefined,
       selected1: 'key1',
-      deadline:date.toGMTString(),
+      deadline:this.props.data.deadlineAt?date.toGMTString():null,
       assignedUserId:this.props.data.assignedUser?this.props.data.assignedUser.id:'',
       results: {
         items: []
@@ -46,7 +46,7 @@ class TabAtributes extends Component {
      });
    }
    submitForm(){
-     let deadlineAt=this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z';
+     let deadlineAt=new Date(this.state.deadline)=="Invalid Date"?(this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z'):this.props.data.deadlineAt;
      let title = this.state.taskName;
      let description = this.state.taskDescription;
      let client = this.props.client;
