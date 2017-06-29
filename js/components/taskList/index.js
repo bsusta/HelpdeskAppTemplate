@@ -5,12 +5,12 @@ import { actions } from 'react-native-navigation-redux-helpers';
 import { Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { graphql, withApollo } from 'react-apollo';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, RefreshControl } from 'react-native';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import TaskListRow from './taskListRow';
 import styles from './styles';
-import { tasks } from './taskList.gquery';
+import { tasks ,newTasksSubscription,editedTasksSubscription} from './taskList.gquery';
 
 const {
   pushRoute,
@@ -27,12 +27,24 @@ const withData = graphql(tasks, {
 });
 
 class TaskList extends Component {
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
+  constructor(props){
+    super(props);
+    this.state={refreshing:false}
+  }
+
+  async updateList(){
+    this.setState({refreshing:true});
+    this.props.refetch().then(this.setState({refreshing:false}));
+  }
+
+  componentWillMount() {
+    this.props.subscribeToMore({
+      document: editedTasksSubscription,
+      updateQuery: () => {
+        this.updateList();
+        return;
+      },
+    });
   }
 
   pushRoute(route) {
@@ -43,6 +55,7 @@ class TaskList extends Component {
     if(this.props.loadingTasks){
       return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
     }
+
     return (
       <Container style={styles.container}>
         <Header>
@@ -69,8 +82,22 @@ class TaskList extends Component {
           </Right>
         </Header>
 
-        <Content>
-          <List dataArray={this.props.tasks} renderRow={data =>
+        <Content
+        refreshControl={
+          <RefreshControl
+          refreshing={ this.state.refreshing }
+          onRefresh={ this.updateList.bind(this)}
+        />
+        }
+        >
+          <List dataArray={this.props.tasks}
+          refreshControl={
+            <RefreshControl
+            refreshing={ this.state.refreshing }
+            onRefresh={ this.updateList.bind(this)}
+          />
+          }
+          renderRow={data =>
             <TaskListRow data={data} />
           }
           />

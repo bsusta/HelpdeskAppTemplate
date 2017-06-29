@@ -2,12 +2,13 @@ import gql from 'graphql-tag';
 import { taskFragment } from './task.fragments';
 
 export const updateTask = gql`
-	mutation updateTask($title: String!,$description: String,$id: ID!,$assignedUserId: ID) {
+	mutation updateTask($title: String!,$description: String,$id: ID!,$assignedUserId: ID,$deadlineAt: DateTime) {
 		updateTask(
       title: $title,
       description: $description,
 			id: $id,
 			assignedUserId: $assignedUserId,
+			deadlineAt: $deadlineAt,
 		) {
 			...TaskInfo
 		}

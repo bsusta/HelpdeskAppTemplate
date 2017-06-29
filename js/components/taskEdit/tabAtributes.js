@@ -7,6 +7,7 @@ import styles from './styles';
 import { updateTask , users } from './taskEdit.gquery';
 import { Actions } from 'react-native-router-flux';
 import { withApollo, graphql } from 'react-apollo';
+import DatePicker from 'react-native-datepicker';
 
 const withData = graphql(users, {
   props: ({ data: { loading, allUsers, error, refetch, subscribeToMore } }) => ({
@@ -21,11 +22,13 @@ const withData = graphql(users, {
 class TabAtributes extends Component {
   constructor(props) {
     super(props);
+    let date=new Date(this.props.data.deadlineAt);
     this.state = {
       taskName:this.props.data.title,
       taskDescription:this.props.data.description,
       selectedItem: undefined,
       selected1: 'key1',
+      deadline:date.toGMTString(),
       assignedUserId:this.props.data.assignedUser?this.props.data.assignedUser.id:'',
       results: {
         items: []
@@ -43,6 +46,7 @@ class TabAtributes extends Component {
      });
    }
    submitForm(){
+     let deadlineAt=this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z';
      let title = this.state.taskName;
      let description = this.state.taskDescription;
      let client = this.props.client;
@@ -50,7 +54,7 @@ class TabAtributes extends Component {
      let assignedUserId = this.state.assignedUserId==''?null:this.state.assignedUserId;
      client.mutate({
            mutation: updateTask,
-           variables: { title, description, id, assignedUserId},
+           variables: { title, description, id, assignedUserId,deadlineAt},
          }).then(Actions.taskList());
    }
 
@@ -78,6 +82,38 @@ class TabAtributes extends Component {
               onChangeText={ value => this.setState({taskDescription:value}) }
             />
           </View>
+          <Text note>Assigned</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+          <Picker
+            supportedOrientations={['portrait', 'landscape']}
+            iosHeader="Select one"
+            mode="dropdown"
+            selectedValue={this.state.assignedUserId}
+            onValueChange={this.pickedAssigned.bind(this)}>
+            {
+              [{id:'',key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
+                  (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
+                )
+            }
+          </Picker>
+          </View>
+          <Text note>Deadline</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+          <DatePicker
+            date={this.state.deadline}
+            style={{width:380}}
+            mode="datetime"
+            placeholder="Deadline"
+            showIcon={false}
+            androidMode="spinner"
+            format="DD.MM.YYYY HH:MM"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            is24Hour={true}
+            onDateChange={(date) => {this.setState({deadline: date})}}
+          />
+          </View>
+
           <Text note>Work hours</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input />
@@ -117,21 +153,6 @@ class TabAtributes extends Component {
               <Item label="Company 1" value="key0" />
               <Item label="Company 2" value="key1" />
             </Picker>
-          </View>
-          <Text note>Assigned</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <Picker
-            supportedOrientations={['portrait', 'landscape']}
-            iosHeader="Select one"
-            mode="dropdown"
-            selectedValue={this.state.assignedUserId}
-            onValueChange={this.pickedAssigned.bind(this)}>
-            {
-              [{id:'',key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
-                  (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
-                )
-            }
-          </Picker>
           </View>
         </Content>
       <Footer>
