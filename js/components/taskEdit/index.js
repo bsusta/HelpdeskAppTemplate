@@ -7,17 +7,20 @@ import { Actions } from 'react-native-router-flux';
 import TabAtributes from './tabAtributes';
 import TabComments from './tabComments';
 import TabItems from './tabItems';
+import { comments } from './taskEdit.gquery';
+
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
+import { graphql } from 'react-apollo';
 
 const {
   pushRoute,
 } = actions;
-const datas = [
-];
 
-class TaskAdd extends Component {
+
+
+class TaskEdit extends Component {
   constructor(props){
     super(props);
   }
@@ -34,6 +37,17 @@ class TaskAdd extends Component {
   }
 
   render() {
+    const withData = graphql(comments,{options:{variables:{taskId:this.props.id}},
+      props: ({ data: { loading, allComments, error, refetch, subscribeToMore } }) => ({
+        loadingComments: loading,
+        comments: allComments,
+        commentsError: error,
+        refetch,
+        subscribeToMore,
+      })
+    });
+    const HOCTabComments=withData(TabComments);
+
     return (
       <Container style={styles.container}>
         <Header>
@@ -52,9 +66,9 @@ class TaskAdd extends Component {
                    <TabAtributes data={this.props.data} />
                </Tab>
                <Tab heading="Comments">
-                   <TabComments />
+                   <HOCTabComments data={this.props.data}/>
                </Tab>
-               <Tab heading="Items">
+               <Tab heading="Items" data={this.props.data}>
                    <TabItems />
                </Tab>
            </Tabs>
@@ -76,4 +90,4 @@ const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
 });
 
-export default connect(mapStateToProps, bindAction)(TaskAdd);
+export default connect(mapStateToProps, bindAction)(TaskEdit);

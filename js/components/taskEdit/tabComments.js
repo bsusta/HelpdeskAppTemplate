@@ -5,8 +5,10 @@ import { Input, Label, Button, Icon, Item, Footer, FooterTab, Thumbnail, Contain
 import { Actions } from 'react-native-router-flux';
 import styles from './styles';
 
-export default class TabComments extends Component { // eslint-disable-line
-
+class TabComments extends Component { // eslint-disable-line
+  constructor(props){
+    super(props);
+  }
   render() { // eslint-disable-line
     return (
       <Container>
@@ -54,7 +56,7 @@ export default class TabComments extends Component { // eslint-disable-line
 
       <Footer>
         <FooterTab>
-          <Button onPress={Actions.addComment} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+          <Button onPress={()=>{Actions.addComment({id:this.props.data.id})}} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
             <Icon active style={{ color: 'white' }} name="md-add" />
             <Text style={{ color: 'white' }} >Comment</Text>
           </Button>
@@ -66,3 +68,4 @@ export default class TabComments extends Component { // eslint-disable-line
     );
   }
 }
+export default TabComments;

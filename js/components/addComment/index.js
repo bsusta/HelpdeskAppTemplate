@@ -52,7 +52,7 @@ class AddComment extends Component {
       <Container style={styles.container}>
         <Tabs>
             <Tab heading="+ Comment">
-                <TabComment />
+                <TabComment id={this.props.id} />
             </Tab>
             <Tab heading="+ Email">
                 <TabEmail />
