@@ -55,7 +55,8 @@ class TabAtributes extends Component {
      client.mutate({
            mutation: updateTask,
            variables: { title, description, id, assignedUserId,deadlineAt},
-         }).then(Actions.taskList());
+         });
+    Actions.taskList();
    }
 
   render() {

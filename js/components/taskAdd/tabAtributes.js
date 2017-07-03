@@ -44,6 +44,9 @@ class TabAtributes extends Component { // eslint-disable-line
   }
   submitForm(){
     let deadlineAt=this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z';
+    if(deadlineAt=='--TZ'){
+      deadlineAt=null;
+    }
     let title = this.state.taskName;
     let description = this.state.taskDescription;
     let client = this.props.client;
@@ -52,7 +55,8 @@ class TabAtributes extends Component { // eslint-disable-line
     client.mutate({
           mutation: createTask,
           variables: { title, description, assignedUserId, deadlineAt },
-        }).then(Actions.taskList);
+        });
+    Actions.taskList();
   }
 
   render() { // eslint-disable-line
