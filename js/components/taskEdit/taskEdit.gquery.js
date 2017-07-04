@@ -42,14 +42,46 @@ export const users = gql`
 `;
 
 export const comments = gql`
-  query allComments($taskId:ID) {
+  query Comments($filter:ID) {
        allComments (
 				orderBy: id_DESC,
-				taskId:$task)
-				{
+				filter:{
+					task{
+						id:$filter
+					}
+				},
+			)
+		{
 		id,
 		createdAt,
 		content,
+		user{
+			id,
+			firstName
+		}
+		task{
+			id
+		}
 	 }
   }
+`;
+export const addedCommentsSubscription = gql`
+	subscription {
+		Comment(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
+			mutation
+			node {
+				id
+				key:id
+				createdAt
+				content
+				user{
+					id,
+					firstName
+				}
+				task{
+					id
+				}
+			}
+		}
+	}
 `;

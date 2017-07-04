@@ -37,7 +37,9 @@ class TaskEdit extends Component {
   }
 
   render() {
-    const withData = graphql(comments,{options:{variables:{taskId:this.props.id}},
+    const withData = graphql(comments,{options:{variables:{
+      filter:this.props.id,
+    },
       props: ({ data: { loading, allComments, error, refetch, subscribeToMore } }) => ({
         loadingComments: loading,
         comments: allComments,

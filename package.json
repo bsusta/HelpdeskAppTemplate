@@ -10,15 +10,11 @@
     "eject-native-base": "node node_modules/native-base/ejectTheme.js"
   },
   "dependencies": {
-    "@shoutem/theme": "^0.9.0",
-    "apollo-client": "^1.4.2",
     "color": "~0.11.1",
-    "graphql-tag": "^2.4.0",
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
     "native-base": "2.1.0",
     "react": "15.4.2",
-    "react-apollo": "^1.4.2",
     "react-native": "0.42.3",
     "react-native-code-push": "1.17.0-beta",
     "react-native-datepicker": "^1.6.0",
@@ -31,13 +27,7 @@
     "redux": "^3.5.2",
     "redux-form": "^6.2.0",
     "redux-persist": "^3.2.2",
-<<<<<<< HEAD
-    "redux-thunk": "^2.1.0",
-    "remote-redux-devtools": "^0.3.3",
-    "subscriptions-transport-ws": "^0.7.3"
-=======
     "redux-thunk": "^2.1.0"
->>>>>>> refs/remotes/origin/master
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
