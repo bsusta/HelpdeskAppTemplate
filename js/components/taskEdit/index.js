@@ -37,17 +37,17 @@ class TaskEdit extends Component {
   }
 
   render() {
-    const withData = graphql(comments,{options:{variables:{
-      filter:this.props.id,
+  const withData = graphql(comments,{options:{variables:{
+      id:this.props.data.id,
     },
       props: ({ data: { loading, allComments, error, refetch, subscribeToMore } }) => ({
-        loadingComments: loading,
-        comments: allComments,
-        commentsError: error,
+        loading,
+        allComments,
+        error,
         refetch,
         subscribeToMore,
       })
-    });
+    }});
     const HOCTabComments=withData(TabComments);
 
     return (
@@ -68,7 +68,7 @@ class TaskEdit extends Component {
                    <TabAtributes data={this.props.data} />
                </Tab>
                <Tab heading="Comments">
-                   <HOCTabComments data={this.props.data}/>
+                   <HOCTabComments id={this.props.data.id}/>
                </Tab>
                <Tab heading="Items" data={this.props.data}>
                    <TabItems />

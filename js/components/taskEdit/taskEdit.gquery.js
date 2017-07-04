@@ -42,21 +42,22 @@ export const users = gql`
 `;
 
 export const comments = gql`
-  query Comments($filter:ID) {
+  query Comments($id:ID!) {
        allComments (
-				orderBy: id_DESC,
+				orderBy: id_DESC
 				filter:{
-					task{
-						id:$filter
+					task:{
+						id:$id
 					}
-				},
+				}
 			)
 		{
-		id,
-		createdAt,
-		content,
+		id
+		key:id
+		createdAt
+		content
 		user{
-			id,
+			id
 			firstName
 		}
 		task{

@@ -8,6 +8,7 @@ import { withApollo} from 'react-apollo';
 import { createComment } from './addComment.gquery';
 
 
+
 class TabAtributes extends Component { // eslint-disable-line
 
     static propTypes = {
@@ -37,6 +38,7 @@ class TabAtributes extends Component { // eslint-disable-line
             mutation: createComment,
             variables: { content, userId, taskId },
           });
+      Actions.pop();
     }
     render() {
       return (
