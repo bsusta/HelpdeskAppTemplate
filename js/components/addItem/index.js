@@ -4,15 +4,25 @@ import { connect } from 'react-redux';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import { ActivityIndicator } from 'react-native';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
+import { units } from './addItem.gquery';
+import { withApollo, graphql } from 'react-apollo';
 
 const {
   pushRoute,
 } = actions;
-const datas = [
-];
+const withData = graphql(units, {
+  props: ({ data: { loading, allUnits, error, refetch, subscribeToMore } }) => ({
+    loadingUnits: loading,
+    units: allUnits,
+    usersError: error,
+    refetch,
+    subscribeToMore,
+  }),
+});
 
 class AddItem extends Component {
 
@@ -28,24 +38,19 @@ class AddItem extends Component {
     this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
   }
 
+
   constructor(props) {
     super(props);
     this.state = {
-      selectedItem: undefined,
-      selected1: 'key0',
-      results: {
-        items: []
-      },
+      unit:null
     };
-  }
-  onValueChange(value: string) {
-    this.setState({
-      selected1: value
-    });
   }
 
 
   render() {
+    if(this.props.loadingUnits){
+      return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
+    }
     return (
       <Container style={styles.container}>
         <Header>
@@ -55,7 +60,7 @@ class AddItem extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Add/Edit item</Title>
+            <Title>Add item</Title>
           </Body>
         </Header>
         <Content style={{ padding: 15 }}>
@@ -71,12 +76,11 @@ class AddItem extends Component {
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Picker
               supportedOrientations={['portrait', 'landscape']}
-              iosHeader="Select one"
-              mode="dropdown"
-              selectedValue={this.state.selected1}
-              onValueChange={this.onValueChange.bind(this)}>
-              <Item label="ks" value="key0" />
-              <Item label="th" value="key1" />
+              selectedValue={this.state.unit}
+              onValueChange={(value)=>this.setState({unit:value})}>
+              {([{id:null,name:"None"}].concat(this.props.units)).map(
+                (unit)=> <Item label={unit.name} key={unit.id} value={unit.id} />
+              )}
             </Picker>
           </View>
           <Text note>Quantity</Text>
@@ -87,13 +91,13 @@ class AddItem extends Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={Actions.addUser} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.pop} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="trash" />
               <Text style={{ color: 'white' }} >Delete</Text>
             </Button>
           </FooterTab>
           <FooterTab>
-            <Button onPress={Actions.addUser} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.pop} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
               <Text style={{ color: 'white' }} >Save</Text>
             </Button>
@@ -117,4 +121,4 @@ const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
 });
 
-export default connect(mapStateToProps, bindAction)(AddItem);
+export default withData(connect(mapStateToProps, bindAction)(AddItem));

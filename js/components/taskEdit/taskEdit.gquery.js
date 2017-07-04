@@ -66,6 +66,7 @@ export const comments = gql`
 	 }
   }
 `;
+
 export const addedCommentsSubscription = gql`
 	subscription {
 		Comment(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
@@ -81,6 +82,60 @@ export const addedCommentsSubscription = gql`
 				}
 				task{
 					id
+				}
+			}
+		}
+	}
+`;
+
+
+export const invoiceItems = gql`
+  query InvoiceItems($id:ID!) {
+       allInvoiceItems (
+				orderBy: id_DESC
+				filter:{
+					task:{
+						id:$id
+					}
+				}
+			)
+		{
+		id
+		key:id
+		createdAt
+		name
+		price
+		quantity
+		unit{
+			id
+			name
+		}
+		user{
+			id
+			firstName
+		}
+	 }
+  }
+`;
+
+export const invoiceItemsSubscription = gql`
+	subscription {
+		Comment(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
+			mutation
+			node {
+				id
+				key:id
+				createdAt
+				name
+				price
+				quantity
+				unit{
+					id
+					name
+				}
+				user{
+					id
+					firstName
 				}
 			}
 		}

@@ -26,7 +26,6 @@ class TabComments extends Component { // eslint-disable-line
     if(this.props.data.loading){
       return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
     }
-    console.log(this.props);
     return (
       <Container>
         <Content padder style={{ marginTop: 0 }}>
