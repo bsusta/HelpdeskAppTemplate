@@ -23,6 +23,7 @@ import UsersList from './components/usersList/';
 import AddUser from './components/addUser/';
 import AddCompany from './components/addCompany/';
 import AddItem from './components/addItem/';
+import EditItem from './components/editItem/';
 import AddComment from './components/addComment/';
 
 const {
@@ -109,6 +110,7 @@ class AppNavigator extends Component {
               <Scene key="addUser" component={AddUser} />
               <Scene key="addCompany" component={AddCompany} />
               <Scene key="addItem" component={AddItem} />
+              <Scene key="editItem" component={EditItem} />
               <Scene key="addComment" component={AddComment} />
             </Scene>
           </RouterWithRedux>

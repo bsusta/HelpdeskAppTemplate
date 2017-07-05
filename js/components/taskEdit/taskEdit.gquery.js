@@ -118,9 +118,9 @@ export const invoiceItems = gql`
   }
 `;
 
-export const invoiceItemsSubscription = gql`
+export const changedInvoiceItemsSubscription = gql`
 	subscription {
-		Comment(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
+		InvoiceItem(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
 			mutation
 			node {
 				id
@@ -138,6 +138,15 @@ export const invoiceItemsSubscription = gql`
 					firstName
 				}
 			}
+		}
+	}
+`;
+export const deleteInvoiceItem = gql`
+	mutation ($InvoiceItemId: ID!) {
+		deleteInvoiceItem(
+			id: $InvoiceItemId,
+		) {
+		  id
 		}
 	}
 `;

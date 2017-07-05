@@ -14,7 +14,7 @@ export const units = gql`
 export const createInvoiceItem = gql`
 	mutation CreateInvoiceItem($name: String!,$price: Float!,$unitId: ID,$quantity: Int!,$taskId: ID!) {
 		createInvoiceItem(
-			name:$name,
+			name: $name,
       price: $price,
       unitId: $unitId,
       quantity: $quantity,
@@ -24,4 +24,18 @@ export const createInvoiceItem = gql`
 		}
 	}
 	${InvoiceItemFragment}
+`;
+export const updateInvoiceItem = gql`
+	mutation updateInvoiceItem($name: String!,$price: Float!,$unitId: ID,$quantity: Int!,$id: ID!) {
+    updateInvoiceItem(
+      name:$name,
+      price: $price,
+      unitId: $unitId,
+      quantity: $quantity,
+      id: $id,
+    ) {
+      ...InvoiceItemInfo
+      }
+  }
+  ${InvoiceItemFragment}
 `;

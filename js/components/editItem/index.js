@@ -8,7 +8,7 @@ import { ActivityIndicator } from 'react-native';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
-import { units, createInvoiceItem } from './addItem.gquery';
+import { units, updateInvoiceItem } from './editItem.gquery';
 import { withApollo, graphql } from 'react-apollo';
 const {
   pushRoute,
@@ -23,7 +23,7 @@ const withData = graphql(units, {
   }),
 });
 
-class AddItem extends Component {
+class EditItem extends Component {
   static propTypes = {
     openDrawer: React.PropTypes.func,
     pushRoute: React.PropTypes.func,
@@ -40,11 +40,12 @@ class AddItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      unit:null,
-      itemQuantity:'0',
-      itemName:'',
-      itemPrice:'0',
+      unit:this.props.itemData.unit?this.props.itemData.unit.id:null,
+      itemQuantity:this.props.itemData.quantity.toString(),
+      itemName:this.props.itemData.name,
+      itemPrice:this.props.itemData.price.toString(),
     };
+    console.log(this.props.itemData);
     this.setPrice.bind(this);
     this.setQuantity.bind(this);
   }
@@ -54,10 +55,10 @@ class AddItem extends Component {
     let price = parseInt(this.state.itemPrice);
     let unitId = this.state.unit;
     let quantity = parseInt(this.state.itemQuantity);
-    let taskId = this.props.id;
+    let id = this.props.itemData.id;
     this.props.client.mutate({
-          mutation: createInvoiceItem,
-          variables: { name, price, unitId, quantity,taskId },
+          mutation: updateInvoiceItem,
+          variables: { name, price, unitId, quantity,id },
         });
     Actions.pop();
   }
@@ -89,7 +90,7 @@ class AddItem extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Add item</Title>
+            <Title>Edit item</Title>
           </Body>
         </Header>
         <Content style={{ padding: 15 }}>
@@ -161,4 +162,4 @@ const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
 });
 
-export default withData(withApollo(connect(mapStateToProps, bindAction)(AddItem)));
+export default withData(withApollo(connect(mapStateToProps, bindAction)(EditItem)));
