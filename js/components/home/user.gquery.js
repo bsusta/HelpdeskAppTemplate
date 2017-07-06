@@ -27,31 +27,46 @@ export const editedTasksSubscription = gql`
 		Task(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
 			mutation
 			node {
-				id
-				key:id
-				title
-        deadlineAt
+        title
         description
+    		id
+        key: id
         assignedUser{
-          firstName,
+          firstName
           id
         }
-				createdAt
-				active
+        deadlineAt
+        duration
+        status
+        requester{
+          id
+        }
+        company{
+          id
+        }
 			}
 		}
 	}
 `;
+
 export const tasks = gql`
   query Tasks {
        allTasks (orderBy: id_DESC) {
-		id
-		key: id
-		title
-		deadlineAt
+    title
     description
+		id
+    key: id
     assignedUser{
-      firstName,
+      firstName
+      id
+    }
+    deadlineAt
+    duration
+    status
+    requester{
+      id
+    }
+    company{
       id
     }
 	 }

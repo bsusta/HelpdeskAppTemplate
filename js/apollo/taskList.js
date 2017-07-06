@@ -1,9 +1,11 @@
 const initialState = {
   taskList: [],
 };
+export const UPDATE_TASKLIST= 'updateTaskList';
+
 export default function updateTaskList(state = initialState, action){
   switch (action.type) {
-    case "updateTaskList":
+    case UPDATE_TASKLIST:
       return {
         ...state,
         taskList: action.taskList,

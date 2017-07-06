@@ -45,7 +45,6 @@ class EditItem extends Component {
       itemName:this.props.itemData.name,
       itemPrice:this.props.itemData.price.toString(),
     };
-    console.log(this.props.itemData);
     this.setPrice.bind(this);
     this.setQuantity.bind(this);
   }

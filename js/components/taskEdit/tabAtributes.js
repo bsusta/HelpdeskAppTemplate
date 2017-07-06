@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker } from 'native-base';
 import { ActivityIndicator } from 'react-native';
 import styles from './styles';
-import { updateTask , users } from './taskEdit.gquery';
+import { updateTask , users, companies } from './taskEdit.gquery';
 import { Actions } from 'react-native-router-flux';
 import { withApollo, graphql } from 'react-apollo';
 import DatePicker from 'react-native-datepicker';
@@ -18,6 +18,15 @@ const withData = graphql(users, {
     subscribeToMore,
   }),
 });
+const withData2 = graphql(companies, {
+  props: ({ data: { loading, allCompanies, error, refetch, subscribeToMore } }) => ({
+    loadingCompanies: loading,
+    companies: allCompanies,
+    companiesError: error,
+    refetch,
+    subscribeToMore,
+  }),
+});
 
 class TabAtributes extends Component {
   constructor(props) {
@@ -26,44 +35,45 @@ class TabAtributes extends Component {
     this.state = {
       taskName:this.props.data.title,
       taskDescription:this.props.data.description,
-      selectedItem: undefined,
-      selected1: 'key1',
       deadline:this.props.data.deadlineAt?date.toGMTString():null,
-      assignedUserId:this.props.data.assignedUser?this.props.data.assignedUser.id:'',
-      results: {
-        items: []
-     }
+      assignedUserId:this.props.data.assignedUser?this.props.data.assignedUser.id:null,
+      requesterUserId:this.props.data.requester?this.props.data.requester.id:null,
+      progress:this.props.data.status?this.props.data.status:'New',
+      duration:this.props.data.duration?this.props.data.duration.toString():'0',
+      company:this.props.data.company?this.props.data.company.id:null,
     }
+    this.setWorkTime.bind(this);
   }
-   onValueChange (value: string) {
-     this.setState({
-         selected1 : value,
-     });
-   }
-   pickedAssigned(value:string){
-     this.setState({
-         assignedUserId : value
-     });
-   }
+  setWorkTime(input){
+    if(!/^\d*$/.test(input)){
+      return;
+    }
+    this.setState({duration:input});
+  }
+
    submitForm(){
      let deadlineAt=new Date(this.state.deadline)=="Invalid Date"?(this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z'):this.props.data.deadlineAt;
      let title = this.state.taskName;
      let description = this.state.taskDescription;
      let client = this.props.client;
      let id = this.props.data.id;
-     let assignedUserId = this.state.assignedUserId==''?null:this.state.assignedUserId;
+     let assignedUserId = this.state.assignedUserId;
+     let duration = this.state.duration==''?0:parseInt(this.state.duration);
+     let status= this.state.progress;
+     let requesterId=this.state.requesterUserId;
+     let companyId=this.state.company;
+
      client.mutate({
            mutation: updateTask,
-           variables: { title, description, id, assignedUserId,deadlineAt},
+           variables: {title, description, id, assignedUserId,deadlineAt,duration,status,requesterId,companyId},
          });
     Actions.taskList();
    }
 
   render() {
-    if(this.props.loadingUsers){
+    if(this.props.loadingUsers||this.props.loadingCompanies){
       return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
     }
-
     return (
       <Container>
         <Content style={{ padding: 15 }}>
@@ -90,9 +100,9 @@ class TabAtributes extends Component {
             iosHeader="Select one"
             mode="dropdown"
             selectedValue={this.state.assignedUserId}
-            onValueChange={this.pickedAssigned.bind(this)}>
+            onValueChange={(value)=>{this.setState({assignedUserId : value})}}>
             {
-              [{id:'',key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
+              [{id:null,key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
                   (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
                 )
             }
@@ -117,7 +127,11 @@ class TabAtributes extends Component {
 
           <Text note>Work hours</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Input />
+          <Input
+            value={this.state.duration}
+            keyboardType='numeric'
+            onChangeText={ value => this.setWorkTime(value) }
+          />
           </View>
           <Text note>Status</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
@@ -125,10 +139,11 @@ class TabAtributes extends Component {
               supportedOrientations={['portrait', 'landscape']}
               iosHeader="Select one"
               mode="dropdown"
-              selectedValue={this.state.selected1}
-              onValueChange={this.onValueChange.bind(this)}>
-              <Item label="New" value="key0" />
-              <Item label="Company 2" value="key1" />
+              selectedValue={this.state.progress}
+              onValueChange={(value)=>this.setState({progress:value})}>
+              <Item label="New" value="New" />
+              <Item label="Pending" value="Pending" />
+              <Item label="Done" value="Done" />
             </Picker>
           </View>
           <Text note>Requester</Text>
@@ -137,10 +152,13 @@ class TabAtributes extends Component {
               supportedOrientations={['portrait', 'landscape']}
               iosHeader="Select one"
               mode="dropdown"
-              selectedValue={this.state.selected1}
-              onValueChange={this.onValueChange.bind(this)}>
-              <Item label="user 1" value="key0" />
-              <Item label="Company 2" value="key1" />
+              selectedValue={this.state.requesterUserId}
+              onValueChange={(value)=>{this.setState({requesterUserId : value})}}>
+              {
+                [{id:null,key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
+                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
+                  )
+              }
             </Picker>
           </View>
           <Text note>Company</Text>
@@ -149,10 +167,13 @@ class TabAtributes extends Component {
               supportedOrientations={['portrait', 'landscape']}
               iosHeader="Select one"
               mode="dropdown"
-              selectedValue={this.state.selected1}
-              onValueChange={this.onValueChange.bind(this)}>
-              <Item label="Company 1" value="key0" />
-              <Item label="Company 2" value="key1" />
+              selectedValue={this.state.company}
+              onValueChange={(value)=>{this.setState({company : value})}}>
+              {
+                [{id:null,key:'',name:'Ziadna'}].concat(this.props.companies).map((company)=>
+                    (<Item label={company.name?company.name:'id:'+company.id} key={company.id} value={company.id} />)
+                  )
+              }
             </Picker>
           </View>
         </Content>
@@ -177,4 +198,4 @@ class TabAtributes extends Component {
     );
   }
 }
-export default withData(withApollo(TabAtributes));
+export default withData2(withData(withApollo(TabAtributes)));

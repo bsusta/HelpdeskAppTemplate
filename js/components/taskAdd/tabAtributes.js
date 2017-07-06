@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker } from 'native-base';
 import { withApollo, graphql } from 'react-apollo';
 import styles from './styles';
-import { createTask, users } from './taskAdd.gquery';
+import { createTask, users, companies } from './taskAdd.gquery';
 import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator } from 'react-native';
 import DatePicker from 'react-native-datepicker';
@@ -16,31 +16,34 @@ const withData = graphql(users, {
     subscribeToMore,
   }),
 });
-
+const withData2 = graphql(companies, {
+  props: ({ data: { loading, allCompanies, error, refetch, subscribeToMore } }) => ({
+    loadingCompanies: loading,
+    companies: allCompanies,
+    companiesError: error,
+    refetch,
+    subscribeToMore,
+  }),
+});
 class TabAtributes extends Component { // eslint-disable-line
   constructor(props) {
     super(props);
     this.state = {
       taskName:'',
       taskDescription:'',
-      selectedItem: undefined,
-      selected1: 'key1',
-      assignedUserId:'',
-      deadline:'',
-      results: {
-        items: [],
-     }
+      deadline:null,
+      assignedUserId:null,
+      requesterUserId:null,
+      progress:'New',
+      duration:'0',
+      company:null,
     }
   }
-   onValueChange (value: string) {
-     this.setState({
-         selected1 : value
-     });
-   }
-  pickedAssigned(value:string){
-    this.setState({
-        assignedUserId : value
-    });
+  setWorkTime(input){
+    if(!/^\d*$/.test(input)){
+      return;
+    }
+    this.setState({duration:input});
   }
   submitForm(){
     let deadlineAt=this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z';
@@ -50,17 +53,22 @@ class TabAtributes extends Component { // eslint-disable-line
     let title = this.state.taskName;
     let description = this.state.taskDescription;
     let client = this.props.client;
-    let assignedUserId = this.state.assignedUserId==''?null:this.state.assignedUserId;
+    let createdById= 'cj46tjoxp49qd01429j1w4pxa';
+    let assignedUserId = this.state.assignedUserId;
+    let duration = this.state.duration==''?0:parseInt(this.state.duration);
+    let status= this.state.progress;
+    let requesterId=this.state.requesterUserId;
+    let companyId=this.state.company;
 
     client.mutate({
           mutation: createTask,
-          variables: { title, description, assignedUserId, deadlineAt },
+          variables: { title, description, assignedUserId, deadlineAt,createdById,duration,status,requesterId,companyId },
         });
     Actions.taskList();
   }
 
-  render() { // eslint-disable-line
-    if(this.props.loadingUsers){
+  render() {
+    if(this.props.loadingUsers||this.props.loadingCompanies){
       return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
     }
     return (
@@ -70,8 +78,8 @@ class TabAtributes extends Component { // eslint-disable-line
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
               placeholder={ 'Zadajte názov' }
-        			value={ this.state.taskName }
-        			onChangeText={ value => this.setState({taskName:value}) }
+              value={ this.state.taskName }
+              onChangeText={ value => this.setState({taskName:value}) }
             />
           </View>
           <Text note>Descrition</Text>
@@ -84,18 +92,18 @@ class TabAtributes extends Component { // eslint-disable-line
           </View>
           <Text note>Assigned</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader="Select one"
-              mode="dropdown"
-              selectedValue={this.state.assignedUserId}
-              onValueChange={this.pickedAssigned.bind(this)}>
-              {
-                [{id:'',key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
-                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
-                  )
-              }
-            </Picker>
+          <Picker
+            supportedOrientations={['portrait', 'landscape']}
+            iosHeader="Select one"
+            mode="dropdown"
+            selectedValue={this.state.assignedUserId}
+            onValueChange={(value)=>{this.setState({assignedUserId : value})}}>
+            {
+              [{id:null,key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
+                  (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
+                )
+            }
+          </Picker>
           </View>
           <Text note>Deadline</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
@@ -116,7 +124,11 @@ class TabAtributes extends Component { // eslint-disable-line
 
           <Text note>Work hours</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Input />
+          <Input
+            value={this.state.duration}
+            keyboardType='numeric'
+            onChangeText={ value => this.setWorkTime(value) }
+          />
           </View>
           <Text note>Status</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
@@ -124,10 +136,11 @@ class TabAtributes extends Component { // eslint-disable-line
               supportedOrientations={['portrait', 'landscape']}
               iosHeader="Select one"
               mode="dropdown"
-              selectedValue={this.state.selected1}
-              onValueChange={this.onValueChange.bind(this)}>
-              <Item label="New" value="key0" />
-              <Item label="Company 2" value="key1" />
+              selectedValue={this.state.progress}
+              onValueChange={(value)=>this.setState({progress:value})}>
+              <Item label="New" value="New" />
+              <Item label="Pending" value="Pending" />
+              <Item label="Done" value="Done" />
             </Picker>
           </View>
           <Text note>Requester</Text>
@@ -136,10 +149,13 @@ class TabAtributes extends Component { // eslint-disable-line
               supportedOrientations={['portrait', 'landscape']}
               iosHeader="Select one"
               mode="dropdown"
-              selectedValue={this.state.selected1}
-              onValueChange={this.onValueChange.bind(this)}>
-              <Item label="user 1" value="key0" />
-              <Item label="Company 2" value="key1" />
+              selectedValue={this.state.requesterUserId}
+              onValueChange={(value)=>{this.setState({requesterUserId : value})}}>
+              {
+                [{id:null,key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
+                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
+                  )
+              }
             </Picker>
           </View>
           <Text note>Company</Text>
@@ -148,13 +164,15 @@ class TabAtributes extends Component { // eslint-disable-line
               supportedOrientations={['portrait', 'landscape']}
               iosHeader="Select one"
               mode="dropdown"
-              selectedValue={this.state.selected1}
-              onValueChange={this.onValueChange.bind(this)}>
-              <Item label="Company 1" value="key0" />
-              <Item label="Company 2" value="key1" />
+              selectedValue={this.state.company}
+              onValueChange={(value)=>{this.setState({company : value})}}>
+              {
+                [{id:null,key:'',name:'Ziadna'}].concat(this.props.companies).map((company)=>
+                    (<Item label={company.name?company.name:'id:'+company.id} key={company.id} value={company.id} />)
+                  )
+              }
             </Picker>
           </View>
-
         </Content>
       <Footer>
         <FooterTab>
@@ -174,10 +192,7 @@ class TabAtributes extends Component { // eslint-disable-line
         </FooterTab>
     </Footer>
     </Container>
-
-
-
     );
   }
 }
-export default withData(withApollo(TabAtributes));
+export default withData2(withData(withApollo(TabAtributes)));

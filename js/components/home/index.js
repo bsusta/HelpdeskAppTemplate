@@ -10,6 +10,7 @@ import { withApollo,graphql } from 'react-apollo';
 import { setLoggedUser } from './actions';
 import { addTokenToUse } from '../../tokens/tokenHandling';
 import { signinUser, editedTasksSubscription, tasks } from './user.gquery';
+import {UPDATE_TASKLIST} from '../../apollo/taskList';
 
 const withData = graphql(tasks, {
   props: ({ data: { loading, allTasks, error, refetch, subscribeToMore } }) => ({
@@ -136,7 +137,8 @@ class Home extends Component {
 function bindActions(dispatch) {
   return {
     openDrawer: () => dispatch(openDrawer()),
-    updateTaskList: (data) => dispatch({type:'updateTaskList',taskList:data}),
+    updateTaskList: (data) => dispatch({type:UPDATE_TASKLIST,taskList:data}),
+    updateDrawer: (type,drawerProjects) => dispatch({type,drawerProjects}),
   };
 }
 
