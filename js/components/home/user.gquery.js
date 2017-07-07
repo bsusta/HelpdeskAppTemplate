@@ -44,6 +44,10 @@ export const editedTasksSubscription = gql`
         company{
           id
         }
+				project{
+					id
+				}
+
 			}
 		}
 	}
@@ -69,6 +73,37 @@ export const tasks = gql`
     company{
       id
     }
+		project{
+			id
+		}
 	 }
   }
+`;
+
+export const projects = gql`
+  query Projects {
+       allProjects (orderBy: id_DESC) {
+		id
+    key: id
+		title
+		tasks{
+			id
+		}
+	 }
+  }
+`;
+export const editedProjectsSubscription = gql`
+	subscription {
+		Project(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
+			mutation
+			node {
+				id
+				key: id
+				title
+				tasks{
+					id
+				}
+			}
+		}
+	}
 `;

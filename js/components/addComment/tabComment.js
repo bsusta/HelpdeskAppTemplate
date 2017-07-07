@@ -6,10 +6,11 @@ import { Actions } from 'react-native-router-flux';
 import styles from './styles';
 import { withApollo} from 'react-apollo';
 import { createComment } from './addComment.gquery';
+import { connect } from 'react-redux';
 
 
 
-class TabAtributes extends Component { // eslint-disable-line
+class TabComment extends Component { // eslint-disable-line
 
     static propTypes = {
       openDrawer: React.PropTypes.func,
@@ -32,7 +33,7 @@ class TabAtributes extends Component { // eslint-disable-line
 
     submitForm(){
       let content=this.state.message;
-      let userId = 'cj46tjoxp49qd01429j1w4pxa';
+      let userId = this.props.loggedUserId;
       let taskId = this.props.id;
       this.props.client.mutate({
             mutation: createComment,
@@ -72,4 +73,14 @@ class TabAtributes extends Component { // eslint-disable-line
       );
     }
   }
-export default withApollo(TabAtributes);
+
+
+  const mapStateToProps = state => ({
+    loggedUserId:state.logInUser.id,
+  });
+
+  function bindAction(dispatch) {
+    return {
+    };
+  }
+  export default withApollo(connect(mapStateToProps,bindAction)(TabComment));

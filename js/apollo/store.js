@@ -4,6 +4,7 @@ import routes from './routes';
 import cardNavigation from './cardNavigation';
 import updateTaskList from './taskList';
 import updateDrawer from './drawerData';
+import logInUser from './user';
 
 export default client => createStore(
 	combineReducers({
@@ -12,7 +13,8 @@ export default client => createStore(
 	cardNavigation,
 	routes,
 	updateTaskList,
-	updateDrawer
+	updateDrawer,
+	logInUser
 }),
 	{},
 	compose(

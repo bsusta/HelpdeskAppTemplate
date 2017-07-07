@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker } from 'native-base';
 import { ActivityIndicator } from 'react-native';
 import styles from './styles';
+import { connect } from 'react-redux';
 import { updateTask , users, companies } from './taskEdit.gquery';
 import { Actions } from 'react-native-router-flux';
 import { withApollo, graphql } from 'react-apollo';
@@ -41,6 +42,7 @@ class TabAtributes extends Component {
       progress:this.props.data.status?this.props.data.status:'New',
       duration:this.props.data.duration?this.props.data.duration.toString():'0',
       company:this.props.data.company?this.props.data.company.id:null,
+      project:this.props.data.project?this.props.data.project.id:this.props.projectList[0].id,
     }
     this.setWorkTime.bind(this);
   }
@@ -62,12 +64,13 @@ class TabAtributes extends Component {
      let status= this.state.progress;
      let requesterId=this.state.requesterUserId;
      let companyId=this.state.company;
+     let projectId=this.state.project;
 
      client.mutate({
            mutation: updateTask,
-           variables: {title, description, id, assignedUserId,deadlineAt,duration,status,requesterId,companyId},
+           variables: {title, description, id, assignedUserId,deadlineAt,duration,status,requesterId,companyId,projectId},
          });
-    Actions.taskList();
+    Actions.pop();
    }
 
   render() {
@@ -176,6 +179,21 @@ class TabAtributes extends Component {
               }
             </Picker>
           </View>
+          <Text note>Project</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Picker
+              supportedOrientations={['portrait', 'landscape']}
+              iosHeader="Select one"
+              mode="dropdown"
+              selectedValue={this.state.project}
+              onValueChange={(value)=>{this.setState({project : value})}}>
+              {
+                this.props.projectList.map((project)=>
+                    (<Item label={project.title?project.title:''} key={project.id} value={project.id} />)
+                  )
+              }
+            </Picker>
+          </View>
         </Content>
       <Footer>
         <FooterTab>
@@ -198,4 +216,12 @@ class TabAtributes extends Component {
     );
   }
 }
-export default withData2(withData(withApollo(TabAtributes)));
+
+const mapStateToProps = state => ({
+  projectList: state.updateDrawer.drawerProjects,
+});
+function bindAction(dispatch) {
+  return {
+  };
+}
+export default withData2(withData(withApollo(connect(mapStateToProps,bindAction)(TabAtributes))));

@@ -48,11 +48,11 @@ class TaskList extends Component {
         </Header>
 
         <Content>
-          <List dataArray={this.props.taskList}
-          renderRow={data =>
-            <TaskListRow data={data} />
+          <List>
+          {
+            this.props.taskList.map((data) => data.project.id==this.props.projectId||this.props.projectId==null?<TaskListRow data={data} key={data.id} />:null)
           }
-          />
+          </List>
         </Content>
 
         <Footer>

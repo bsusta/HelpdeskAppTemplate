@@ -6,11 +6,11 @@ import { Actions } from 'react-native-router-flux';
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 import { withApollo,graphql } from 'react-apollo';
-
-import { setLoggedUser } from './actions';
 import { addTokenToUse } from '../../tokens/tokenHandling';
-import { signinUser, editedTasksSubscription, tasks } from './user.gquery';
+import { signinUser, editedTasksSubscription, tasks, projects, editedProjectsSubscription } from './user.gquery';
 import {UPDATE_TASKLIST} from '../../apollo/taskList';
+import {UPDATE_PROJECTS} from '../../apollo/drawerData';
+import {ADD_USER} from '../../apollo/user';
 
 const withData = graphql(tasks, {
   props: ({ data: { loading, allTasks, error, refetch, subscribeToMore } }) => ({
@@ -19,6 +19,15 @@ const withData = graphql(tasks, {
     tasksError: error,
     refetch,
     subscribeToMore,
+  }),
+});
+const withData2 = graphql(projects, {
+  props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
+    loadingProjects: loading,
+    projects: allProjects,
+    projectsError: error,
+    refetchProjects:refetch,
+    subscribeToMoreProjects:subscribeToMore,
   }),
 });
 
@@ -53,10 +62,7 @@ class Home extends Component {
         const token = signedUser.token;
         const userId = signedUser.user.id;
         addTokenToUse(client, token);
-        setLoggedUser({
-          id: userId,
-          email: signedUser.user.email
-        });
+        this.props.setUser(userId);
         this.setState(
           {working:false}
         );
@@ -67,6 +73,24 @@ class Home extends Component {
             this.props.refetch().then(
               ()=>{
                 this.props.updateTaskList(this.props.tasks);
+              }
+            ).catch((error)=>{console.log(error)});
+            this.props.refetchProjects().then(
+              ()=>{
+                this.props.updateDrawer(this.props.projects,UPDATE_PROJECTS);
+              }
+            ).catch((error)=>{console.log(error)});
+            return;
+          },
+        });
+
+        this.props.updateDrawer(this.props.projects,UPDATE_PROJECTS);
+        this.props.subscribeToMoreProjects({
+          document: editedProjectsSubscription,
+          updateQuery: () => {
+            this.props.refetchProjects().then(
+              ()=>{
+                this.props.updateDrawer(this.props.projects,UPDATE_PROJECTS);
               }
             ).catch((error)=>{console.log(error)});
             return;
@@ -138,7 +162,8 @@ function bindActions(dispatch) {
   return {
     openDrawer: () => dispatch(openDrawer()),
     updateTaskList: (data) => dispatch({type:UPDATE_TASKLIST,taskList:data}),
-    updateDrawer: (type,drawerProjects) => dispatch({type,drawerProjects}),
+    updateDrawer: (drawerProjects,type) => dispatch({type,drawerProjects}),
+    setUser: (userId) => dispatch({type:ADD_USER,id:userId}),
   };
 }
 
@@ -149,4 +174,4 @@ const mapStateToProps = state => ({
   taskList:state.updateTaskList.taskList,
 });
 
-export default withData(withApollo(connect(mapStateToProps, bindActions)(Home)));
+export default withData2(withData(withApollo(connect(mapStateToProps, bindActions)(Home))));

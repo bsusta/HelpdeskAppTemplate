@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker } from 'native-base';
 import { withApollo, graphql } from 'react-apollo';
 import styles from './styles';
+import { connect } from 'react-redux';
 import { createTask, users, companies } from './taskAdd.gquery';
 import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator } from 'react-native';
@@ -37,6 +38,7 @@ class TabAtributes extends Component { // eslint-disable-line
       progress:'New',
       duration:'0',
       company:null,
+      project:this.props.projectList[0].id,
     }
   }
   setWorkTime(input){
@@ -46,25 +48,26 @@ class TabAtributes extends Component { // eslint-disable-line
     this.setState({duration:input});
   }
   submitForm(){
-    let deadlineAt=this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z';
+    let deadlineAt=this.state.deadline!=null?this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z':null;
     if(deadlineAt=='--TZ'){
       deadlineAt=null;
     }
     let title = this.state.taskName;
     let description = this.state.taskDescription;
     let client = this.props.client;
-    let createdById= 'cj46tjoxp49qd01429j1w4pxa';
+    let createdById= this.props.loggedUserId;
     let assignedUserId = this.state.assignedUserId;
     let duration = this.state.duration==''?0:parseInt(this.state.duration);
     let status= this.state.progress;
     let requesterId=this.state.requesterUserId;
     let companyId=this.state.company;
+    let projectId=this.state.project;
 
     client.mutate({
           mutation: createTask,
-          variables: { title, description, assignedUserId, deadlineAt,createdById,duration,status,requesterId,companyId },
+          variables: { title, description, assignedUserId, deadlineAt,createdById,duration,status,requesterId,companyId,projectId },
         });
-    Actions.taskList();
+    Actions.pop();
   }
 
   render() {
@@ -173,6 +176,21 @@ class TabAtributes extends Component { // eslint-disable-line
               }
             </Picker>
           </View>
+          <Text note>Project</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Picker
+              supportedOrientations={['portrait', 'landscape']}
+              iosHeader="Select one"
+              mode="dropdown"
+              selectedValue={this.state.project}
+              onValueChange={(value)=>{this.setState({project : value})}}>
+              {
+                this.props.projectList.map((project)=>
+                    (<Item label={project.title?project.title:''} key={project.id} value={project.id} />)
+                  )
+              }
+            </Picker>
+          </View>
         </Content>
       <Footer>
         <FooterTab>
@@ -195,4 +213,12 @@ class TabAtributes extends Component { // eslint-disable-line
     );
   }
 }
-export default withData2(withData(withApollo(TabAtributes)));
+const mapStateToProps = state => ({
+  projectList: state.updateDrawer.drawerProjects,
+  loggedUserId:state.logInUser.id,
+});
+function bindAction(dispatch) {
+  return {
+  };
+}
+export default withData2(withData(withApollo(connect(mapStateToProps,bindAction)(TabAtributes))));
