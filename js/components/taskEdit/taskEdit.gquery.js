@@ -36,26 +36,6 @@ export const createComment = gql`
 `;
 
 
-export const users = gql`
-  query Users {
-       allUsers (orderBy: id_DESC) {
-		id
-		key: id
-		firstName
-	 }
-  }
-`;
-
-export const companies = gql`
-  query allCompanies {
-       allCompanies (orderBy: id_DESC) {
-		id
-		key: id
-		name
-	 }
-  }
-`;
-
 export const comments = gql`
   query Comments($id:ID!) {
        allComments (
@@ -162,6 +142,68 @@ export const deleteInvoiceItem = gql`
 			id: $InvoiceItemId,
 		) {
 		  id
+		}
+	}
+`;
+export const subtasks = gql`
+  query Subtasks($id:ID!) {
+       allSubtasks (
+				orderBy: id_DESC
+				filter:{
+					task:{
+						id:$id
+					}
+				}
+			)
+		{
+			id
+			key:id
+			description
+			finished
+			name
+			user{
+				id
+				firstName
+			}
+	 }
+  }
+`;
+
+export const changedSubtaskSubscription = gql`
+	subscription {
+		Subtask(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
+			mutation
+			node {
+				id
+				key:id
+				finished
+				name
+				description
+				user{
+					id
+					firstName
+				}
+			}
+		}
+	}
+`;
+export const deleteSubtask = gql`
+	mutation ($subtaskId: ID!) {
+		deleteSubtask(
+			id: $subtaskId,
+		) {
+		  id
+		}
+	}
+`;
+
+export const updateSubtask = gql`
+mutation updateSubtask($finished: Boolean,$id: ID!) {
+		updateSubtask(
+      finished:$finished
+			id:$id
+		) {
+			id,
 		}
 	}
 `;

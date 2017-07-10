@@ -7,12 +7,14 @@ import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 import { withApollo,graphql } from 'react-apollo';
 import { addTokenToUse } from '../../tokens/tokenHandling';
-import { signinUser, editedTasksSubscription, tasks, projects, editedProjectsSubscription } from './user.gquery';
+import { signinUser, editedTasksSubscription, tasks, projects, editedProjectsSubscription, companies, subscribeToMoreCompanies, users, subscribeToMoreUsers } from './user.gquery';
 import {UPDATE_TASKLIST} from '../../apollo/taskList';
 import {UPDATE_PROJECTS} from '../../apollo/drawerData';
+import {UPDATE_COMPANIES} from '../../apollo/companies';
+import {UPDATE_USERS} from '../../apollo/users';
 import {ADD_USER} from '../../apollo/user';
 
-const withData = graphql(tasks, {
+const withTasks = graphql(tasks, {
   props: ({ data: { loading, allTasks, error, refetch, subscribeToMore } }) => ({
     loadingTasks: loading,
     tasks: allTasks,
@@ -21,13 +23,31 @@ const withData = graphql(tasks, {
     subscribeToMore,
   }),
 });
-const withData2 = graphql(projects, {
+const withProjects = graphql(projects, {
   props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
     loadingProjects: loading,
     projects: allProjects,
     projectsError: error,
     refetchProjects:refetch,
     subscribeToMoreProjects:subscribeToMore,
+  }),
+});
+const withUsers = graphql(users, {
+  props: ({ data: { loading, allUsers, error, refetch, subscribeToMore } }) => ({
+    loadingUsers: loading,
+    users: allUsers,
+    usersError: error,
+    refetchUsers:refetch,
+    subscribeToMoreUsers:subscribeToMore,
+  }),
+});
+const withCompanies = graphql(companies, {
+  props: ({ data: { loading, allCompanies, error, refetch, subscribeToMore } }) => ({
+    loadingCompanies: loading,
+    companies: allCompanies,
+    companiesError: error,
+    refetchCompanies:refetch,
+    subscribeToMoreCompanies:subscribeToMore,
   }),
 });
 
@@ -97,6 +117,32 @@ class Home extends Component {
           },
         });
 
+        this.props.updateUsers(this.props.users,UPDATE_USERS);
+        this.props.subscribeToMoreUsers({
+          document: subscribeToMoreUsers,
+          updateQuery: () => {
+            this.props.refetchUsers().then(
+              ()=>{
+                this.props.updateUsers(this.props.users,UPDATE_USERS);
+              }
+            ).catch((error)=>{console.log(error)});
+            return;
+          },
+        });
+
+        this.props.updateCompanies(this.props.companies,UPDATE_COMPANIES);
+        this.props.subscribeToMoreCompanies({
+          document: subscribeToMoreCompanies,
+          updateQuery: () => {
+            this.props.refetchCompanies().then(
+              ()=>{
+                this.props.updateCompanies(this.props.companies,UPDATE_COMPANIES);
+              }
+            ).catch((error)=>{console.log(error)});
+            return;
+          },
+        });
+
         Actions.taskList();
       }
     ).catch(
@@ -128,6 +174,7 @@ class Home extends Component {
             </Item>
             <Item inlineLabel last>
               <Input
+                secureTextEntry={true}
                 placeholder='password'
                 value={this.state.pass}
                 onChangeText={(value)=>this.setState({pass:value})}
@@ -164,6 +211,8 @@ function bindActions(dispatch) {
     updateTaskList: (data) => dispatch({type:UPDATE_TASKLIST,taskList:data}),
     updateDrawer: (drawerProjects,type) => dispatch({type,drawerProjects}),
     setUser: (userId) => dispatch({type:ADD_USER,id:userId}),
+    updateUsers: (users) => dispatch({type:UPDATE_USERS,users}),
+    updateCompanies: (companies) => dispatch({type:UPDATE_COMPANIES,companies}),
   };
 }
 
@@ -171,7 +220,6 @@ const mapStateToProps = state => ({
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
   routes: state.drawer.routes,
-  taskList:state.updateTaskList.taskList,
 });
 
-export default withData2(withData(withApollo(connect(mapStateToProps, bindActions)(Home))));
+export default withUsers(withCompanies(withProjects(withTasks(withApollo(connect(mapStateToProps, bindActions)(Home))))));

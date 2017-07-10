@@ -9,8 +9,7 @@ import styles from './styles';
 const {
   pushRoute,
 } = actions;
-const datas = [
-];
+
 
 class CompaniesList extends Component {
 
@@ -36,11 +35,6 @@ class CompaniesList extends Component {
         }
     }
 }
-onValueChange (value: string) {
-    this.setState({
-        selected1 : value
-    });
-}
 
   render() {
     return (
@@ -56,24 +50,19 @@ onValueChange (value: string) {
           </Body>
         </Header>
         <Content>
-          <List>
-                    <ListItem >
-                      <Body>
-                        <Text>Company 1</Text>
-                      </Body>
-                      <Right>
-                        <Icon name="arrow-forward" />
-                      </Right>
-                    </ListItem>
-                    <ListItem>
-                      <Body>
-                        <Text>Company 2</Text>
-                      </Body>
-                      <Right>
-                        <Icon name="arrow-forward" />
-                      </Right>
-                    </ListItem>
-                </List>
+          <List
+          dataArray={this.props.companies}
+          renderRow={(company)=>
+            <ListItem>
+              <Body>
+                <Text>{company.name}</Text>
+              </Body>
+              <Right>
+                <Icon name="arrow-forward" />
+              </Right>
+            </ListItem>
+          }
+          />
         </Content>
         <Footer>
           <FooterTab>
@@ -99,6 +88,7 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
+  companies: state.updateCompanies.companies,
 });
 
 export default connect(mapStateToProps, bindAction)(CompaniesList);

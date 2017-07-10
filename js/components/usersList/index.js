@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 
@@ -43,24 +42,19 @@ class usersList extends Component {
           </Body>
         </Header>
         <Content>
-          <List>
-                  <ListItem >
-                    <Body>
-                      <Text>User 1</Text>
-                    </Body>
-                    <Right>
-                      <Icon name="arrow-forward" />
-                    </Right>
-                  </ListItem>
-                  <ListItem>
-                    <Body>
-                      <Text>User 2</Text>
-                    </Body>
-                    <Right>
-                      <Icon name="arrow-forward" />
-                    </Right>
-                  </ListItem>
-              </List>
+          <List
+            dataArray={this.props.users}
+            renderRow={(user)=>
+              <ListItem >
+                <Body>
+                  <Text>{user.firstName}</Text>
+                </Body>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+            }
+          />
         </Content>
         <Footer>
           <FooterTab>
@@ -86,6 +80,7 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
+  users: state.updateUsers.users,
 });
 
 export default connect(mapStateToProps, bindAction)(usersList);

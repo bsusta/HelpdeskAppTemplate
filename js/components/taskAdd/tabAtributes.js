@@ -8,24 +8,7 @@ import { createTask, users, companies } from './taskAdd.gquery';
 import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator } from 'react-native';
 import DatePicker from 'react-native-datepicker';
-const withData = graphql(users, {
-  props: ({ data: { loading, allUsers, error, refetch, subscribeToMore } }) => ({
-    loadingUsers: loading,
-    users: allUsers,
-    usersError: error,
-    refetch,
-    subscribeToMore,
-  }),
-});
-const withData2 = graphql(companies, {
-  props: ({ data: { loading, allCompanies, error, refetch, subscribeToMore } }) => ({
-    loadingCompanies: loading,
-    companies: allCompanies,
-    companiesError: error,
-    refetch,
-    subscribeToMore,
-  }),
-});
+
 class TabAtributes extends Component { // eslint-disable-line
   constructor(props) {
     super(props);
@@ -71,9 +54,6 @@ class TabAtributes extends Component { // eslint-disable-line
   }
 
   render() {
-    if(this.props.loadingUsers||this.props.loadingCompanies){
-      return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
-    }
     return (
       <Container>
         <Content style={{ padding: 15 }}>
@@ -216,9 +196,11 @@ class TabAtributes extends Component { // eslint-disable-line
 const mapStateToProps = state => ({
   projectList: state.updateDrawer.drawerProjects,
   loggedUserId:state.logInUser.id,
+  companies:state.updateCompanies.companies,
+  users:state.updateUsers.users,
 });
 function bindAction(dispatch) {
   return {
   };
 }
-export default withData2(withData(withApollo(connect(mapStateToProps,bindAction)(TabAtributes))));
+export default withApollo(connect(mapStateToProps,bindAction)(TabAtributes));

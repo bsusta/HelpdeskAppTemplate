@@ -21,23 +21,3 @@ export const createTask = gql`
 	}
 	${taskFragment}
 `;
-
-export const companies = gql`
-  query allCompanies {
-       allCompanies (orderBy: id_DESC) {
-		id
-		key: id
-		name
-	 }
-  }
-`;
-
-export const users = gql`
-  query Users {
-       allUsers (orderBy: id_DESC) {
-		id
-		key: id
-		firstName
-	 }
-  }
-`;

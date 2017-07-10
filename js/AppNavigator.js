@@ -25,6 +25,7 @@ import AddCompany from './components/addCompany/';
 import AddItem from './components/addItem/';
 import EditItem from './components/editItem/';
 import AddComment from './components/addComment/';
+import AddSubtask from './components/addSubtask/';
 
 const {
   popRoute,
@@ -112,6 +113,7 @@ class AppNavigator extends Component {
               <Scene key="addItem" component={AddItem} />
               <Scene key="editItem" component={EditItem} />
               <Scene key="addComment" component={AddComment} />
+              <Scene key="addSubtask" component={AddSubtask} />
             </Scene>
           </RouterWithRedux>
         </Drawer>

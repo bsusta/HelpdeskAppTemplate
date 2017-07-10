@@ -107,3 +107,47 @@ export const editedProjectsSubscription = gql`
 		}
 	}
 `;
+
+export const users = gql`
+  query Users {
+       allUsers (orderBy: id_DESC) {
+		id
+		key: id
+		firstName
+	 }
+  }
+`;
+export const subscribeToMoreUsers = gql`
+	subscription {
+		User(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
+			mutation
+			node {
+				id
+				key: id
+				firstName
+			}
+		}
+	}
+`;
+
+export const companies = gql`
+  query allCompanies {
+       allCompanies (orderBy: id_DESC) {
+		id
+		key: id
+		name
+	 }
+  }
+`;
+export const subscribeToMoreCompanies = gql`
+	subscription {
+		Company(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
+			mutation
+			node {
+				id
+				key: id
+				name
+			}
+		}
+	}
+`;

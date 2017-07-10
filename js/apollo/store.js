@@ -3,6 +3,8 @@ import drawer from './drawer';
 import routes from './routes';
 import cardNavigation from './cardNavigation';
 import updateTaskList from './taskList';
+import updateUsers from './users';
+import updateCompanies from './companies';
 import updateDrawer from './drawerData';
 import logInUser from './user';
 
@@ -14,7 +16,9 @@ export default client => createStore(
 	routes,
 	updateTaskList,
 	updateDrawer,
-	logInUser
+	logInUser,
+	updateCompanies,
+	updateUsers
 }),
 	{},
 	compose(

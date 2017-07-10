@@ -7,7 +7,8 @@ import { Actions } from 'react-native-router-flux';
 import TabAtributes from './tabAtributes';
 import TabComments from './tabComments';
 import TabItems from './tabItems';
-import { comments, invoiceItems } from './taskEdit.gquery';
+import Subtasks from './tabSubtasks';
+import { comments, invoiceItems,subtasks } from './taskEdit.gquery';
 
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
@@ -49,6 +50,20 @@ class TaskEdit extends Component {
       })
     }});
     const HOCTabComments=withData(TabComments);
+
+    const withData3 = graphql(subtasks,{options:{variables:{
+      id:this.props.data.id,
+    },
+      props: ({ data: { loading, allSubtasks, error, refetch, subscribeToMore } }) => ({
+        loading,
+        allSubtasks,
+        error,
+        refetch,
+        subscribeToMore,
+      })
+    }});
+    const HOCTabSubtasks=withData3(Subtasks);
+
     const withData2 = graphql(invoiceItems,{options:{variables:{
       id:this.props.data.id,
     },
@@ -61,7 +76,6 @@ class TaskEdit extends Component {
       })
     }});
     const HOCTabItems=withData2(TabItems);
-
     return (
       <Container style={styles.container}>
         <Header>
@@ -84,6 +98,9 @@ class TaskEdit extends Component {
                </Tab>
                <Tab heading="Items">
                    <HOCTabItems id={this.props.data.id}/>
+               </Tab>
+               <Tab heading="Subtasks">
+                   <HOCTabSubtasks id={this.props.data.id}/>
                </Tab>
            </Tabs>
       </Container>
