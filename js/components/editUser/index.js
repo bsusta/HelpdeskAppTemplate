@@ -6,29 +6,29 @@ import { Actions } from 'react-native-router-flux';
 import { withApollo} from 'react-apollo';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
-import {createUser} from './addUser.gquery';
+import {updateUser} from './editUser.gquery';
 import { AsyncStorage } from 'react-native';
 
-class AddUser extends Component {
+class EditUser extends Component {
 constructor(props) {
     super(props);
     this.state = {
-      firstName:'',
-      surName:'',
-      email:'',
-      company:null,
+      firstName:this.props.user.firstName?this.props.user.firstName:'',
+      surName:this.props.user.surName?this.props.user.surName:'',
+      email:this.props.user.email?this.props.user.email:'',
+      company:this.props.user.company?this.props.user.company.id:null,
       password:'',
-      note:'',
+      note:this.props.user.note?this.props.user.note:'',
+      active:this.props.user.active?this.props.user.active:true,
     };
     }
+//active=true
 
   submit(){
-    let authProvider= { email: { email:this.state.email,password: this.state.password } }
-    this.props.client.mutate({
-          mutation: createUser,
-          variables: { firstName:this.state.firstName,surName:this.state.surName,companyId:this.state.company,note:this.state.note,active:true,authProvider },
-        });
-
+      this.props.client.mutate({
+            mutation: updateUser,
+            variables: { id:this.props.user.id, firstName:this.state.firstName,surName:this.state.surName,companyId:this.state.company,note:this.state.note,active:this.state.active },
+          });
     Actions.pop();
   }
 
@@ -65,6 +65,7 @@ constructor(props) {
           <Text note>Email</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
+            disabled={true}
             placeholder='E-mail'
             value={this.state.email}
             onChangeText={(value)=>this.setState({email:value})}
@@ -87,6 +88,7 @@ constructor(props) {
           <Text note>Password</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
+            disabled={true}
             secureTextEntry={true}
             placeholder='password'
             value={this.state.password}
@@ -139,4 +141,4 @@ const mapStateToProps = state => ({
   companies: state.updateCompanies.companies,
 });
 
-export default withApollo(connect(mapStateToProps, bindAction)(AddUser));
+export default withApollo(connect(mapStateToProps, bindAction)(EditUser));

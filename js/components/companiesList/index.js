@@ -1,39 +1,17 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { actions } from 'react-native-navigation-redux-helpers';
 import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import styles from './styles';
 
-const {
-  pushRoute,
-} = actions;
 
 
 class CompaniesList extends Component {
 
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
-  }
-
-  pushRoute(route) {
-    this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-  }
 
   constructor(props) {
     super(props);
-    this.state = {
-        selectedItem: undefined,
-        selected1: 'key0',
-        results: {
-            items: []
-        }
-    }
 }
 
   render() {
@@ -53,7 +31,9 @@ class CompaniesList extends Component {
           <List
           dataArray={this.props.companies}
           renderRow={(company)=>
-            <ListItem>
+            <ListItem
+              button onPress={()=>Actions.editCompany({company})}
+            >
               <Body>
                 <Text>{company.name}</Text>
               </Body>

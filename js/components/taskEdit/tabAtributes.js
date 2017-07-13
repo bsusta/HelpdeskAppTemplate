@@ -27,11 +27,16 @@ class TabAtributes extends Component {
     }
     this.setWorkTime.bind(this);
   }
-  setWorkTime(input){
+  setWorkTime(input) {
     if(!/^\d*$/.test(input)){
       return;
     }
-    this.setState({duration:input});
+    if(input.length==2 && input[0]=='0'){
+      this.setState({duration:input[1]});
+    }
+    else{
+      this.setState({duration:input});
+    }
   }
 
    submitForm(){

@@ -21,7 +21,9 @@ import AddFolder from './components/addFolder/';
 import CompaniesList from './components/companiesList/';
 import UsersList from './components/usersList/';
 import AddUser from './components/addUser/';
+import EditUser from './components/editUser/';
 import AddCompany from './components/addCompany/';
+import EditCompany from './components/editCompany/';
 import AddItem from './components/addItem/';
 import EditItem from './components/editItem/';
 import AddComment from './components/addComment/';
@@ -109,7 +111,9 @@ class AppNavigator extends Component {
               <Scene key="companiesList" component={CompaniesList} />
               <Scene key="usersList" component={UsersList} />
               <Scene key="addUser" component={AddUser} />
+              <Scene key="editUser" component={EditUser} />
               <Scene key="addCompany" component={AddCompany} />
+              <Scene key="editCompany" component={EditCompany} />
               <Scene key="addItem" component={AddItem} />
               <Scene key="editItem" component={EditItem} />
               <Scene key="addComment" component={AddComment} />

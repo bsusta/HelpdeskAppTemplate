@@ -110,10 +110,17 @@ export const editedProjectsSubscription = gql`
 
 export const users = gql`
   query Users {
-       allUsers (orderBy: id_DESC) {
-		id
-		key: id
+   	allUsers (orderBy: id_DESC) {
+	 	id
+		key:id
+		email
 		firstName
+		surName
+		company{
+			id
+		}
+		note
+		active
 	 }
   }
 `;
@@ -123,8 +130,15 @@ export const subscribeToMoreUsers = gql`
 			mutation
 			node {
 				id
-				key: id
+				key:id
+				email
 				firstName
+				surName
+				company{
+					id
+				}
+				note
+				active
 			}
 		}
 	}
@@ -135,7 +149,17 @@ export const companies = gql`
        allCompanies (orderBy: id_DESC) {
 		id
 		key: id
+		active
 		name
+		street
+		city
+		country
+		note
+		hours
+		registrationNumber
+		taxNumber
+		vat
+		zip
 	 }
   }
 `;

@@ -24,11 +24,16 @@ class TabAtributes extends Component { // eslint-disable-line
       project:this.props.projectList[0].id,
     }
   }
-  setWorkTime(input){
+  setWorkTime(input) {
     if(!/^\d*$/.test(input)){
       return;
     }
-    this.setState({duration:input});
+    if(input.length==2 && input[0]=='0'){
+      this.setState({duration:input[1]});
+    }
+    else{
+      this.setState({duration:input});
+    }
   }
   submitForm(){
     let deadlineAt=this.state.deadline!=null?this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z':null;

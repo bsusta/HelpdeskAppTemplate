@@ -66,14 +66,24 @@ class EditItem extends Component {
     if(!/^\d*$/.test(input)){
       return;
     }
-    this.setState({itemPrice:input});
+    if(input.length==2 && input[0]=='0'){
+      this.setState({itemPrice:input[1]});
+    }
+    else{
+      this.setState({itemPrice:input});
+    }
   }
 
   setQuantity(input){
     if(!/^\d*$/.test(input)){
       return;
     }
-    this.setState({itemQuantity:input});
+    if(input.length==2 && input[0]=='0'){
+      this.setState({itemQuantity:input[1]});
+    }
+    else{
+      this.setState({itemQuantity:input});
+    }
   }
 
   render() {

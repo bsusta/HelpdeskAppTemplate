@@ -3,24 +3,24 @@ import React, { Component } from 'react';
 import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { withApollo} from 'react-apollo';
-import {createCompany} from './addCompany.gquery';
+import {updateCompany} from './editCompany.gquery';
 import styles from './styles';
 
-class AddCompany extends Component {
+class EditCompany extends Component {
 
   constructor(props) {
       super(props);
       this.state = {
-        name:'',
-        street:'',
-        city:'',
-        country:'',
-        note:'',
-        hours:'0',
-        registrationNumber:'',
-        taxNumber:'',
-        vat:'',
-        zip:'',
+        name:this.props.company.name?this.props.company.name:'',
+        street:this.props.company.street?this.props.company.street:'',
+        city:this.props.company.city?this.props.company.city:'',
+        country:this.props.company.country?this.props.company.country:'',
+        note:this.props.company.note?this.props.company.note:'',
+        hours:this.props.company.hours?this.props.company.hours.toString():'0',
+        registrationNumber:this.props.company.registrationNumber?this.props.company.registrationNumber:'',
+        taxNumber:this.props.company.taxNumber?this.props.company.taxNumber:'',
+        vat:this.props.company.vat?this.props.company.vat:'',
+        zip:this.props.company.zip?this.props.company.zip:'',
       };
       this.setHours.bind(this);
       this.setRegistrationNumber.bind(this);
@@ -30,7 +30,7 @@ class AddCompany extends Component {
       //always active
   submit(){
     this.props.client.mutate({
-          mutation: createCompany,
+          mutation: updateCompany,
           variables: {
             active:true,
             name:this.state.name,
@@ -42,7 +42,8 @@ class AddCompany extends Component {
             registrationNumber:this.state.registrationNumber,
             taxNumber:this.state.taxNumber,
             vat:this.state.vat,
-            zip:this.state.zip
+            zip:this.state.zip,
+            id:this.props.company.id
           },
         });
 
@@ -89,7 +90,7 @@ class AddCompany extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Add company</Title>
+            <Title>Edit company</Title>
           </Body>
         </Header>
         <Content style={{ padding: 15 }}>
@@ -211,4 +212,4 @@ class AddCompany extends Component {
 }
 
 
-export default (withApollo)(AddCompany);
+export default (withApollo)(EditCompany);

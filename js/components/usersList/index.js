@@ -45,9 +45,13 @@ class usersList extends Component {
           <List
             dataArray={this.props.users}
             renderRow={(user)=>
-              <ListItem >
+              <ListItem
+                button onPress={()=>Actions.editUser({user})}
+              >
                 <Body>
-                  <Text>{user.firstName}</Text>
+                  {(user.firstName || user.surName) && <Text>{user.firstName?user.firstName:''} {user.surName?user.surName:''}</Text>}
+                  {user.email  && <Text note>{user.email}</Text>}
+                  {!user.email && !user.firstName && !user.surName && <Text note>{user.email}</Text>}
                 </Body>
                 <Right>
                   <Icon name="arrow-forward" />

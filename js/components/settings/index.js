@@ -96,7 +96,7 @@ class Settings extends Component {
             </Button>
           </FooterTab>
           <FooterTab>
-            <Button onPress={Actions.addCompany} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.addUser} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
               <Text style={{ color: 'white' }} >User</Text>
             </Button>

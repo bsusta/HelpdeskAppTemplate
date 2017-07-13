@@ -79,10 +79,10 @@ class AddItem extends Component {
       return;
     }
     if(input.length==2 && input[0]=='0'){
-      this.setState({itemPrice:input[1]});
+      this.setState({itemQuantity:input[1]});
     }
     else{
-      this.setState({itemPrice:input});
+      this.setState({itemQuantity:input});
     }
   }
 
