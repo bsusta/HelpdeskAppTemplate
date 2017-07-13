@@ -10,7 +10,7 @@ import styles from './styles';
 import TabDescription from './tabDescription';
 import TabACL from './tabACL';
 
-class AddFolder extends Component {
+export default class EditFolder extends Component {
 
   render() {
     return (
@@ -22,13 +22,13 @@ class AddFolder extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Add Folder</Title>
+            <Title>Edit Folder</Title>
           </Body>
         </Header>
 
           <Tabs>
               <Tab heading="Description">
-                  <TabDescription />
+                  <TabDescription folder={this.props.folder} />
               </Tab>
               <Tab heading="ACL">
                   <TabACL />
@@ -39,5 +39,3 @@ class AddFolder extends Component {
     );
   }
 }
-
-export default AddFolder;

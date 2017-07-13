@@ -18,6 +18,7 @@ import Search from './components/search/';
 import Settings from './components/settings/';
 import Messages from './components/messages/';
 import AddFolder from './components/addFolder/';
+import EditFolder from './components/editFolder/';
 import CompaniesList from './components/companiesList/';
 import UsersList from './components/usersList/';
 import AddUser from './components/addUser/';
@@ -28,6 +29,7 @@ import AddItem from './components/addItem/';
 import EditItem from './components/editItem/';
 import AddComment from './components/addComment/';
 import AddSubtask from './components/addSubtask/';
+import ProjectsList from './components/projectsList/';
 
 const {
   popRoute,
@@ -108,6 +110,7 @@ class AppNavigator extends Component {
               <Scene key="messages" component={Messages} />
               <Scene key="settings" component={Settings} />
               <Scene key="addFolder" component={AddFolder} />
+              <Scene key="editFolder" component={EditFolder} />
               <Scene key="companiesList" component={CompaniesList} />
               <Scene key="usersList" component={UsersList} />
               <Scene key="addUser" component={AddUser} />
@@ -118,6 +121,8 @@ class AppNavigator extends Component {
               <Scene key="editItem" component={EditItem} />
               <Scene key="addComment" component={AddComment} />
               <Scene key="addSubtask" component={AddSubtask} />
+              <Scene key="projectsList" component={ProjectsList} />
+
             </Scene>
           </RouterWithRedux>
         </Drawer>

@@ -28,7 +28,6 @@ constructor(props) {
           mutation: createUser,
           variables: { firstName:this.state.firstName,surName:this.state.surName,companyId:this.state.company,note:this.state.note,active:true,authProvider },
         });
-
     Actions.pop();
   }
 

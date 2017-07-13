@@ -74,6 +74,19 @@ class Settings extends Component {
               <Icon name="arrow-forward" />
             </Right>
           </ListItem>
+
+          <ListItem button onPress={Actions.projectsList} icon>
+            <Left>
+              <Icon name="book" />
+            </Left>
+            <Body>
+              <Text>Folders</Text>
+            </Body>
+            <Right>
+              <Icon name="arrow-forward" />
+            </Right>
+          </ListItem>
+
           <ListItem icon>
             <Left>
               <Icon name="exit" />
@@ -99,6 +112,12 @@ class Settings extends Component {
             <Button onPress={Actions.addUser} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
               <Text style={{ color: 'white' }} >User</Text>
+            </Button>
+          </FooterTab>
+          <FooterTab>
+            <Button onPress={Actions.addFolder} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+              <Icon active style={{ color: 'white' }} name="add" />
+              <Text style={{ color: 'white' }} >Folder</Text>
             </Button>
           </FooterTab>
         </Footer>

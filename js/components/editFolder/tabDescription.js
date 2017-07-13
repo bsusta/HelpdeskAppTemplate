@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Form, Input, Label, Button, Icon, Item, Footer, FooterTab, Thumbnail, Container, Content, Card, CardItem, Text, ListItem, List,  Left, Body, Right } from 'native-base';
+import {Alert} from 'react-native';
+import {Form, Input, Label, Button, Icon, Item, Footer, FooterTab, Thumbnail, Container, Content, Card, CardItem, Text, ListItem, List,  Left, Body, Right } from 'native-base';
 import styles from './styles';
-import {createFolder} from './addFolder.gquery';
+import {updateProject,deleteProject} from './editFolder.gquery';
 import { Actions } from 'react-native-router-flux';
 import { withApollo} from 'react-apollo';
 class TabDescription extends Component { // eslint-disable-line
@@ -10,14 +11,33 @@ class TabDescription extends Component { // eslint-disable-line
   constructor(props){
     super(props);
     this.state={
-      title:'',
-      description:''
+      title:this.props.folder.title?this.props.folder.title:'',
+      description:this.props.folder.description?this.props.folder.description:''
     }
   }
+
+  deleteFolder(){
+    Alert.alert(
+      'Deleting Folder',
+      'Are you sure you want to delete this folder?',
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {text: 'OK', onPress: () =>{
+          this.props.client.mutate({
+                mutation: deleteProject,
+                variables: { id:this.props.folder.id},
+              });
+              Actions.pop();
+        }},
+      ],
+      { cancelable: false }
+    );
+  }
+
   submit(){
     this.props.client.mutate({
-          mutation: createFolder,
-          variables: { title:this.state.title,description:this.state.description},
+          mutation: updateProject,
+          variables: { id:this.props.folder.id,title:this.state.title,description:this.state.description},
         });
     Actions.pop();
   }
@@ -59,6 +79,14 @@ class TabDescription extends Component { // eslint-disable-line
             <Text style={{ color: 'white' }} >Cancel</Text>
           </Button>
         </FooterTab>
+
+        <FooterTab>
+          <Button iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }} onPress={this.deleteFolder.bind(this)}>
+            <Icon active name="trash" style={{ color: 'white' }} />
+            <Text style={{ color: 'white' }} >Delete</Text>
+          </Button>
+        </FooterTab>
+
 
         <FooterTab>
           <Button iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }} onPress={this.submit.bind(this)}>

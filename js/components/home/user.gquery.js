@@ -86,6 +86,7 @@ export const projects = gql`
 		id
     key: id
 		title
+		description
 		tasks{
 			id
 		}
@@ -100,6 +101,7 @@ export const editedProjectsSubscription = gql`
 				id
 				key: id
 				title
+				description
 				tasks{
 					id
 				}
