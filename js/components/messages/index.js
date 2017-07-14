@@ -8,24 +8,7 @@ import { Actions } from 'react-native-router-flux';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-const {
-  pushRoute,
-} = actions;
-
-
 class Messages extends Component {
-
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
-  }
-
-  pushRoute(route) {
-    this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-  }
 
   render() {
     return (
@@ -65,17 +48,5 @@ class Messages extends Component {
   }
 }
 
-function bindAction(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-  };
-}
 
-const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
-});
-
-export default connect(mapStateToProps, bindAction)(Messages);
+export default Messages;

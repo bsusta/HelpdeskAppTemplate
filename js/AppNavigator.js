@@ -31,38 +31,10 @@ import AddComment from './components/addComment/';
 import AddSubtask from './components/addSubtask/';
 import ProjectsList from './components/projectsList/';
 
-const {
-  popRoute,
-} = actions;
-
 const RouterWithRedux = connect()(Router);
 
 
 class AppNavigator extends Component {
-
-  static propTypes = {
-    drawerState: React.PropTypes.string,
-    popRoute: React.PropTypes.func,
-    closeDrawer: React.PropTypes.func,
-    themeState: React.PropTypes.string,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-      routes: React.PropTypes.array,
-    }),
-  }
-
-  componentDidMount() {
-    BackAndroid.addEventListener('hardwareBackPress', () => {
-      const routes = this.props.navigation.routes;
-
-      if (routes[routes.length - 1].key === 'home') {
-        return false;
-      }
-
-      this.props.popRoute(this.props.navigation.key);
-      return true;
-    });
-  }
 
   componentDidUpdate() {
     if (this.props.drawerState === 'opened') {
@@ -72,10 +44,6 @@ class AppNavigator extends Component {
     if (this.props.drawerState === 'closed') {
       this._drawer._root.close();
     }
-  }
-
-  popRoute() {
-    this.props.popRoute();
   }
 
   openDrawer() {
@@ -102,27 +70,26 @@ class AppNavigator extends Component {
           />
           <RouterWithRedux>
             <Scene key="root">
-              <Scene key="home" component={Home} hideNavBar initial={true} />
-              <Scene key="taskList" component={TaskList} />
-              <Scene key="taskEdit" component={TaskEdit} />
-              <Scene key="taskAdd" component={TaskAdd} />
-              <Scene key="search" component={Search} />
-              <Scene key="messages" component={Messages} />
-              <Scene key="settings" component={Settings} />
-              <Scene key="addFolder" component={AddFolder} />
-              <Scene key="editFolder" component={EditFolder} />
-              <Scene key="companiesList" component={CompaniesList} />
-              <Scene key="usersList" component={UsersList} />
-              <Scene key="addUser" component={AddUser} />
-              <Scene key="editUser" component={EditUser} />
-              <Scene key="addCompany" component={AddCompany} />
-              <Scene key="editCompany" component={EditCompany} />
-              <Scene key="addItem" component={AddItem} />
-              <Scene key="editItem" component={EditItem} />
-              <Scene key="addComment" component={AddComment} />
-              <Scene key="addSubtask" component={AddSubtask} />
-              <Scene key="projectsList" component={ProjectsList} />
-
+            <Scene key="home" component={Home} hideNavBar initial={true} />
+            <Scene key="taskList" component={TaskList} />
+            <Scene key="taskEdit" component={TaskEdit} />
+            <Scene key="taskAdd" component={TaskAdd} />
+            <Scene key="search" component={Search} />
+            <Scene key="messages" component={Messages} />
+            <Scene key="settings" component={Settings} />
+            <Scene key="addFolder" component={AddFolder} />
+            <Scene key="editFolder" component={EditFolder} />
+            <Scene key="companiesList" component={CompaniesList} />
+            <Scene key="usersList" component={UsersList} />
+            <Scene key="addUser" component={AddUser} />
+            <Scene key="editUser" component={EditUser} />
+            <Scene key="addCompany" component={AddCompany} />
+            <Scene key="editCompany" component={EditCompany} />
+            <Scene key="addItem" component={AddItem} />
+            <Scene key="editItem" component={EditItem} />
+            <Scene key="addComment" component={AddComment} />
+            <Scene key="addSubtask" component={AddSubtask} />
+            <Scene key="projectsList" component={ProjectsList} />
             </Scene>
           </RouterWithRedux>
         </Drawer>
@@ -133,7 +100,6 @@ class AppNavigator extends Component {
 
 const bindAction = dispatch => ({
   closeDrawer: () => dispatch(closeDrawer()),
-  popRoute: key => dispatch(popRoute(key)),
 });
 
 const mapStateToProps = state => ({

@@ -8,10 +8,9 @@ import styles from './styles';
 
 
 class CompaniesList extends Component {
-
-
   constructor(props) {
     super(props);
+    this.state={seached:''}
 }
 
   render() {
@@ -28,8 +27,14 @@ class CompaniesList extends Component {
           </Body>
         </Header>
         <Content>
+        <Item rounded>
+          <Icon name="ios-search" />
+          <Input placeholder="Search"
+          value={this.state.seached}
+          onChangeText={((value)=>this.setState({seached:value}))} />
+        </Item>
           <List
-          dataArray={this.props.companies}
+          dataArray={this.props.companies.filter((company)=>company.name.toLowerCase().includes(this.state.seached.toLowerCase()))}
           renderRow={(company)=>
             <ListItem
               button onPress={()=>Actions.editCompany({company})}
@@ -59,15 +64,10 @@ class CompaniesList extends Component {
 
 function bindAction(dispatch) {
   return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
   };
 }
 
 const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
   companies: state.updateCompanies.companies,
 });
 

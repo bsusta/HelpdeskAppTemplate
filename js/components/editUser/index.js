@@ -130,14 +130,10 @@ constructor(props) {
 
 function bindAction(dispatch) {
   return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
   };
 }
 
 const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
   companies: state.updateCompanies.companies,
 });
 

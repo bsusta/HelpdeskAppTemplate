@@ -62,10 +62,6 @@ class Home extends Component {
       working:false,
     }
   }
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-  }
-
   async submitLogin(){
     this.setState(
       {working:true}

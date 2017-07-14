@@ -31,21 +31,31 @@ export const editedTasksSubscription = gql`
         description
     		id
         key: id
-        assignedUser{
+				assignedUser{
           firstName
+					surName
           id
         }
         deadlineAt
         duration
         status
-        requester{
+				requester{
+					firstName
+					surName
+          id
+        }
+				createdBy{
+					firstName
+					surName
           id
         }
         company{
           id
+					name
         }
 				project{
 					id
+					title
 				}
 
 			}
@@ -62,19 +72,29 @@ export const tasks = gql`
     key: id
     assignedUser{
       firstName
+			surName
       id
     }
+		createdBy{
+			firstName
+			surName
+			id
+		}
     deadlineAt
     duration
     status
     requester{
       id
+			firstName
+			surName
     }
     company{
       id
+			name
     }
 		project{
 			id
+			title
 		}
 	 }
   }
@@ -120,6 +140,7 @@ export const users = gql`
 		surName
 		company{
 			id
+			name
 		}
 		note
 		active

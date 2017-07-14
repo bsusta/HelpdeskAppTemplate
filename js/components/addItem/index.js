@@ -24,19 +24,6 @@ const withData = graphql(units, {
 });
 
 class AddItem extends Component {
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
-  }
-
-  pushRoute(route) {
-    this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-  }
-
-
   constructor(props) {
     super(props);
     this.state = {
@@ -158,17 +145,4 @@ class AddItem extends Component {
   }
 }
 
-function bindAction(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-  };
-}
-
-const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
-});
-
-export default withData(withApollo(connect(mapStateToProps, bindAction)(AddItem)));
+export default withData(withApollo((AddItem)));

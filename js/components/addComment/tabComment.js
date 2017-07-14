@@ -11,19 +11,6 @@ import { connect } from 'react-redux';
 
 
 class TabComment extends Component { // eslint-disable-line
-
-    static propTypes = {
-      openDrawer: React.PropTypes.func,
-      pushRoute: React.PropTypes.func,
-      navigation: React.PropTypes.shape({
-        key: React.PropTypes.string,
-      }),
-    }
-
-    pushRoute(route) {
-      this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-    }
-
     constructor(props) {
       super(props);
       this.state = {

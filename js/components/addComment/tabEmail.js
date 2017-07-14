@@ -7,35 +7,6 @@ import styles from './styles';
 
 export default class TabAtributes extends Component { // eslint-disable-line
 
-    static propTypes = {
-      openDrawer: React.PropTypes.func,
-      pushRoute: React.PropTypes.func,
-      navigation: React.PropTypes.shape({
-        key: React.PropTypes.string,
-      }),
-    }
-
-    pushRoute(route) {
-      this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-    }
-
-    constructor(props) {
-      super(props);
-      this.state = {
-        selectedItem: undefined,
-        selected1: 'key0',
-        results: {
-          items: []
-        },
-      };
-    }
-    onValueChange(value: string) {
-      this.setState({
-        selected1: value
-      });
-    }
-
-
     render() {
       return (
         <Container style={styles.container}>

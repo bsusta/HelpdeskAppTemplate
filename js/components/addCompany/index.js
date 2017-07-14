@@ -27,7 +27,6 @@ class AddCompany extends Component {
       this.setTaxNumber.bind(this);
       this.setZIP.bind(this);
     }
-      //always active
   submit(){
     this.props.client.mutate({
           mutation: createCompany,

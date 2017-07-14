@@ -7,7 +7,6 @@ import { withApollo} from 'react-apollo';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 import {createUser} from './addUser.gquery';
-import { AsyncStorage } from 'react-native';
 
 class AddUser extends Component {
 constructor(props) {
@@ -127,14 +126,10 @@ constructor(props) {
 
 function bindAction(dispatch) {
   return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
   };
 }
 
 const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
   companies: state.updateCompanies.companies,
 });
 

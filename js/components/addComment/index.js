@@ -10,42 +10,7 @@ import styles from './styles';
 import TabComment from './tabComment';
 import TabEmail from './tabEmail';
 
-const {
-  pushRoute,
-} = actions;
-const datas = [
-];
-
 class AddComment extends Component {
-
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
-  }
-
-  pushRoute(route) {
-    this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedItem: undefined,
-      selected1: 'key0',
-      results: {
-        items: []
-      },
-    };
-  }
-  onValueChange(value: string) {
-    this.setState({
-      selected1: value
-    });
-  }
-
 
   render() {
     return (
@@ -63,17 +28,4 @@ class AddComment extends Component {
   }
 }
 
-function bindAction(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-  };
-}
-
-const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
-});
-
-export default connect(mapStateToProps, bindAction)(AddComment);
+export default AddComment;

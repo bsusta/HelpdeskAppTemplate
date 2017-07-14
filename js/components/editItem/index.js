@@ -10,9 +10,6 @@ import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 import { units, updateInvoiceItem } from './editItem.gquery';
 import { withApollo, graphql } from 'react-apollo';
-const {
-  pushRoute,
-} = actions;
 const withData = graphql(units, {
   props: ({ data: { loading, allUnits, error, refetch, subscribeToMore } }) => ({
     loadingUnits: loading,
@@ -24,19 +21,6 @@ const withData = graphql(units, {
 });
 
 class EditItem extends Component {
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
-  }
-
-  pushRoute(route) {
-    this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-  }
-
-
   constructor(props) {
     super(props);
     this.state = {
@@ -158,17 +142,5 @@ class EditItem extends Component {
   }
 }
 
-function bindAction(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-  };
-}
 
-const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
-});
-
-export default withData(withApollo(connect(mapStateToProps, bindAction)(EditItem)));
+export default withData(withApollo(EditItem));

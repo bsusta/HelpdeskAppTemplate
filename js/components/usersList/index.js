@@ -7,26 +7,12 @@ import { Actions } from 'react-native-router-flux';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-const {
-  pushRoute,
-} = actions;
-const datas = [
-];
 
 class usersList extends Component {
-
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
+  constructor(props) {
+    super(props);
+    this.state={seached:''}
   }
-
-  pushRoute(route) {
-    this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-  }
-
 
   render() {
     return (
@@ -42,8 +28,21 @@ class usersList extends Component {
           </Body>
         </Header>
         <Content>
+        <Item rounded>
+          <Icon name="ios-search" />
+          <Input placeholder="Search"
+          value={this.state.seached}
+          onChangeText={((value)=>this.setState({seached:value}))} />
+        </Item>
+
           <List
-            dataArray={this.props.users}
+            dataArray={
+              this.props.users.filter((user)=>
+              {
+                let filter=this.state.seached.toLowerCase();
+                return (user.firstName&&user.firstName.toLowerCase().includes(filter))||(user.surName&&user.surName.toLowerCase().includes(filter))||(user.email&&user.email.toLowerCase().includes(filter))||(user.company&&user.company.name&&user.company.name.toLowerCase().includes(filter))
+              })
+              }
             renderRow={(user)=>
               <ListItem
                 button onPress={()=>Actions.editUser({user})}
