@@ -27,7 +27,7 @@ class CompaniesList extends Component {
           </Body>
         </Header>
         <Content>
-        <Item rounded>
+        <Item rounded style={{marginTop:15,marginBottom:15,marginLeft: 20, marginRight: 20,}}>
           <Icon name="ios-search" />
           <Input placeholder="Search"
           value={this.state.seached}

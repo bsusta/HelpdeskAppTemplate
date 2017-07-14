@@ -32,7 +32,6 @@ class Search extends Component {
           let requesterUserReversed='';
           let createdByUserFullname='';
           let createdByUserReversed='';
-          console.log(task);
           if(task["assignedUser"]){
             assignedUserFullname= (task["assignedUser"].firstName?task["assignedUser"].firstName:'')+' '+(task["assignedUser"].surName?task["assignedUser"].surName:'');
             assignedUserReversed= (task["assignedUser"].surName?task["assignedUser"].surName:'')+' '+(task["assignedUser"].firstName?task["assignedUser"].firstName:'');
