@@ -16,19 +16,15 @@ class AddItem extends Component {
     super(props);
     this.state = {
       subtaskName:'',
-      subtaskDescription:'',
-      assignedTo:null,
     };
   }
 
   submit(){
     let name = this.state.subtaskName;
-    let description = this.state.description;
-    let userId = this.state.assignedTo;
     let taskId = this.props.id;
     this.props.client.mutate({
           mutation: createSubtask,
-          variables: { name,userId, taskId, description },
+          variables: { name,taskId },
         });
     Actions.pop();
   }
@@ -55,25 +51,6 @@ class AddItem extends Component {
           />
         </View>
 
-        <Text note>Description</Text>
-        <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <Input
-            value={this.state.description}
-            onChangeText={ value => this.setState({description:value}) }
-          />
-        </View>
-
-          <Text note>Assigned to:</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              selectedValue={this.state.assignedTo}
-              onValueChange={(value)=>this.setState({assignedTo:value})}>
-              {([{id:null,firstName:"None"}].concat(this.props.users)).map(
-                (unit)=> <Item label={unit.firstName} key={unit.id} value={unit.id} />
-              )}
-            </Picker>
-          </View>
         </Content>
         <Footer>
           <FooterTab>
@@ -94,13 +71,5 @@ class AddItem extends Component {
   }
 }
 
-function bindAction(dispatch) {
-  return {
-  };
-}
 
-const mapStateToProps = state => ({
-  users: state.updateUsers.users,
-});
-
-export default withApollo(connect(mapStateToProps, bindAction)(AddItem));
+export default withApollo(AddItem);

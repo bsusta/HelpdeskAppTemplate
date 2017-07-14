@@ -74,15 +74,10 @@ class usersList extends Component {
 
 function bindAction(dispatch) {
   return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
   };
 }
 
 const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
   users: state.updateUsers.users,
 });
 

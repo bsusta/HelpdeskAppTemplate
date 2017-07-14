@@ -1,6 +1,5 @@
 
 import React, { Component } from 'react';
-
 import { Input, Label, Button, Icon, Item, Footer, FooterTab, Thumbnail, Container, Content, Card, CardItem, Text, ListItem, List,  Left, Body, Right } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import styles from './styles';
@@ -64,43 +63,3 @@ class TabComments extends Component { // eslint-disable-line
   }
 }
 export default TabComments;
-/*
-<ListItem avatar>
-        <Left>
-           <Thumbnail/>
-       </Left>
-       <Body>
-           <Text note>Kumar Pratik</Text>
-           <Text>Doing what you like will always keep you happy . .</Text>
-       </Body>
-       <Right>
-           <Text note>3:43 pm 12.2.2017</Text>
-       </Right>
-   </ListItem>
-   <ListItem avatar>
-           <Left>
-              <Thumbnail/>
-          </Left>
-          <Body>
-              <Text note>Kumar Pratik posted a reply</Text>
-              <Text>Doing what you like will always keep you happy . .</Text>
-          </Body>
-          <Right>
-              <Text note>3:43 pm 12.2.2017</Text>
-          </Right>
-      </ListItem>
-      <ListItem avatar>
-              <Left>
-                 <Thumbnail/>
-             </Left>
-             <Body>
-                 <Text note>FROM:branislav.susta@gmail.com</Text>
-                 <Text note>TO:hotline@lansystems.sk</Text>
-                 <Text>Doing what you like will always keep you happy . .</Text>
-             </Body>
-             <Right>
-                 <Text note>3:43 pm 12.2.2017</Text>
-             </Right>
-         </ListItem>
-
-*/

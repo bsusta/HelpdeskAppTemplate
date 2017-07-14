@@ -10,16 +10,8 @@ import { ActivityIndicator, RefreshControl } from 'react-native';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import TaskListRow from './taskListRow';
 import styles from './styles';
-const {
-  pushRoute,
-} = actions;
 
 class TaskList extends Component {
-
-  pushRoute(route) {
-    this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-  }
-
   render() {
     return (
       <Container style={styles.container}>
@@ -87,7 +79,6 @@ function bindAction(dispatch) {
   return {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
   };
 }
 

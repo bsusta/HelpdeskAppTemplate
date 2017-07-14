@@ -158,13 +158,8 @@ export const subtasks = gql`
 		{
 			id
 			key:id
-			description
 			finished
 			name
-			user{
-				id
-				firstName
-			}
 	 }
   }
 `;
@@ -178,11 +173,6 @@ export const changedSubtaskSubscription = gql`
 				key:id
 				finished
 				name
-				description
-				user{
-					id
-					firstName
-				}
 			}
 		}
 	}

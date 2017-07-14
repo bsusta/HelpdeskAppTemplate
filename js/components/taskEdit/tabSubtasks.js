@@ -63,25 +63,6 @@ class Subtasks extends Component { // eslint-disable-line
               </Right>
             </CardItem>
 
-            <CardItem>
-              <Left>
-                <Text note>Description</Text>
-              </Left>
-              <Right>
-                <Text>{subtask.description}</Text>
-              </Right>
-            </CardItem>
-
-            <CardItem>
-              <Left>
-                <Text note>Assigned to:</Text>
-              </Left>
-              <Right>
-                <Text>{subtask.user?subtask.user.firstName:'Nikto'}</Text>
-              </Right>
-            </CardItem>
-
-
               <CardItem>
                 <Left>
                   <Button active block onPress={()=>this.deleteSubtask(subtask.id,subtask.name)}>

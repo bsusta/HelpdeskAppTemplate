@@ -9,32 +9,15 @@ import TabComments from './tabComments';
 import TabItems from './tabItems';
 import Subtasks from './tabSubtasks';
 import { comments, invoiceItems,subtasks } from './taskEdit.gquery';
-
-
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 import { graphql } from 'react-apollo';
-
-const {
-  pushRoute,
-} = actions;
 
 
 
 class TaskEdit extends Component {
   constructor(props){
     super(props);
-  }
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
-  }
-
-  pushRoute(route) {
-    this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
   }
 
   render() {
@@ -108,17 +91,4 @@ class TaskEdit extends Component {
   }
 }
 
-function bindAction(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-  };
-}
-
-const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
-});
-
-export default connect(mapStateToProps, bindAction)(TaskEdit);
+export default TaskEdit;

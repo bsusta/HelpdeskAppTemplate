@@ -1,8 +1,8 @@
 
 import React, { Component } from 'react';
-import { BackAndroid, StatusBar, NavigationExperimental, Platform } from 'react-native';
+import { StatusBar, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import { StyleProvider, variables, Drawer } from 'native-base';
+import { StyleProvider, Drawer } from 'native-base';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Router, Scene } from 'react-native-router-flux';
 import getTheme from '../native-base-theme/components';

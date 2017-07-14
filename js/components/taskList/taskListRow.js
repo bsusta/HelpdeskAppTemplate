@@ -2,8 +2,6 @@
 import React, { Component } from 'react';
 import { Icon, Text, Right, Body, ListItem } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-
-import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 
 class TaskListRow extends Component {
