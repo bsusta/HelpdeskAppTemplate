@@ -8,6 +8,7 @@ import { createTask, users, companies } from './taskAdd.gquery';
 import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator } from 'react-native';
 import DatePicker from 'react-native-datepicker';
+import I18n from '../../translations/';
 
 class TabAtributes extends Component { // eslint-disable-line
   constructor(props) {
@@ -62,23 +63,23 @@ class TabAtributes extends Component { // eslint-disable-line
     return (
       <Container>
         <Content style={{ padding: 15 }}>
-          <Text note> Task Name</Text>
+          <Text note>{I18n.t('taskAddTaskName')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
-              placeholder={ 'Zadajte názov' }
+              placeholder={ I18n.t('taskAddTaskNameLabel')}
               value={ this.state.taskName }
               onChangeText={ value => this.setState({taskName:value}) }
             />
           </View>
-          <Text note>Descrition</Text>
+          <Text note>{I18n.t('taskAddDescription')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
-              placeholder={ 'Zadajte popis' }
+              placeholder={I18n.t('taskAddDescriptionLabel')}
               value={ this.state.taskDescription }
               onChangeText={ value => this.setState({taskDescription:value}) }
             />
           </View>
-          <Text note>Assigned</Text>
+          <Text note>{I18n.t('assignedTo')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
           <Picker
             supportedOrientations={['portrait', 'landscape']}
@@ -87,30 +88,30 @@ class TabAtributes extends Component { // eslint-disable-line
             selectedValue={this.state.assignedUserId}
             onValueChange={(value)=>{this.setState({assignedUserId : value})}}>
             {
-              [{id:null,key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
+              [{id:null,key:'',firstName:I18n.t('nobody')}].concat(this.props.users).map((user)=>
                   (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
                 )
             }
           </Picker>
           </View>
-          <Text note>Deadline</Text>
+          <Text note>{I18n.t('deadline')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
           <DatePicker
             date={this.state.deadline}
             style={{width:380}}
             mode="datetime"
-            placeholder="Deadline"
+            placeholder={I18n.t('deadline')}
             showIcon={false}
             androidMode="spinner"
             format="DD.MM.YYYY HH:MM"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
+            confirmBtnText={I18n.t('confirm')}
+            cancelBtnText={I18n.t('cancel')}
             is24Hour={true}
             onDateChange={(date) => {this.setState({deadline: date})}}
           />
           </View>
 
-          <Text note>Work hours</Text>
+          <Text note>{I18n.t('workHours')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
           <Input
             value={this.state.duration}
@@ -118,7 +119,7 @@ class TabAtributes extends Component { // eslint-disable-line
             onChangeText={ value => this.setWorkTime(value) }
           />
           </View>
-          <Text note>Status</Text>
+          <Text note>{I18n.t('status')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Picker
               supportedOrientations={['portrait', 'landscape']}
@@ -131,41 +132,41 @@ class TabAtributes extends Component { // eslint-disable-line
               <Item label="Done" value="Done" />
             </Picker>
           </View>
-          <Text note>Requester</Text>
+          <Text note>{I18n.t('requester')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Picker
               supportedOrientations={['portrait', 'landscape']}
-              iosHeader="Select one"
+              iosHeader={I18n.t('selectOne')}
               mode="dropdown"
               selectedValue={this.state.requesterUserId}
               onValueChange={(value)=>{this.setState({requesterUserId : value})}}>
               {
-                [{id:null,key:'',firstName:'Nikto'}].concat(this.props.users).map((user)=>
+                [{id:null,key:'',firstName:I18n.t('nobody')}].concat(this.props.users).map((user)=>
                     (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
                   )
               }
             </Picker>
           </View>
-          <Text note>Company</Text>
+          <Text note>{I18n.t('company')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Picker
               supportedOrientations={['portrait', 'landscape']}
-              iosHeader="Select one"
+              iosHeader={I18n.t('selectOne')}
               mode="dropdown"
               selectedValue={this.state.company}
               onValueChange={(value)=>{this.setState({company : value})}}>
               {
-                [{id:null,key:'',name:'Ziadna'}].concat(this.props.companies).map((company)=>
+                [{id:null,key:'',name:I18n.t('none')}].concat(this.props.companies).map((company)=>
                     (<Item label={company.name?company.name:'id:'+company.id} key={company.id} value={company.id} />)
                   )
               }
             </Picker>
           </View>
-          <Text note>Project</Text>
+          <Text note>{I18n.t('project')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Picker
               supportedOrientations={['portrait', 'landscape']}
-              iosHeader="Select one"
+              iosHeader={I18n.t('selectOne')}
               mode="dropdown"
               selectedValue={this.state.project}
               onValueChange={(value)=>{this.setState({project : value})}}>
@@ -179,9 +180,9 @@ class TabAtributes extends Component { // eslint-disable-line
         </Content>
       <Footer>
         <FooterTab>
-          <Button iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+          <Button iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }} onPress={Actions.pop}>
             <Icon active style={{ color: 'white' }} name="md-add" />
-            <Text style={{ color: 'white' }} >Cancel</Text>
+            <Text style={{ color: 'white' }} >{I18n.t('cancel')}</Text>
           </Button>
         </FooterTab>
 
@@ -190,7 +191,7 @@ class TabAtributes extends Component { // eslint-disable-line
           onPress={this.submitForm.bind(this)}
           >
             <Icon active name="md-add" style={{ color: 'white' }} />
-            <Text style={{ color: 'white' }} >Save</Text>
+            <Text style={{ color: 'white' }} >{I18n.t('save')}</Text>
           </Button>
         </FooterTab>
     </Footer>

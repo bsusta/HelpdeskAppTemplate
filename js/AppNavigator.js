@@ -9,6 +9,7 @@ import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
 import { closeDrawer } from './actions/drawer';
 import statusBarColor from './themes/variables';
+
 import Home from './components/home/';
 import SideBar from './components/sidebar';
 import TaskList from './components/taskList/';
@@ -17,18 +18,18 @@ import TaskAdd from './components/taskAdd/';
 import Search from './components/search/';
 import Settings from './components/settings/';
 import Messages from './components/messages/';
-import AddFolder from './components/addFolder/';
-import EditFolder from './components/editFolder/';
+import FolderAdd from './components/folderAdd/';
+import FolderEdit from './components/folderEdit/';
 import CompaniesList from './components/companiesList/';
 import UsersList from './components/usersList/';
-import AddUser from './components/addUser/';
-import EditUser from './components/editUser/';
-import AddCompany from './components/addCompany/';
-import EditCompany from './components/editCompany/';
-import AddItem from './components/addItem/';
-import EditItem from './components/editItem/';
-import AddComment from './components/addComment/';
-import AddSubtask from './components/addSubtask/';
+import UserAdd from './components/userAdd/';
+import UserEdit from './components/userEdit/';
+import CompanyAdd from './components/companyAdd/';
+import CompanyEdit from './components/companyEdit/';
+import ItemAdd from './components/itemAdd/';
+import ItemEdit from './components/itemEdit/';
+import CommentAdd from './components/commentAdd/';
+import SubtaskAdd from './components/subtaskAdd/';
 import ProjectsList from './components/projectsList/';
 
 const RouterWithRedux = connect()(Router);
@@ -77,18 +78,18 @@ class AppNavigator extends Component {
             <Scene key="search" component={Search} />
             <Scene key="messages" component={Messages} />
             <Scene key="settings" component={Settings} />
-            <Scene key="addFolder" component={AddFolder} />
-            <Scene key="editFolder" component={EditFolder} />
+            <Scene key="folderAdd" component={FolderAdd} />
+            <Scene key="folderEdit" component={FolderEdit} />
             <Scene key="companiesList" component={CompaniesList} />
             <Scene key="usersList" component={UsersList} />
-            <Scene key="addUser" component={AddUser} />
-            <Scene key="editUser" component={EditUser} />
-            <Scene key="addCompany" component={AddCompany} />
-            <Scene key="editCompany" component={EditCompany} />
-            <Scene key="addItem" component={AddItem} />
-            <Scene key="editItem" component={EditItem} />
-            <Scene key="addComment" component={AddComment} />
-            <Scene key="addSubtask" component={AddSubtask} />
+            <Scene key="userAdd" component={UserAdd} />
+            <Scene key="userEdit" component={UserEdit} />
+            <Scene key="companyAdd" component={CompanyAdd} />
+            <Scene key="companyEdit" component={CompanyEdit} />
+            <Scene key="itemAdd" component={ItemAdd} />
+            <Scene key="itemEdit" component={ItemEdit} />
+            <Scene key="commentAdd" component={CommentAdd} />
+            <Scene key="subtaskAdd" component={SubtaskAdd} />
             <Scene key="projectsList" component={ProjectsList} />
             </Scene>
           </RouterWithRedux>

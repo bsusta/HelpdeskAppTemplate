@@ -6,6 +6,7 @@ import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Conte
 import { Actions } from 'react-native-router-flux';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
+import I18n from '../../translations/';
 
 
 class usersList extends Component {
@@ -24,13 +25,13 @@ class usersList extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Users list</Title>
+            <Title>{I18n.t('settingsUsersListTitle')}</Title>
           </Body>
         </Header>
         <Content>
         <Item rounded style={{marginTop:15,marginBottom:15,marginLeft: 20, marginRight: 20,}}>
           <Icon name="ios-search" />
-          <Input placeholder="Search"
+          <Input placeholder={I18n.t('search')}
           value={this.state.seached}
           onChangeText={((value)=>this.setState({seached:value}))} />
         </Item>
@@ -45,7 +46,7 @@ class usersList extends Component {
               }
             renderRow={(user)=>
               <ListItem
-                button onPress={()=>Actions.editUser({user})}
+                button onPress={()=>Actions.userEdit({user})}
               >
                 <Body>
                   {(user.firstName || user.surName) && <Text>{user.firstName?user.firstName:''} {user.surName?user.surName:''}</Text>}
@@ -61,9 +62,9 @@ class usersList extends Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={Actions.addUser} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.userAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
-              <Text style={{ color: 'white' }} >User</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('settingsUser')}</Text>
             </Button>
           </FooterTab>
         </Footer>

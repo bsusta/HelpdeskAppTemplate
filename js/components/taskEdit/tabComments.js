@@ -5,6 +5,7 @@ import { Actions } from 'react-native-router-flux';
 import styles from './styles';
 import { ActivityIndicator } from 'react-native';
 import { addedCommentsSubscription } from './taskEdit.gquery';
+import I18n from '../../translations/';
 
 
 class TabComments extends Component { // eslint-disable-line
@@ -50,9 +51,9 @@ class TabComments extends Component { // eslint-disable-line
 
       <Footer>
         <FooterTab>
-          <Button onPress={()=>{Actions.addComment({id:this.props.id})}} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+          <Button onPress={()=>{Actions.commentAdd({id:this.props.id})}} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
             <Icon active style={{ color: 'white' }} name="md-add" />
-            <Text style={{ color: 'white' }} >Comment</Text>
+            <Text style={{ color: 'white' }} >{I18n.t('taskEditComment')}</Text>
           </Button>
         </FooterTab>
       </Footer>

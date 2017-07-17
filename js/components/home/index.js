@@ -13,6 +13,7 @@ import {UPDATE_PROJECTS} from '../../apollo/drawerData';
 import {UPDATE_COMPANIES} from '../../apollo/companies';
 import {UPDATE_USERS} from '../../apollo/users';
 import {ADD_USER} from '../../apollo/user';
+import I18n from '../../translations/';
 
 const withTasks = graphql(tasks, {
   props: ({ data: { loading, allTasks, error, refetch, subscribeToMore } }) => ({
@@ -143,7 +144,7 @@ class Home extends Component {
       }
     ).catch(
       (error)=>{
-        this.setState({errorMessage:'Zlé meno alebo heslo!'});
+        this.setState({errorMessage:I18n.t('homeLoginError')});
         setTimeout(()=>this.setState({errorMessage:''}), 1500);
         this.setState(
           {working:false}
@@ -157,13 +158,13 @@ class Home extends Component {
         <Content padder style={{ backgroundColor: '#FFF', padding: 20 }}>
           <Header>
             <Body>
-              <Title>LanHelpdesk</Title>
+              <Title>{I18n.t('appName')}</Title>
             </Body>
           </Header>
           <Form>
             <Item inlineLabel>
               <Input
-                placeholder='E-mail'
+                placeholder={I18n.t('homeMail')}
                 value={this.state.email}
                  onChangeText={(value)=>this.setState({email:value})}
               />
@@ -171,7 +172,7 @@ class Home extends Component {
             <Item inlineLabel last>
               <Input
                 secureTextEntry={true}
-                placeholder='password'
+                placeholder={I18n.t('homePass')}
                 value={this.state.pass}
                 onChangeText={(value)=>this.setState({pass:value})}
               />
@@ -190,7 +191,7 @@ class Home extends Component {
               <ActivityIndicator
               animating size={ 'large' }
               color='#007299' /> :
-              <Text>Login</Text>
+              <Text>{I18n.t('homeLogin')}</Text>
             }
             </Button>
           <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>

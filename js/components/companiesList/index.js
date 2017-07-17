@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import styles from './styles';
-
+import I18n from '../../translations/';
 
 
 class CompaniesList extends Component {
@@ -23,13 +23,13 @@ class CompaniesList extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Companies list</Title>
+            <Title>{I18n.t('settingsCompaniesListTitle')}</Title>
           </Body>
         </Header>
         <Content>
         <Item rounded style={{marginTop:15,marginBottom:15,marginLeft: 20, marginRight: 20,}}>
           <Icon name="ios-search" />
-          <Input placeholder="Search"
+          <Input placeholder={I18n.t('search')}
           value={this.state.seached}
           onChangeText={((value)=>this.setState({seached:value}))} />
         </Item>
@@ -37,7 +37,7 @@ class CompaniesList extends Component {
           dataArray={this.props.companies.filter((company)=>company.name.toLowerCase().includes(this.state.seached.toLowerCase()))}
           renderRow={(company)=>
             <ListItem
-              button onPress={()=>Actions.editCompany({company})}
+              button onPress={()=>Actions.companyEdit({company})}
             >
               <Body>
                 <Text>{company.name}</Text>
@@ -51,9 +51,9 @@ class CompaniesList extends Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={Actions.addCompany} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.companyAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
-              <Text style={{ color: 'white' }} >Company</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('company')}</Text>
             </Button>
           </FooterTab>
         </Footer>

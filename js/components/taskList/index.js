@@ -10,6 +10,7 @@ import { ActivityIndicator, RefreshControl } from 'react-native';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import TaskListRow from './taskListRow';
 import styles from './styles';
+import I18n from '../../translations/';
 
 class TaskList extends Component {
   render() {
@@ -22,7 +23,7 @@ class TaskList extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Filter/Folder name</Title>
+            <Title>{this.props.projectId==null?I18n.t('taskListAllFolder'):this.props.projectName}</Title>
           </Body>
           <Right>
             <Button transparent style={{ marginTop: 8 }} onPress={Actions.search}>
@@ -53,20 +54,20 @@ class TaskList extends Component {
              vertical
              >
               <Icon active style={{ color: 'white' }} name="refresh" />
-              <Text style={{ color: 'white' }} >Reload</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('reload')}</Text>
             </Button>
           </FooterTab>
           <FooterTab>
-            <Button vertical onPress={Actions.addFolder}>
+            <Button vertical onPress={Actions.folderAdd}>
               <Icon active style={{ color: 'white' }} name="md-add" />
-              <Text style={{ color: 'white' }} >Folder</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('project')}</Text>
             </Button>
           </FooterTab>
 
           <FooterTab>
             <Button vertical onPress={Actions.taskAdd}>
               <Icon name="md-add" style={{ color: 'white' }} />
-              <Text style={{ color: 'white' }} >Task</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('task')}</Text>
             </Button>
           </FooterTab>
         </Footer>

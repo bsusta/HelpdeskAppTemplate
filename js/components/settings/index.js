@@ -7,7 +7,7 @@ import { Actions } from 'react-native-router-flux';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
-
+import I18n from '../../translations/';
 
 class Settings extends Component {
   render() {
@@ -20,7 +20,7 @@ class Settings extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Settings</Title>
+            <Title>{I18n.t('settingsTitle')}</Title>
           </Body>
           <Right>
          </Right>
@@ -31,7 +31,7 @@ class Settings extends Component {
               <Icon name="person" />
             </Left>
             <Body>
-              <Text>Users</Text>
+              <Text>{I18n.t('settingsUsers')}</Text>
             </Body>
             <Right>
               <Icon name="arrow-forward" />
@@ -42,7 +42,7 @@ class Settings extends Component {
               <Icon name="people" />
             </Left>
             <Body>
-              <Text>Companies</Text>
+              <Text>{I18n.t('settingsCompanies')}</Text>
             </Body>
             <Right>
               <Icon name="arrow-forward" />
@@ -54,7 +54,7 @@ class Settings extends Component {
               <Icon name="book" />
             </Left>
             <Body>
-              <Text>Folders</Text>
+              <Text>{I18n.t('settingsProjects')}</Text>
             </Body>
             <Right>
               <Icon name="arrow-forward" />
@@ -67,7 +67,7 @@ class Settings extends Component {
             </Left>
             <Body>
               <Text>
-                Log out
+                {I18n.t('logOut')}
               </Text>
             </Body>
             <Right>
@@ -77,21 +77,21 @@ class Settings extends Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={Actions.addCompany} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.userAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
-              <Text style={{ color: 'white' }} >Company</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('settingsUser')}</Text>
             </Button>
           </FooterTab>
           <FooterTab>
-            <Button onPress={Actions.addUser} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.companyAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
-              <Text style={{ color: 'white' }} >User</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('company')}</Text>
             </Button>
           </FooterTab>
           <FooterTab>
-            <Button onPress={Actions.addFolder} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.folderAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
-              <Text style={{ color: 'white' }} >Folder</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('project')}</Text>
             </Button>
           </FooterTab>
         </Footer>
