@@ -1,53 +1,47 @@
 import gql from 'graphql-tag';
-mutation updateTask($title: String!,$description: String,$id: ID!,$assignedUserId: ID,$deadlineAt: DateTime,$duration:Int,$status:TASK_STATUS,$requesterId:ID,$companyId:ID) {
 
-export const tasks = gql`
-  query Tasks {
-       allTasks (orderBy: id_DESC) {
+export default inboxTasks =  gql`
+  query Tasks($id:ID!) {
+       allTasks (
+         orderBy: id_DESC,
+         filter:
+           {
+           assignedUser:{
+             id:$id
+           }
+         }
+       )
+       {
     title
     description
 		id
     key: id
     assignedUser{
       firstName
+			surName
       id
     }
+		createdBy{
+			firstName
+			surName
+			id
+		}
     deadlineAt
     duration
     status
     requester{
       id
+			firstName
+			surName
     }
     company{
       id
+			name
     }
+		project{
+			id
+			title
+		}
 	 }
   }
-`;
-
-export const editedTasksSubscription = gql`
-	subscription {
-		Task(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
-			mutation
-			node {
-        title
-        description
-    		id
-        key: id
-        assignedUser{
-          firstName
-          id
-        }
-        deadlineAt
-        duration
-        status
-        requester{
-          id
-        }
-        company{
-          id
-        }
-			}
-		}
-	}
 `;

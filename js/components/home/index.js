@@ -139,11 +139,12 @@ class Home extends Component {
             return;
           },
         });
-
-        Actions.taskList();
+        let projectId = 'INBOX';
+        Actions.taskList(projectId);
       }
     ).catch(
       (error)=>{
+        console.log(error);
         this.setState({errorMessage:I18n.t('homeLoginError')});
         setTimeout(()=>this.setState({errorMessage:''}), 1500);
         this.setState(
