@@ -1,3 +1,3 @@
 export default {
-  taskListAllFolder: 'Všetky úlohy',
+  taskListAllFolder: 'INBOX',
 };

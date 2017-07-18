@@ -32,7 +32,7 @@ class SideBar extends Component {
     this.props.projectList.map((data)=>allTasks+= data.tasks.length);
     let all={
       title:I18n.t('taskListAllFolder'),
-      id:null,
+      id:'INBOX',
       tasks: new Array(allTasks),
     }
     return (
