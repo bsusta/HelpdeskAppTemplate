@@ -7,35 +7,9 @@ import { Actions } from 'react-native-router-flux';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
-
-const {
-  pushRoute,
-} = actions;
-const datas = [
-  {
-    route: 'taskEdit',
-    text: 'Task name 1',
-  },
-  {
-    route: 'taskEdit',
-    text: 'Task name 2',
-  },
-];
+import I18n from '../../translations/';
 
 class Settings extends Component {
-
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
-  }
-
-  pushRoute(route) {
-    this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-  }
-
   render() {
     return (
       <Container style={styles.container}>
@@ -46,7 +20,7 @@ class Settings extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Settings</Title>
+            <Title>{I18n.t('settingsTitle')}</Title>
           </Body>
           <Right>
          </Right>
@@ -57,7 +31,7 @@ class Settings extends Component {
               <Icon name="person" />
             </Left>
             <Body>
-              <Text>Users</Text>
+              <Text>{I18n.t('settingsUsers')}</Text>
             </Body>
             <Right>
               <Icon name="arrow-forward" />
@@ -68,19 +42,32 @@ class Settings extends Component {
               <Icon name="people" />
             </Left>
             <Body>
-              <Text>Companies</Text>
+              <Text>{I18n.t('settingsCompanies')}</Text>
             </Body>
             <Right>
               <Icon name="arrow-forward" />
             </Right>
           </ListItem>
+
+          <ListItem button onPress={Actions.projectsList} icon>
+            <Left>
+              <Icon name="book" />
+            </Left>
+            <Body>
+              <Text>{I18n.t('settingsProjects')}</Text>
+            </Body>
+            <Right>
+              <Icon name="arrow-forward" />
+            </Right>
+          </ListItem>
+
           <ListItem icon>
             <Left>
               <Icon name="exit" />
             </Left>
             <Body>
               <Text>
-                Log out
+                {I18n.t('logOut')}
               </Text>
             </Body>
             <Right>
@@ -90,15 +77,21 @@ class Settings extends Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={Actions.addCompany} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.userAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
-              <Text style={{ color: 'white' }} >Company</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('settingsUser')}</Text>
             </Button>
           </FooterTab>
           <FooterTab>
-            <Button onPress={Actions.addCompany} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.companyAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
-              <Text style={{ color: 'white' }} >User</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('company')}</Text>
+            </Button>
+          </FooterTab>
+          <FooterTab>
+            <Button onPress={Actions.folderAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+              <Icon active style={{ color: 'white' }} name="add" />
+              <Text style={{ color: 'white' }} >{I18n.t('project')}</Text>
             </Button>
           </FooterTab>
         </Footer>
@@ -106,18 +99,4 @@ class Settings extends Component {
     );
   }
 }
-
-function bindAction(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-  };
-}
-
-const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
-});
-
-export default connect(mapStateToProps, bindAction)(Settings);
+export default Settings;

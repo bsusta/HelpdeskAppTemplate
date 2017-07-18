@@ -14,4 +14,10 @@ export default {
   mb: {
     marginBottom: 15,
   },
+  checkboxText: {
+    color: 'white',
+    fontSize:20,
+    marginBottom:5,
+    marginLeft:15,
+  },
 };

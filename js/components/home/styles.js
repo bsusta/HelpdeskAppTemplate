@@ -11,6 +11,11 @@ export default {
     width: null,
     height: null,
   },
+  errorMessage:{
+    color:'red',
+    fontSize:17,
+    textAlign:'center',
+  },
   logoContainer: {
     flex: 1,
     marginTop: deviceHeight / 8,

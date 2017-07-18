@@ -9,65 +9,12 @@ import material from '../../../native-base-theme/variables/material';
 import { changePlatform, changeMaterial, closeDrawer } from '../../actions/drawer';
 import navigateTo from '../../actions/sideBarNav';
 import styles from './style';
+import I18n from '../../translations/';
 
 const drawerCover = require('../../../img/drawer-cover.png');
-
 const drawerImage = require('../../../img/logo-kitchen-sink.png');
 
-const datas = [
-  {
-    name: 'DO IT',
-    route: 'filter',
-    icon: 'ios-color-filter-outline',
-    bg: '#477EEA',
-    types: '8',
-  },
-  {
-    name: 'IMPORTANT',
-    route: 'folder',
-    icon: 'ios-color-filter-outline',
-    bg: '#477EEA',
-    types: '8',
-  },
-  {
-    name: 'SCHEDULED',
-    route: 'folder',
-    icon: 'ios-color-filter-outline',
-    bg: '#477EEA',
-    types: '8',
-  },
-  {
-    name: 'REQUESTED',
-    route: 'folder',
-    icon: 'ios-color-filter-outline',
-    bg: '#477EEA',
-    types: '8',
-  },
-  {
-    name: 'Folder 1',
-    route: 'folder',
-    icon: 'folder',
-    bg: '#477EEA',
-    types: '8',
-  },
-  {
-    name: 'Folder 2',
-    route: 'folder',
-    icon: 'folder',
-    bg: '#477EEA',
-    types: '8',
-  },
-];
-
 class SideBar extends Component {
-
-  static propTypes = {
-    navigateTo: React.PropTypes.func,
-    themeState: React.PropTypes.string,
-    changePlatform: React.PropTypes.func,
-    changeMaterial: React.PropTypes.func,
-  }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -81,36 +28,43 @@ class SideBar extends Component {
   }
 
   render() {
+    let allTasks = 0;
+    this.props.projectList.map((data)=>allTasks+= data.tasks.length);
+    let all={
+      title:I18n.t('taskListAllFolder'),
+      id:null,
+      tasks: new Array(allTasks),
+    }
     return (
       <Container>
-
         <Content
           bounces={false}
           style={{ flex: 1, backgroundColor: '#fff', top: -1 }}
         >
         <Header>
           <Body>
-            <Title>LanHelpdesk App</Title>
+            <Title>{I18n.t('appName')}</Title>
           </Body>
           <Right />
         </Header>
           <List
-            dataArray={datas} renderRow={data =>
-              <ListItem button noBorder onPress={() => { Actions[data.route](); this.props.closeDrawer() }} >
+            dataArray={[all].concat(this.props.projectList)} renderRow={data =>
+              <ListItem button noBorder onPress={() => {this.props.closeDrawer(),Actions.taskList({projectId:data.id,projectName:data.title})}} >
                 <Left>
-                  <Icon active name={data.icon} style={{ color: '#777', fontSize: 26, width: 30 }} />
-                  <Text style={styles.text}>{data.name}</Text>
+                  <Icon active name={'ios-color-filter-outline'} style={{ color: '#777', fontSize: 26, width: 30 }} />
+                  <Text style={styles.text}>{data.title}</Text>
                 </Left>
-                {(data.types) &&
+                {(data.tasks.length>0) &&
                 <Right style={{ flex: 1 }}>
                   <Badge
-                    style={{ borderRadius: 3, height: 25, width: 25, backgroundColor: data.bg }}
+                    style={{ borderRadius: 3, height: 25, backgroundColor: '#477EEA' }}
                   >
-                    <Text style={styles.badgeText}>{`${data.types}`}</Text>
+                    <Text style={styles.badgeText}>{data.tasks.length.toString()}</Text>
                   </Badge>
                 </Right>
                 }
-              </ListItem>}
+              </ListItem>
+            }
           />
         </Content>
       </Container>
@@ -130,6 +84,7 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
+  projectList: state.updateDrawer.drawerProjects,
 });
 
 export default connect(mapStateToProps, bindAction)(SideBar);

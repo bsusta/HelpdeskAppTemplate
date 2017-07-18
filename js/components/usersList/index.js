@@ -4,30 +4,16 @@ import { connect } from 'react-redux';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
+import I18n from '../../translations/';
 
-const {
-  pushRoute,
-} = actions;
-const datas = [
-];
 
 class usersList extends Component {
-
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
+  constructor(props) {
+    super(props);
+    this.state={seached:''}
   }
-
-  pushRoute(route) {
-    this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
-  }
-
 
   render() {
     return (
@@ -39,34 +25,46 @@ class usersList extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Users list</Title>
+            <Title>{I18n.t('settingsUsersListTitle')}</Title>
           </Body>
         </Header>
         <Content>
-          <List>
-                  <ListItem >
-                    <Body>
-                      <Text>User 1</Text>
-                    </Body>
-                    <Right>
-                      <Icon name="arrow-forward" />
-                    </Right>
-                  </ListItem>
-                  <ListItem>
-                    <Body>
-                      <Text>User 2</Text>
-                    </Body>
-                    <Right>
-                      <Icon name="arrow-forward" />
-                    </Right>
-                  </ListItem>
-              </List>
+        <Item rounded style={{marginTop:15,marginBottom:15,marginLeft: 20, marginRight: 20,}}>
+          <Icon name="ios-search" />
+          <Input placeholder={I18n.t('search')}
+          value={this.state.seached}
+          onChangeText={((value)=>this.setState({seached:value}))} />
+        </Item>
+
+          <List
+            dataArray={
+              this.props.users.filter((user)=>
+              {
+                let filter=this.state.seached.toLowerCase();
+                return (user.firstName&&user.firstName.toLowerCase().includes(filter))||(user.surName&&user.surName.toLowerCase().includes(filter))||(user.email&&user.email.toLowerCase().includes(filter))||(user.company&&user.company.name&&user.company.name.toLowerCase().includes(filter))
+              })
+              }
+            renderRow={(user)=>
+              <ListItem
+                button onPress={()=>Actions.userEdit({user})}
+              >
+                <Body>
+                  {(user.firstName || user.surName) && <Text>{user.firstName?user.firstName:''} {user.surName?user.surName:''}</Text>}
+                  {user.email  && <Text note>{user.email}</Text>}
+                  {!user.email && !user.firstName && !user.surName && <Text note>{user.email}</Text>}
+                </Body>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+            }
+          />
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={Actions.addUser} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.userAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
-              <Text style={{ color: 'white' }} >User</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('settingsUser')}</Text>
             </Button>
           </FooterTab>
         </Footer>
@@ -77,15 +75,11 @@ class usersList extends Component {
 
 function bindAction(dispatch) {
   return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
   };
 }
 
 const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
-  themeState: state.drawer.themeState,
+  users: state.updateUsers.users,
 });
 
 export default connect(mapStateToProps, bindAction)(usersList);

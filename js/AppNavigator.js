@@ -1,61 +1,41 @@
 
 import React, { Component } from 'react';
-import { BackAndroid, StatusBar, NavigationExperimental, Platform } from 'react-native';
+import { StatusBar, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import { StyleProvider, variables, Drawer } from 'native-base';
+import { StyleProvider, Drawer } from 'native-base';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Router, Scene } from 'react-native-router-flux';
 import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
 import { closeDrawer } from './actions/drawer';
 import statusBarColor from './themes/variables';
+
 import Home from './components/home/';
 import SideBar from './components/sidebar';
 import TaskList from './components/taskList/';
 import TaskEdit from './components/taskEdit/';
+import TaskAdd from './components/taskAdd/';
 import Search from './components/search/';
 import Settings from './components/settings/';
 import Messages from './components/messages/';
-import AddFolder from './components/addFolder/';
+import FolderAdd from './components/folderAdd/';
+import FolderEdit from './components/folderEdit/';
 import CompaniesList from './components/companiesList/';
 import UsersList from './components/usersList/';
-import AddUser from './components/addUser/';
-import AddCompany from './components/addCompany/';
-import AddItem from './components/addItem/';
-import AddComment from './components/addComment/';
-
-const {
-  popRoute,
-} = actions;
+import UserAdd from './components/userAdd/';
+import UserEdit from './components/userEdit/';
+import CompanyAdd from './components/companyAdd/';
+import CompanyEdit from './components/companyEdit/';
+import ItemAdd from './components/itemAdd/';
+import ItemEdit from './components/itemEdit/';
+import CommentAdd from './components/commentAdd/';
+import SubtaskAdd from './components/subtaskAdd/';
+import ProjectsList from './components/projectsList/';
 
 const RouterWithRedux = connect()(Router);
 
 
 class AppNavigator extends Component {
-
-  static propTypes = {
-    drawerState: React.PropTypes.string,
-    popRoute: React.PropTypes.func,
-    closeDrawer: React.PropTypes.func,
-    themeState: React.PropTypes.string,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-      routes: React.PropTypes.array,
-    }),
-  }
-
-  componentDidMount() {
-    BackAndroid.addEventListener('hardwareBackPress', () => {
-      const routes = this.props.navigation.routes;
-
-      if (routes[routes.length - 1].key === 'home') {
-        return false;
-      }
-
-      this.props.popRoute(this.props.navigation.key);
-      return true;
-    });
-  }
 
   componentDidUpdate() {
     if (this.props.drawerState === 'opened') {
@@ -65,10 +45,6 @@ class AppNavigator extends Component {
     if (this.props.drawerState === 'closed') {
       this._drawer._root.close();
     }
-  }
-
-  popRoute() {
-    this.props.popRoute();
   }
 
   openDrawer() {
@@ -95,19 +71,26 @@ class AppNavigator extends Component {
           />
           <RouterWithRedux>
             <Scene key="root">
-              <Scene key="home" component={Home} hideNavBar initial={true} />
-              <Scene key="taskList" component={TaskList} />
-              <Scene key="taskEdit" component={TaskEdit} />
-              <Scene key="search" component={Search} />
-              <Scene key="messages" component={Messages} />
-              <Scene key="settings" component={Settings} />
-              <Scene key="addFolder" component={AddFolder} />
-              <Scene key="companiesList" component={CompaniesList} />
-              <Scene key="usersList" component={UsersList} />
-              <Scene key="addUser" component={AddUser} />
-              <Scene key="addCompany" component={AddCompany} />
-              <Scene key="addItem" component={AddItem} />
-              <Scene key="addComment" component={AddComment} />
+            <Scene key="home" component={Home} hideNavBar initial={true} />
+            <Scene key="taskList" component={TaskList} />
+            <Scene key="taskEdit" component={TaskEdit} />
+            <Scene key="taskAdd" component={TaskAdd} />
+            <Scene key="search" component={Search} />
+            <Scene key="messages" component={Messages} />
+            <Scene key="settings" component={Settings} />
+            <Scene key="folderAdd" component={FolderAdd} />
+            <Scene key="folderEdit" component={FolderEdit} />
+            <Scene key="companiesList" component={CompaniesList} />
+            <Scene key="usersList" component={UsersList} />
+            <Scene key="userAdd" component={UserAdd} />
+            <Scene key="userEdit" component={UserEdit} />
+            <Scene key="companyAdd" component={CompanyAdd} />
+            <Scene key="companyEdit" component={CompanyEdit} />
+            <Scene key="itemAdd" component={ItemAdd} />
+            <Scene key="itemEdit" component={ItemEdit} />
+            <Scene key="commentAdd" component={CommentAdd} />
+            <Scene key="subtaskAdd" component={SubtaskAdd} />
+            <Scene key="projectsList" component={ProjectsList} />
             </Scene>
           </RouterWithRedux>
         </Drawer>
@@ -118,7 +101,6 @@ class AppNavigator extends Component {
 
 const bindAction = dispatch => ({
   closeDrawer: () => dispatch(closeDrawer()),
-  popRoute: key => dispatch(popRoute(key)),
 });
 
 const mapStateToProps = state => ({
