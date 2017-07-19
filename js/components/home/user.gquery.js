@@ -100,6 +100,31 @@ export const tasks = gql`
   }
 `;
 
+export const statuses = gql`
+  query Statuses {
+       allStatuses (orderBy: id_DESC) {
+		id
+    key: id
+		name
+		color
+	 }
+  }
+`;
+
+export const editedStatusesSubscription = gql`
+	subscription {
+		Status(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
+			mutation
+			node {
+				id
+				key: id
+				name
+				color
+			}
+		}
+	}
+`;
+
 export const projects = gql`
   query Projects {
        allProjects (orderBy: id_DESC) {

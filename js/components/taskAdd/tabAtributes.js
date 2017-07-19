@@ -19,7 +19,7 @@ class TabAtributes extends Component { // eslint-disable-line
       deadline:null,
       assignedUserId:null,
       requesterUserId:null,
-      progress:'New',
+      progress:this.props.statuses[0].id,
       duration:'0',
       company:null,
       project:this.props.projectList[0].id,
@@ -47,14 +47,14 @@ class TabAtributes extends Component { // eslint-disable-line
     let createdById= this.props.loggedUserId;
     let assignedUserId = this.state.assignedUserId;
     let duration = this.state.duration==''?0:parseInt(this.state.duration);
-    let status= this.state.progress;
+    let statusId= this.state.progress;
     let requesterId=this.state.requesterUserId;
     let companyId=this.state.company;
     let projectId=this.state.project;
 
     client.mutate({
           mutation: createTask,
-          variables: { title, description, assignedUserId, deadlineAt,createdById,duration,status,requesterId,companyId,projectId },
+          variables: { title, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId },
         });
     Actions.pop();
   }
@@ -127,9 +127,9 @@ class TabAtributes extends Component { // eslint-disable-line
               mode="dropdown"
               selectedValue={this.state.progress}
               onValueChange={(value)=>this.setState({progress:value})}>
-              <Item label="New" value="New" />
-              <Item label="Pending" value="Pending" />
-              <Item label="Done" value="Done" />
+              {this.props.statuses.map((status)=>
+                <Item label={status.name} value={status.id} key={status.id} />)
+              }
             </Picker>
           </View>
           <Text note>{I18n.t('requester')}</Text>
@@ -204,6 +204,7 @@ const mapStateToProps = state => ({
   loggedUserId:state.logInUser.id,
   companies:state.updateCompanies.companies,
   users:state.updateUsers.users,
+  statuses:state.statuses.statuses,
 });
 function bindAction(dispatch) {
   return {

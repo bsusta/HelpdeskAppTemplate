@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const inboxTasks =  gql`
-  query Tasks($id:ID!,$status:TASK_STATUS!,$after: String, $limit: Int) {
+  query Tasks($id:ID!,$statusId:ID,$after: String, $limit: Int) {
        allTasks (
          after: $after,
          first: $limit,
@@ -11,7 +11,9 @@ export const inboxTasks =  gql`
            assignedUser:{
              id:$id
            }
-          status_not:$status
+           status:{
+             id_not:$statusId
+           }
          }
        )
        {
@@ -32,7 +34,11 @@ export const inboxTasks =  gql`
 		}
     deadlineAt
     duration
-    status
+    status{
+      id
+      color
+      name
+    }
     requester{
       id
 			firstName
@@ -81,7 +87,12 @@ export const projectTasks =  gql`
 		}
     deadlineAt
     duration
-    status
+    status{
+      id
+      color
+      name
+    }
+
     requester{
       id
 			firstName
@@ -99,7 +110,7 @@ export const projectTasks =  gql`
   }
 `;
 
-export const editedTasksSubscription = gql`
+export const subscribeToMoreTasks = gql`
 	subscription {
 		Task(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
 			mutation
@@ -116,7 +127,11 @@ export const editedTasksSubscription = gql`
         }
         deadlineAt
         duration
-        status
+        status{
+          id
+          color
+          name
+        }
 				requester{
 					firstName
 					surName

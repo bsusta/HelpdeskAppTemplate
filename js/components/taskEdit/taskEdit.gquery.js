@@ -3,7 +3,7 @@ import { taskFragment } from './task.fragments';
 import { commentFragment } from './comment.fragments';
 
 export const updateTask = gql`
-	mutation updateTask($title: String!,$description: String,$id: ID!,$projectId:ID!,$assignedUserId: ID,$deadlineAt: DateTime,$duration:Int,$status:TASK_STATUS,$requesterId:ID,$companyId:ID) {
+	mutation updateTask($title: String!,$description: String,$id: ID!,$projectId:ID!,$assignedUserId: ID,$deadlineAt: DateTime,$duration:Int,$statusId:ID,$requesterId:ID,$companyId:ID) {
 		updateTask(
       title: $title,
       description: $description,
@@ -11,7 +11,7 @@ export const updateTask = gql`
 			assignedUserId: $assignedUserId,
 			deadlineAt: $deadlineAt,
 			duration: $duration,
-			status: $status,
+			statusId: $statusId,
 			requesterId:$requesterId,
 			companyId:$companyId,
 			projectId:$projectId,

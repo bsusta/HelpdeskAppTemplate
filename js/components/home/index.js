@@ -7,11 +7,12 @@ import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 import { withApollo,graphql } from 'react-apollo';
 import { addTokenToUse } from '../../tokens/tokenHandling';
-import { signinUser, editedTasksSubscription, tasks, projects, editedProjectsSubscription, companies, subscribeToMoreCompanies, users, subscribeToMoreUsers } from './user.gquery';
+import { signinUser, editedTasksSubscription, tasks, projects, editedProjectsSubscription, companies, subscribeToMoreCompanies, users, subscribeToMoreUsers,statuses, editedStatusesSubscription } from './user.gquery';
 import {UPDATE_PROJECTS} from '../../apollo/drawerData';
 import {UPDATE_COMPANIES} from '../../apollo/companies';
 import {UPDATE_USERS} from '../../apollo/users';
 import {ADD_USER} from '../../apollo/user';
+import {UPDATE_STATUSES} from '../../apollo/statuses';
 import I18n from '../../translations/';
 
 const withProjects = graphql(projects, {
@@ -39,6 +40,15 @@ const withCompanies = graphql(companies, {
     companiesError: error,
     refetchCompanies:refetch,
     subscribeToMoreCompanies:subscribeToMore,
+  }),
+});
+const withStatuses = graphql(statuses, {
+  props: ({ data: { loading, allStatuses, error, refetch, subscribeToMore } }) => ({
+    loadingStatuses: loading,
+    statuses: allStatuses,
+    statusesError: error,
+    refetchStatuses:refetch,
+    subscribeToMoreStatuses:subscribeToMore,
   }),
 });
 
@@ -87,6 +97,20 @@ class Home extends Component {
           },
         });
 
+        this.props.updateStatuses(this.props.statuses);
+        this.props.subscribeToMoreStatuses({
+          document: editedStatusesSubscription,
+          updateQuery: () => {
+            this.props.refetchStatuses().then(
+              ()=>{
+                this.props.updateStatuses(this.props.statuses);
+              }
+            ).catch((error)=>{console.log(error)});
+            return;
+          },
+        });
+
+
         this.props.updateUsers(this.props.users,UPDATE_USERS);
         this.props.subscribeToMoreUsers({
           document: subscribeToMoreUsers,
@@ -112,12 +136,11 @@ class Home extends Component {
             return;
           },
         });
-        let projectId = 'INBOX';
-        Actions.taskList({projectId});
+
+        Actions.taskList({projectId:'INBOX'});
       }
     ).catch(
       (error)=>{
-        console.log(error);
         this.setState({errorMessage:I18n.t('homeLoginError')});
         setTimeout(()=>this.setState({errorMessage:''}), 1500);
         this.setState(
@@ -182,6 +205,7 @@ function bindActions(dispatch) {
     updateDrawer: (drawerProjects,type) => dispatch({type,drawerProjects}),
     setUser: (userId) => dispatch({type:ADD_USER,id:userId}),
     updateUsers: (users) => dispatch({type:UPDATE_USERS,users}),
+    updateStatuses: (statuses) => dispatch({type:UPDATE_STATUSES,statuses}),
     updateCompanies: (companies) => dispatch({type:UPDATE_COMPANIES,companies}),
   };
 }
@@ -192,4 +216,4 @@ const mapStateToProps = state => ({
   routes: state.drawer.routes,
 });
 
-export default withUsers(withCompanies(withProjects(withApollo(connect(mapStateToProps, bindActions)(Home)))));
+export default withStatuses(withUsers(withCompanies(withProjects(withApollo(connect(mapStateToProps, bindActions)(Home))))));
