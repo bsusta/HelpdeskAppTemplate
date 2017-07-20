@@ -7,7 +7,7 @@ import { Actions } from 'react-native-router-flux';
 import TabAtributes from './tabAtributes';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
-
+import I18n from '../../translations/';
 
 class TaskEdit extends Component {
   render() {
@@ -20,12 +20,12 @@ class TaskEdit extends Component {
           </Button>
           </Left>
           <Body>
-            <Title>Add task</Title>
+            <Title>{I18n.t('taskAddTitle')}</Title>
           </Body>
           <Right />
         </Header>
            <Tabs>
-               <Tab heading="Attributes">
+               <Tab heading={I18n.t('taskAddAttributes')}>
                    <TabAtributes />
                </Tab>
            </Tabs>

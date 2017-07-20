@@ -12,6 +12,7 @@ import { comments, invoiceItems,subtasks } from './taskEdit.gquery';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 import { graphql } from 'react-apollo';
+import I18n from '../../translations/';
 
 
 
@@ -68,21 +69,21 @@ class TaskEdit extends Component {
           </Button>
           </Left>
           <Body>
-            <Title>Edit task</Title>
+            <Title>{I18n.t('taskEditTitle')}</Title>
           </Body>
           <Right />
         </Header>
            <Tabs>
-               <Tab heading="Attributes">
+               <Tab heading={I18n.t('taskEditTabAttributes')}>
                    <TabAtributes data={this.props.data} />
                </Tab>
-               <Tab heading="Comments">
+               <Tab heading= {I18n.t('taskEditTabComments')}>
                    <HOCTabComments id={this.props.data.id}/>
                </Tab>
-               <Tab heading="Items">
+               <Tab heading={I18n.t('taskEditTabItems')}>
                    <HOCTabItems id={this.props.data.id}/>
                </Tab>
-               <Tab heading="Subtasks">
+               <Tab heading={I18n.t('taskEditTabSubtasks')}>
                    <HOCTabSubtasks id={this.props.data.id}/>
                </Tab>
            </Tabs>

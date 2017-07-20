@@ -5,9 +5,9 @@ import { actions } from 'react-native-navigation-redux-helpers';
 import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import TaskListRow from './taskListRow';
-
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
+import I18n from '../../translations/';
 
 class Search extends Component {
 
@@ -93,14 +93,14 @@ class Search extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Search</Title>
+            <Title>{I18n.t('search')}</Title>
           </Body>
         </Header>
         <Content>
           <ListItem>
             <Item rounded>
               <Icon name="ios-search" />
-              <Input placeholder="Search" value={this.state.filterWord} onChangeText={((value)=>this.setState({filterWord:value}))} />
+              <Input placeholder={I18n.t('search')} value={this.state.filterWord} onChangeText={((value)=>this.setState({filterWord:value}))} />
               <Icon name="ios-people" />
             </Item>
           </ListItem>
@@ -108,25 +108,25 @@ class Search extends Component {
             <Body>
               <Picker
                 supportedOrientations={['portrait', 'landscape']}
-                iosHeader="Select one"
+                iosHeader={I18n.t('selectOne')}
                 mode="dropdown"
                 selectedValue={this.state.filterCategory}
                 onValueChange={(value)=>this.setState({filterCategory:value})}>
-                <Item label="All" value={null} />
-                <Item label="Name" value="title" />
-                <Item label="Assigned to" value="assignedUser" />
-                <Item label="Requested by" value="requester" />
-                <Item label="Company" value="company" />
-                <Item label="Project" value="project" />
-                <Item label="Status" value="status" />
-                <Item label="Created by" value="createdBy" />
-                <Item label="Description" value="description" />
-                <Item label="Duration" value="duration" />
+                <Item label={I18n.t('all')} value={null} />
+                <Item label={I18n.t('title')} value="title" />
+                <Item label={I18n.t('assignedTo')} value="assignedUser" />
+                <Item label={I18n.t('requester')} value="requester" />
+                <Item label={I18n.t('company')} value="company" />
+                <Item label={I18n.t('project')} value="project" />
+                <Item label={I18n.t('status')} value="status" />
+                <Item label={I18n.t('createdBy')} value="createdBy" />
+                <Item label={I18n.t('description')} value="description" />
+                <Item label={I18n.t('workHours')} value="duration" />
               </Picker>
             </Body>
           </ListItem>
           <Button onPress={this.filterDisplayed.bind(this)} primary block style={{ margin: 15 }}>
-            <Text>Search</Text>
+            <Text>{I18n.t('search')}</Text>
           </Button>
           <List>
           {

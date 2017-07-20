@@ -7,6 +7,7 @@ import updateUsers from './users';
 import updateCompanies from './companies';
 import updateDrawer from './drawerData';
 import logInUser from './user';
+import statuses from './statuses';
 
 export default client => createStore(
 	combineReducers({
@@ -18,7 +19,8 @@ export default client => createStore(
 	updateDrawer,
 	logInUser,
 	updateCompanies,
-	updateUsers
+	updateUsers,
+	statuses
 }),
 	{},
 	compose(

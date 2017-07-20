@@ -7,22 +7,14 @@ import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 import { withApollo,graphql } from 'react-apollo';
 import { addTokenToUse } from '../../tokens/tokenHandling';
-import { signinUser, editedTasksSubscription, tasks, projects, editedProjectsSubscription, companies, subscribeToMoreCompanies, users, subscribeToMoreUsers } from './user.gquery';
-import {UPDATE_TASKLIST} from '../../apollo/taskList';
+import { signinUser, editedTasksSubscription, tasks, projects, editedProjectsSubscription, companies, subscribeToMoreCompanies, users, subscribeToMoreUsers,statuses, editedStatusesSubscription } from './user.gquery';
 import {UPDATE_PROJECTS} from '../../apollo/drawerData';
 import {UPDATE_COMPANIES} from '../../apollo/companies';
 import {UPDATE_USERS} from '../../apollo/users';
 import {ADD_USER} from '../../apollo/user';
+import {UPDATE_STATUSES} from '../../apollo/statuses';
+import I18n from '../../translations/';
 
-const withTasks = graphql(tasks, {
-  props: ({ data: { loading, allTasks, error, refetch, subscribeToMore } }) => ({
-    loadingTasks: loading,
-    tasks: allTasks,
-    tasksError: error,
-    refetch,
-    subscribeToMore,
-  }),
-});
 const withProjects = graphql(projects, {
   props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
     loadingProjects: loading,
@@ -48,6 +40,15 @@ const withCompanies = graphql(companies, {
     companiesError: error,
     refetchCompanies:refetch,
     subscribeToMoreCompanies:subscribeToMore,
+  }),
+});
+const withStatuses = graphql(statuses, {
+  props: ({ data: { loading, allStatuses, error, refetch, subscribeToMore } }) => ({
+    loadingStatuses: loading,
+    statuses: allStatuses,
+    statusesError: error,
+    refetchStatuses:refetch,
+    subscribeToMoreStatuses:subscribeToMore,
   }),
 });
 
@@ -82,23 +83,6 @@ class Home extends Component {
         this.setState(
           {working:false}
         );
-        this.props.updateTaskList(this.props.tasks);
-        this.props.subscribeToMore({
-          document: editedTasksSubscription,
-          updateQuery: () => {
-            this.props.refetch().then(
-              ()=>{
-                this.props.updateTaskList(this.props.tasks);
-              }
-            ).catch((error)=>{console.log(error)});
-            this.props.refetchProjects().then(
-              ()=>{
-                this.props.updateDrawer(this.props.projects,UPDATE_PROJECTS);
-              }
-            ).catch((error)=>{console.log(error)});
-            return;
-          },
-        });
 
         this.props.updateDrawer(this.props.projects,UPDATE_PROJECTS);
         this.props.subscribeToMoreProjects({
@@ -112,6 +96,20 @@ class Home extends Component {
             return;
           },
         });
+
+        this.props.updateStatuses(this.props.statuses);
+        this.props.subscribeToMoreStatuses({
+          document: editedStatusesSubscription,
+          updateQuery: () => {
+            this.props.refetchStatuses().then(
+              ()=>{
+                this.props.updateStatuses(this.props.statuses);
+              }
+            ).catch((error)=>{console.log(error)});
+            return;
+          },
+        });
+
 
         this.props.updateUsers(this.props.users,UPDATE_USERS);
         this.props.subscribeToMoreUsers({
@@ -139,11 +137,11 @@ class Home extends Component {
           },
         });
 
-        Actions.taskList();
+        Actions.taskList({projectId:'INBOX'});
       }
     ).catch(
       (error)=>{
-        this.setState({errorMessage:'Zlé meno alebo heslo!'});
+        this.setState({errorMessage:I18n.t('homeLoginError')});
         setTimeout(()=>this.setState({errorMessage:''}), 1500);
         this.setState(
           {working:false}
@@ -157,13 +155,13 @@ class Home extends Component {
         <Content padder style={{ backgroundColor: '#FFF', padding: 20 }}>
           <Header>
             <Body>
-              <Title>LanHelpdesk</Title>
+              <Title>{I18n.t('appName')}</Title>
             </Body>
           </Header>
           <Form>
             <Item inlineLabel>
               <Input
-                placeholder='E-mail'
+                placeholder={I18n.t('homeMail')}
                 value={this.state.email}
                  onChangeText={(value)=>this.setState({email:value})}
               />
@@ -171,7 +169,7 @@ class Home extends Component {
             <Item inlineLabel last>
               <Input
                 secureTextEntry={true}
-                placeholder='password'
+                placeholder={I18n.t('homePass')}
                 value={this.state.pass}
                 onChangeText={(value)=>this.setState({pass:value})}
               />
@@ -190,7 +188,7 @@ class Home extends Component {
               <ActivityIndicator
               animating size={ 'large' }
               color='#007299' /> :
-              <Text>Login</Text>
+              <Text>{I18n.t('homeLogin')}</Text>
             }
             </Button>
           <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
@@ -204,10 +202,10 @@ class Home extends Component {
 function bindActions(dispatch) {
   return {
     openDrawer: () => dispatch(openDrawer()),
-    updateTaskList: (data) => dispatch({type:UPDATE_TASKLIST,taskList:data}),
     updateDrawer: (drawerProjects,type) => dispatch({type,drawerProjects}),
     setUser: (userId) => dispatch({type:ADD_USER,id:userId}),
     updateUsers: (users) => dispatch({type:UPDATE_USERS,users}),
+    updateStatuses: (statuses) => dispatch({type:UPDATE_STATUSES,statuses}),
     updateCompanies: (companies) => dispatch({type:UPDATE_COMPANIES,companies}),
   };
 }
@@ -218,4 +216,4 @@ const mapStateToProps = state => ({
   routes: state.drawer.routes,
 });
 
-export default withUsers(withCompanies(withProjects(withTasks(withApollo(connect(mapStateToProps, bindActions)(Home))))));
+export default withStatuses(withUsers(withCompanies(withProjects(withApollo(connect(mapStateToProps, bindActions)(Home))))));

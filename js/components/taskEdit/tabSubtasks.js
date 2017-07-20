@@ -6,6 +6,7 @@ import styles from './styles';
 import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator, Alert } from 'react-native';
 import { changedSubtaskSubscription, deleteSubtask, updateSubtask } from './taskEdit.gquery';
+import I18n from '../../translations/';
 
 class Subtasks extends Component { // eslint-disable-line
   constructor(props){
@@ -23,11 +24,11 @@ class Subtasks extends Component { // eslint-disable-line
 
   deleteSubtask(subtaskId,subtask){
     Alert.alert(
-      'Deleting subtask',
-      'Are you sure you want to delete subtask named '+subtask,
+      I18n.t('taskEditdeletingSubtask'),
+      I18n.t('taskEditdeletingSubtaskMessage')+subtask,
       [
-        {text: 'Cancel', style: 'cancel'},
-        {text: 'OK', onPress: () =>{
+        {text: I18n.t('cancel'), style: 'cancel'},
+        {text: I18n.t('ok'), onPress: () =>{
           this.props.client.mutate({
                 mutation: deleteSubtask,
                 variables: { subtaskId},
@@ -56,7 +57,7 @@ class Subtasks extends Component { // eslint-disable-line
             <Card key={subtask.id}>
             <CardItem>
               <Left>
-                <Text note>Name</Text>
+                <Text note>{I18n.t('title')}</Text>
               </Left>
               <Right>
                 <Text>{subtask.name}</Text>
@@ -67,30 +68,28 @@ class Subtasks extends Component { // eslint-disable-line
                 <Left>
                   <Button active block onPress={()=>this.deleteSubtask(subtask.id,subtask.name)}>
                   <Icon name="trash" />
-                  <Text>Delete</Text>
+                  <Text>{I18n.t('delete')}</Text>
                   </Button>
                 </Left>
                 <Right>
                   <Button active block onPress={()=>{this.changeSubtaskStatus(!subtask.finished,subtask.id)}}>
-                  <Text>Finished?</Text>
+                  <Text>{I18n.t('taskEditFinished')}</Text>
                   {
                     subtask.finished?<Text style={styles.checkboxText}>✓</Text>:<Text style={styles.checkboxText}>X</Text>
                   }
-
                   </Button>
                 </Right>
               </CardItem>
             </Card>
-
           )
         }
 
       </Content>
       <Footer>
         <FooterTab>
-          <Button onPress={()=>Actions.addSubtask({id:this.props.id})} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+          <Button onPress={()=>Actions.subtaskAdd({id:this.props.id})} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
             <Icon active style={{ color: 'white' }} name="md-add" />
-            <Text style={{ color: 'white' }} >Subtask</Text>
+            <Text style={{ color: 'white' }} >{I18n.t('taskEditSubtask')}</Text>
           </Button>
         </FooterTab>
       </Footer>

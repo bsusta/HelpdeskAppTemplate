@@ -1,5 +1,6 @@
 const initialState = {
   taskList: [],
+  numberOfTasks: 3,
 };
 export const UPDATE_TASKLIST= 'updateTaskList';
 

@@ -3,11 +3,11 @@ import React, { Component } from 'react';
 
 import { Right, Left, Container, Content, Card, CardItem, Text, Body, Footer, FooterTab, Button, Icon } from 'native-base';
 import { withApollo } from 'react-apollo';
-
 import styles from './styles';
 import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator, Alert } from 'react-native';
 import { changedInvoiceItemsSubscription, deleteInvoiceItem } from './taskEdit.gquery';
+import I18n from '../../translations/';
 
 class TabItems extends Component { // eslint-disable-line
   constructor(props){
@@ -25,11 +25,11 @@ class TabItems extends Component { // eslint-disable-line
 
   deleteInvoiceItem(InvoiceItemId,itemName){
     Alert.alert(
-      'Deleting Item',
-      'Are you sure you want to delete item named '+itemName,
+      I18n.t('taskEditdeletingItem'),
+      I18n.t('taskEditdeletingItemMessage')+itemName,
       [
-        {text: 'Cancel', style: 'cancel'},
-        {text: 'OK', onPress: () =>{
+        {text: I18n.t('cancel'), style: 'cancel'},
+        {text: I18n.t('ok'), onPress: () =>{
           this.props.client.mutate({
                 mutation: deleteInvoiceItem,
                 variables: { InvoiceItemId},
@@ -54,7 +54,7 @@ class TabItems extends Component { // eslint-disable-line
             <Card key={item.id}>
               <CardItem>
                 <Left>
-                  <Text note>Name</Text>
+                  <Text note>{I18n.t('title')}</Text>
                 </Left>
                 <Right>
                   <Text>{item.name}</Text>
@@ -62,7 +62,7 @@ class TabItems extends Component { // eslint-disable-line
               </CardItem>
               <CardItem>
                 <Left>
-                  <Text note>Price/unit</Text>
+                  <Text note>{I18n.t('taskEditPricePerUnit')}</Text>
                 </Left>
                 <Right>
                   <Text>{(item.price).toString()}</Text>
@@ -70,7 +70,7 @@ class TabItems extends Component { // eslint-disable-line
               </CardItem>
               <CardItem>
                 <Left>
-                  <Text note>Unit</Text>
+                  <Text note>{I18n.t('taskEditUnit')}</Text>
                 </Left>
                 <Right>
                   <Text>{item.unit?item.unit.name:'None'}</Text>
@@ -78,7 +78,7 @@ class TabItems extends Component { // eslint-disable-line
               </CardItem>
               <CardItem>
                 <Left>
-                  <Text note>Quantity</Text>
+                  <Text note>{I18n.t('taskEditQuantity')}</Text>
                 </Left>
                 <Right>
                   <Text>{(item.quantity).toString()}</Text>
@@ -86,7 +86,7 @@ class TabItems extends Component { // eslint-disable-line
               </CardItem>
               <CardItem>
                 <Left>
-                  <Text note>Price total</Text>
+                  <Text note>{I18n.t('taskEditPriceTotal')}</Text>
                 </Left>
                 <Right>
                   <Text>{(item.quantity*item.price).toString()}</Text>
@@ -97,13 +97,13 @@ class TabItems extends Component { // eslint-disable-line
                 <Left>
                   <Button active block onPress={()=>this.deleteInvoiceItem(item.id,item.name)}>
                   <Icon name="trash" />
-                  <Text>Delete</Text>
+                  <Text>{I18n.t('delete')}</Text>
                   </Button>
                 </Left>
                 <Right>
-                  <Button active block onPress={()=>Actions.editItem({itemData:item})}>
+                  <Button active block onPress={()=>Actions.itemEdit({itemData:item})}>
                   <Icon name="open" />
-                  <Text>Edit</Text>
+                  <Text>{I18n.t('edit')}</Text>
                   </Button>
                 </Right>
               </CardItem>
@@ -112,16 +112,10 @@ class TabItems extends Component { // eslint-disable-line
           )
         }
 
-
-
-
-
-
-
           <Card>
             <CardItem>
             <Left>
-              <Text note>Total price</Text>
+              <Text note>{I18n.t('taskEditTotalPrice')}</Text>
             </Left>
             <Right>
               <Text>{total}</Text>
@@ -133,9 +127,9 @@ class TabItems extends Component { // eslint-disable-line
       </Content>
       <Footer>
         <FooterTab>
-          <Button onPress={()=>Actions.addItem({id:this.props.id})} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+          <Button onPress={()=>Actions.itemAdd({id:this.props.id})} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
             <Icon active style={{ color: 'white' }} name="md-add" />
-            <Text style={{ color: 'white' }} >Items</Text>
+            <Text style={{ color: 'white' }}>{I18n.t('taskEditItem')}</Text>
           </Button>
         </FooterTab>
       </Footer>

@@ -6,8 +6,9 @@ import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Conte
 import { Actions } from 'react-native-router-flux';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
+import I18n from '../../translations/';
 
-class usersList extends Component {
+class projectsList extends Component {
 
   render() {
     return (
@@ -19,7 +20,7 @@ class usersList extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Users list</Title>
+            <Title>{I18n.t('settingsProjectsListTitle')}</Title>
           </Body>
         </Header>
         <Content>
@@ -27,7 +28,7 @@ class usersList extends Component {
             dataArray={this.props.folders}
             renderRow={(folder)=>
               <ListItem
-                button onPress={()=>Actions.editFolder({folder})}
+                button onPress={()=>Actions.folderEdit({folder})}
               >
                 <Body>
                   <Text>{folder.title}</Text>
@@ -41,9 +42,9 @@ class usersList extends Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={Actions.addFolder} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.folderAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
-              <Text style={{ color: 'white' }} >Folder</Text>
+              <Text style={{ color: 'white' }} >{I18n.t('project')}</Text>
             </Button>
           </FooterTab>
         </Footer>
@@ -61,4 +62,4 @@ const mapStateToProps = state => ({
   folders: state.updateDrawer.drawerProjects,
 });
 
-export default connect(mapStateToProps, bindAction)(usersList);
+export default connect(mapStateToProps, bindAction)(projectsList);

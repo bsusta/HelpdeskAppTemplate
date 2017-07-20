@@ -6,86 +6,107 @@ import { Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Tex
 import { Actions } from 'react-native-router-flux';
 import { graphql, withApollo } from 'react-apollo';
 import { ActivityIndicator, RefreshControl } from 'react-native';
+import {inboxTasks,projectTasks,getMoreTasks} from './taskList.gquery';
+import TaskList from './taskList';
 
-import { openDrawer, closeDrawer } from '../../actions/drawer';
-import TaskListRow from './taskListRow';
-import styles from './styles';
 
-class TaskList extends Component {
-  render() {
-    return (
-      <Container style={styles.container}>
-        <Header>
-          <Left>
-            <Button transparent onPress={this.props.openDrawer}>
-              <Icon name="menu" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Filter/Folder name</Title>
-          </Body>
-          <Right>
-            <Button transparent style={{ marginTop: 8 }} onPress={Actions.search}>
-              <Icon name="search" style={{ color: 'white' }} />
-            </Button>
-
-            <Button transparent style={{ marginTop: 8 }} onPress={Actions.messages}>
-              <Icon name="mail" style={{ color: 'white' }} />
-            </Button>
-
-            <Button transparent style={{ marginTop: 8 }} onPress={Actions.settings}>
-              <Icon name="settings" style={{ color: 'white' }} />
-            </Button>
-          </Right>
-        </Header>
-
-        <Content>
-          <List>
-          {
-            this.props.taskList.map((data) => data.project.id==this.props.projectId||this.props.projectId==null?<TaskListRow data={data} key={data.id} />:null)
+class TaskListLoader extends Component {
+  constructor(props){
+    super(props);
+    if(this.props.projectId=='INBOX'){
+      const withFilterInbox = graphql(inboxTasks,{
+        options:{
+          variables:{
+            id:this.props.loggedUserId,
+            status:'Done',
+            after:null,
+            limit:this.props.numberOfTasks,
+          },
+        },
+        props: ({ data: { loading, allTasks, error, refetch, fetchMore,subscribeToMore } }) => ({
+          loading,
+          allTasks,
+          error,
+          refetch,
+          subscribeToMore,
+          getMore:()=>{
+            fetchMore(
+              {
+                variables:{
+                  id:this.props.loggedUserId,
+                  statusId:'cj5b6hwro0m5d0161vwmgev4o',
+                  after:allTasks.length==0?null:allTasks[allTasks.length-1].id,
+                  limit:this.props.numberOfTasks,
+                },
+                updateQuery:(previousResult,{fetchMoreResult})=>{
+                  if(fetchMoreResult.allTasks.length==0){
+                    return previousResult;
+                  }
+                  return Object.assign({},previousResult, {
+                    allTasks: [...previousResult.allTasks, ...fetchMoreResult.allTasks]});
+                }
+              }
+            )
           }
-          </List>
-        </Content>
-
-        <Footer>
-          <FooterTab>
-            <Button
-             vertical
-             >
-              <Icon active style={{ color: 'white' }} name="refresh" />
-              <Text style={{ color: 'white' }} >Reload</Text>
-            </Button>
-          </FooterTab>
-          <FooterTab>
-            <Button vertical onPress={Actions.addFolder}>
-              <Icon active style={{ color: 'white' }} name="md-add" />
-              <Text style={{ color: 'white' }} >Folder</Text>
-            </Button>
-          </FooterTab>
-
-          <FooterTab>
-            <Button vertical onPress={Actions.taskAdd}>
-              <Icon name="md-add" style={{ color: 'white' }} />
-              <Text style={{ color: 'white' }} >Task</Text>
-            </Button>
-          </FooterTab>
-        </Footer>
-      </Container>
-    );
+        })
+      });
+      HOCTaskList=withFilterInbox(TaskList);
+    }
+  else{
+    const withFilterProject = graphql(projectTasks,{
+      options:{
+        variables:{
+          id:this.props.projectId,
+          after:null,
+          limit:this.props.numberOfTasks,
+        },
+      },
+      props: ({ data: { loading, allTasks, error, refetch, fetchMore,subscribeToMore } }) => ({
+        loading,
+        allTasks,
+        error,
+        refetch,
+        subscribeToMore,
+        getMore:()=>{
+          fetchMore(
+            {
+              variables:{
+                id:this.props.projectId,
+                after:allTasks.length==0?null:allTasks[allTasks.length-1].id,
+                limit:this.props.numberOfTasks,
+              },
+              updateQuery:(previousResult,{fetchMoreResult})=>{
+                if(fetchMoreResult.allTasks.length==0){
+                  return previousResult;
+                }
+                return Object.assign({},previousResult, {
+                  allTasks: [...previousResult.allTasks, ...fetchMoreResult.allTasks]});
+              }
+            }
+          )
+        }
+      })
+    });
+    HOCTaskList=withFilterProject(TaskList);
+    }
+  }
+  render() {
+      return (
+        <HOCTaskList projectId={this.props.projectId} projectName={this.props.projectName}/>
+      );
   }
 }
 
 function bindAction(dispatch) {
   return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
+    updateTaskList: (taskList,projectID) => dispatch({type:ADD_TO_TASKLIST,taskList,projectID}),
   };
 }
 
 const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
-  taskList: state.updateTaskList.taskList,
+  loggedUserId: state.logInUser.id,
+  numberOfTasks: state.updateTaskList.numberOfTasks,
 });
 
-export default connect(mapStateToProps, bindAction)(TaskList);
+export default connect(mapStateToProps, bindAction)(TaskListLoader);
