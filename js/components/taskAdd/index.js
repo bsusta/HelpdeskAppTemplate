@@ -1,15 +1,12 @@
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { actions } from 'react-native-navigation-redux-helpers';
 import { Tab, Tabs, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import TabAtributes from './tabAtributes';
-import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 import I18n from '../../translations/';
 
-class TaskEdit extends Component {
+class TaskAdd extends Component {
   render() {
     return (
       <Container style={styles.container}>
@@ -34,4 +31,4 @@ class TaskEdit extends Component {
   }
 }
 
-export default TaskEdit;
+export default TaskAdd;

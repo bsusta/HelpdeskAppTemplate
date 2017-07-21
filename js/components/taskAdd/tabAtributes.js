@@ -4,11 +4,21 @@ import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Labe
 import { withApollo, graphql } from 'react-apollo';
 import styles from './styles';
 import { connect } from 'react-redux';
-import { createTask, users, companies } from './taskAdd.gquery';
+import { createTask, users, companies,projects,editedTasksSubscription,editedProjectsSubscription } from './taskAdd.gquery';
 import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import I18n from '../../translations/';
+
+const withProjects = graphql(projects, {
+  props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
+    loadingProjects: loading,
+    projectList: allProjects,
+    projectsError: error,
+    refetchProjects:refetch,
+    subscribeToMoreProjects:subscribeToMore,
+  }),
+});
 
 class TabAtributes extends Component { // eslint-disable-line
   constructor(props) {
@@ -25,6 +35,16 @@ class TabAtributes extends Component { // eslint-disable-line
       project:this.props.projectList[0].id,
     }
   }
+  componentDidMount(){
+    this.props.subscribeToMoreProjects({
+      document: editedProjectsSubscription,
+      updateQuery: () => {
+        this.props.refetchProjects();
+        return;
+      },
+    });
+  }
+
   setWorkTime(input) {
     if(!/^\d*$/.test(input)){
       return;
@@ -60,6 +80,12 @@ class TabAtributes extends Component { // eslint-disable-line
   }
 
   render() {
+    if(this.props.loadingProjects){
+      return <ActivityIndicator
+      animating size={ 'large' }
+      color='#007299' />
+    }
+
     return (
       <Container>
         <Content style={{ padding: 15 }}>
@@ -128,7 +154,7 @@ class TabAtributes extends Component { // eslint-disable-line
               selectedValue={this.state.progress}
               onValueChange={(value)=>this.setState({progress:value})}>
               {this.props.statuses.map((status)=>
-                <Item label={status.name} value={status.id} key={status.id} />)
+                <Item label={status.name} color={status.color} value={status.id} key={status.id} />)
               }
             </Picker>
           </View>
@@ -200,7 +226,6 @@ class TabAtributes extends Component { // eslint-disable-line
   }
 }
 const mapStateToProps = state => ({
-  projectList: state.updateDrawer.drawerProjects,
   loggedUserId:state.logInUser.id,
   companies:state.updateCompanies.companies,
   users:state.updateUsers.users,
@@ -210,4 +235,4 @@ function bindAction(dispatch) {
   return {
   };
 }
-export default withApollo(connect(mapStateToProps,bindAction)(TabAtributes));
+export default withProjects(withApollo(connect(mapStateToProps,bindAction)(TabAtributes)));

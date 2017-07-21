@@ -49,7 +49,7 @@ class Settings extends Component {
             </Right>
           </ListItem>
 
-          <ListItem button onPress={Actions.projectsList} icon>
+          <ListItem button onPress={Actions.projectList} icon>
             <Left>
               <Icon name="book" />
             </Left>
@@ -89,7 +89,7 @@ class Settings extends Component {
             </Button>
           </FooterTab>
           <FooterTab>
-            <Button onPress={Actions.folderAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.projectAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
               <Text style={{ color: 'white' }} >{I18n.t('project')}</Text>
             </Button>

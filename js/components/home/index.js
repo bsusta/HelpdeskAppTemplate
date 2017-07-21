@@ -15,15 +15,6 @@ import {ADD_USER} from '../../apollo/user';
 import {UPDATE_STATUSES} from '../../apollo/statuses';
 import I18n from '../../translations/';
 
-const withProjects = graphql(projects, {
-  props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
-    loadingProjects: loading,
-    projects: allProjects,
-    projectsError: error,
-    refetchProjects:refetch,
-    subscribeToMoreProjects:subscribeToMore,
-  }),
-});
 const withUsers = graphql(users, {
   props: ({ data: { loading, allUsers, error, refetch, subscribeToMore } }) => ({
     loadingUsers: loading,
@@ -83,19 +74,6 @@ class Home extends Component {
         this.setState(
           {working:false}
         );
-
-        this.props.updateDrawer(this.props.projects,UPDATE_PROJECTS);
-        this.props.subscribeToMoreProjects({
-          document: editedProjectsSubscription,
-          updateQuery: () => {
-            this.props.refetchProjects().then(
-              ()=>{
-                this.props.updateDrawer(this.props.projects,UPDATE_PROJECTS);
-              }
-            ).catch((error)=>{console.log(error)});
-            return;
-          },
-        });
 
         this.props.updateStatuses(this.props.statuses);
         this.props.subscribeToMoreStatuses({
@@ -216,4 +194,4 @@ const mapStateToProps = state => ({
   routes: state.drawer.routes,
 });
 
-export default withStatuses(withUsers(withCompanies(withProjects(withApollo(connect(mapStateToProps, bindActions)(Home))))));
+export default withStatuses(withUsers(withCompanies(withApollo(connect(mapStateToProps, bindActions)(Home)))));

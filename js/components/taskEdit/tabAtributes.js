@@ -5,7 +5,7 @@ import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Labe
 import { ActivityIndicator } from 'react-native';
 import styles from './styles';
 import { connect } from 'react-redux';
-import { updateTask } from './taskEdit.gquery';
+import { updateTask, editedProjectsSubscription } from './taskEdit.gquery';
 import { Actions } from 'react-native-router-flux';
 import { withApollo, graphql } from 'react-apollo';
 import DatePicker from 'react-native-datepicker';
@@ -27,6 +27,16 @@ class TabAtributes extends Component {
     }
     this.setWorkTime.bind(this);
   }
+  componentDidMount(){
+    this.props.subscribeToMoreProjects({
+      document: editedProjectsSubscription,
+      updateQuery: () => {
+        this.props.refetchProjects();
+        return;
+      },
+    });
+  }
+
   setWorkTime(input) {
     if(!/^\d*$/.test(input)){
       return;
@@ -129,7 +139,7 @@ class TabAtributes extends Component {
               onValueChange={(value)=>this.setState({progress:value})}>
               {
                 this.props.statuses.map((status)=>
-                <Item label={status.name} value={status.id} key={status.id} />)
+                <Item label={status.name} color={status.color} value={status.id} key={status.id} />)
               }
             </Picker>
           </View>
@@ -202,7 +212,6 @@ class TabAtributes extends Component {
 }
 
 const mapStateToProps = state => ({
-  projectList: state.updateDrawer.drawerProjects,
   users: state.updateUsers.users,
   companies: state.updateCompanies.companies,
   statuses:state.statuses.statuses,

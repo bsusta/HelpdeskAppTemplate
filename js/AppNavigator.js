@@ -18,8 +18,6 @@ import TaskAdd from './components/taskAdd/';
 import Search from './components/search/';
 import Settings from './components/settings/';
 import Messages from './components/messages/';
-import FolderAdd from './components/folderAdd/';
-import FolderEdit from './components/folderEdit/';
 import CompaniesList from './components/companiesList/';
 import UsersList from './components/usersList/';
 import UserAdd from './components/userAdd/';
@@ -30,7 +28,9 @@ import ItemAdd from './components/itemAdd/';
 import ItemEdit from './components/itemEdit/';
 import CommentAdd from './components/commentAdd/';
 import SubtaskAdd from './components/subtaskAdd/';
-import ProjectsList from './components/projectsList/';
+import ProjectAdd from './components/projectAdd/';
+import ProjectEdit from './components/projectEdit/';
+import ProjectList from './components/projectList/';
 
 const RouterWithRedux = connect()(Router);
 
@@ -78,8 +78,6 @@ class AppNavigator extends Component {
             <Scene key="search" component={Search} />
             <Scene key="messages" component={Messages} />
             <Scene key="settings" component={Settings} />
-            <Scene key="folderAdd" component={FolderAdd} />
-            <Scene key="folderEdit" component={FolderEdit} />
             <Scene key="companiesList" component={CompaniesList} />
             <Scene key="usersList" component={UsersList} />
             <Scene key="userAdd" component={UserAdd} />
@@ -90,7 +88,9 @@ class AppNavigator extends Component {
             <Scene key="itemEdit" component={ItemEdit} />
             <Scene key="commentAdd" component={CommentAdd} />
             <Scene key="subtaskAdd" component={SubtaskAdd} />
-            <Scene key="projectsList" component={ProjectsList} />
+            <Scene key="projectAdd" component={ProjectAdd} />
+            <Scene key="projectEdit" component={ProjectEdit} />
+            <Scene key="projectList" component={ProjectList} />
             </Scene>
           </RouterWithRedux>
         </Drawer>

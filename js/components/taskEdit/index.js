@@ -8,32 +8,48 @@ import TabAtributes from './tabAtributes';
 import TabComments from './tabComments';
 import TabItems from './tabItems';
 import Subtasks from './tabSubtasks';
-import { comments, invoiceItems,subtasks } from './taskEdit.gquery';
+import { comments, invoiceItems,subtasks, projects } from './taskEdit.gquery';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 import { graphql } from 'react-apollo';
 import I18n from '../../translations/';
 
 
-
 class TaskEdit extends Component {
   constructor(props){
     super(props);
-  }
-
-  render() {
-    const withData = graphql(comments,{options:{variables:{
-      id:this.props.data.id,
+    const withData = graphql(comments,{options:{
+      variables:{
+        id:this.props.data.id,
+        after:null,
+      },
     },
-      props: ({ data: { loading, allComments, error, refetch, subscribeToMore } }) => ({
+      props: ({ data: { loading, allComments, error, refetch,fetchMore, subscribeToMore } }) => ({
         loading,
         allComments,
         error,
         refetch,
         subscribeToMore,
+        getMore:()=>{
+          fetchMore(
+            {
+              variables:{
+                id:this.props.data.id,
+                after:allComments.length==0?null:allComments[allComments.length-1].id,
+              },
+              updateQuery:(previousResult,{fetchMoreResult})=>{
+                if(fetchMoreResult.allComments.length==0){
+                  return previousResult;
+                }
+                return Object.assign({},previousResult, {
+                  allComments: [...previousResult.allComments, ...fetchMoreResult.allComments]});
+              }
+            }
+          )
+        }
       })
-    }});
-    const HOCTabComments=withData(TabComments);
+    });
+    HOCTabComments=withData(TabComments);
 
     const withData3 = graphql(subtasks,{options:{variables:{
       id:this.props.data.id,
@@ -46,7 +62,7 @@ class TaskEdit extends Component {
         subscribeToMore,
       })
     }});
-    const HOCTabSubtasks=withData3(Subtasks);
+    HOCTabSubtasks=withData3(Subtasks);
 
     const withData2 = graphql(invoiceItems,{options:{variables:{
       id:this.props.data.id,
@@ -59,7 +75,21 @@ class TaskEdit extends Component {
         subscribeToMore,
       })
     }});
-    const HOCTabItems=withData2(TabItems);
+    HOCTabItems=withData2(TabItems);
+
+    const withProjects = graphql(projects, {
+      props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
+        loadingProjects: loading,
+        projectList: allProjects,
+        projectsError: error,
+        refetchProjects:refetch,
+        subscribeToMoreProjects:subscribeToMore,
+      }),
+    });
+    HOCTabAtributes=withProjects(TabAtributes);
+  }
+
+  render() {
     return (
       <Container style={styles.container}>
         <Header>
@@ -75,7 +105,7 @@ class TaskEdit extends Component {
         </Header>
            <Tabs>
                <Tab heading={I18n.t('taskEditTabAttributes')}>
-                   <TabAtributes data={this.props.data} />
+                   <HOCTabAtributes data={this.props.data} />
                </Tab>
                <Tab heading= {I18n.t('taskEditTabComments')}>
                    <HOCTabComments id={this.props.data.id}/>
