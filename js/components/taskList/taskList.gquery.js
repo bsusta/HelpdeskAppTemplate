@@ -1,52 +1,276 @@
 import gql from 'graphql-tag';
-mutation updateTask($title: String!,$description: String,$id: ID!,$assignedUserId: ID,$deadlineAt: DateTime,$duration:Int,$status:TASK_STATUS,$requesterId:ID,$companyId:ID) {
 
-export const tasks = gql`
-  query Tasks {
-       allTasks (orderBy: id_DESC) {
+export const inboxTasks =  gql`
+  query Tasks($id:ID!,$statusId:ID,$after: String, $limit: Int) {
+       allTasks (
+         after: $after,
+         first: $limit,
+         orderBy: createdAt_DESC,
+         filter:
+           {
+           assignedUser:{
+             id:$id
+           }
+           status:{
+             id_not:$statusId
+           }
+         }
+       )
+       {
     title
     description
 		id
     key: id
+    createdAt
     assignedUser{
       firstName
+			surName
       id
     }
+		createdBy{
+			firstName
+			surName
+			id
+		}
     deadlineAt
     duration
-    status
+    status{
+      id
+      color
+      name
+    }
     requester{
       id
+			firstName
+			surName
     }
     company{
       id
+			name
     }
+		project{
+			id
+			title
+		}
 	 }
   }
 `;
 
-export const editedTasksSubscription = gql`
+export const closedProjectTasks =  gql`
+  query Tasks($id:ID!,$after: String, $limit: Int) {
+       allTasks (
+         after: $after,
+         first: $limit,
+         orderBy: createdAt_DESC,
+         filter:
+           {
+           project:{
+             id:$id
+           },
+           status:{
+             id:"cj5b6hwro0m5d0161vwmgev4o"
+           }
+         }
+       )
+       {
+    title
+    description
+		id
+    key: id
+    createdAt
+    assignedUser{
+      firstName
+			surName
+      id
+    }
+		createdBy{
+			firstName
+			surName
+			id
+		}
+    deadlineAt
+    duration
+    status{
+      id
+      color
+      name
+    }
+
+    requester{
+      id
+			firstName
+			surName
+    }
+    company{
+      id
+			name
+    }
+		project{
+			id
+			title
+		}
+	 }
+  }
+`;
+
+export const activeProjectTasks =  gql`
+  query Tasks($id:ID!,$after: String, $limit: Int) {
+       allTasks (
+         after: $after,
+         first: $limit,
+         orderBy: createdAt_DESC,
+         filter:
+           {
+           project:{
+             id:$id
+           },
+           status:{
+             id_not:"cj5b6hwro0m5d0161vwmgev4o"
+           }
+         }
+       )
+       {
+    title
+    description
+		id
+    key: id
+    createdAt
+    assignedUser{
+      firstName
+			surName
+      id
+    }
+		createdBy{
+			firstName
+			surName
+			id
+		}
+    deadlineAt
+    duration
+    status{
+      id
+      color
+      name
+    }
+
+    requester{
+      id
+			firstName
+			surName
+    }
+    company{
+      id
+			name
+    }
+		project{
+			id
+			title
+		}
+	 }
+  }
+`;
+
+export const myProjectTasks =  gql`
+  query Tasks($id:ID!,$userId:ID!,$after: String, $limit: Int) {
+       allTasks (
+         after: $after,
+         first: $limit,
+         orderBy: createdAt_DESC,
+         filter:
+           {
+           project:{
+             id:$id
+           },
+           status:{
+             id_not:"cj5b6hwro0m5d0161vwmgev4o"
+           },
+           assignedUser:{
+             id:$userId
+           }
+         }
+       )
+       {
+    title
+    description
+		id
+    key: id
+    createdAt
+    assignedUser{
+      firstName
+			surName
+      id
+    }
+		createdBy{
+			firstName
+			surName
+			id
+		}
+    deadlineAt
+    duration
+    status{
+      id
+      color
+      name
+    }
+
+    requester{
+      id
+			firstName
+			surName
+    }
+    company{
+      id
+			name
+    }
+		project{
+			id
+			title
+		}
+	 }
+  }
+`;
+
+export const subscribeToMoreTasks = gql`
 	subscription {
 		Task(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
 			mutation
 			node {
+        createdAt
         title
         description
     		id
         key: id
-        assignedUser{
+				assignedUser{
           firstName
+					surName
           id
         }
         deadlineAt
         duration
-        status
-        requester{
+        status{
+          id
+          color
+          name
+        }
+				requester{
+					firstName
+					surName
+          id
+        }
+				createdBy{
+					firstName
+					surName
           id
         }
         company{
           id
+					name
         }
+				project{
+					id
+					title
+				}
+
 			}
 		}
 	}

@@ -1,16 +1,40 @@
-
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { withApollo,graphql } from 'react-apollo';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 import I18n from '../../translations/';
+import {projects,editedTasksSubscription,editedProjectsSubscription} from './projectList.gquery';
+const withProjects = graphql(projects, {
+  props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
+    loadingProjects: loading,
+    projects: allProjects,
+    projectsError: error,
+    refetchProjects:refetch,
+    subscribeToMoreProjects:subscribeToMore,
+  }),
+});
 
-class projectsList extends Component {
+class ProjectList extends Component {
+
+  componentDidMount(){
+    this.props.subscribeToMoreProjects({
+      document: editedProjectsSubscription,
+      updateQuery: () => {
+        this.props.refetchProjects();
+        return;
+      },
+    });
+  }
 
   render() {
+    if(this.props.loadingProjects){
+      return <ActivityIndicator
+      animating size={ 'large' }
+      color='#007299' />
+    }
     return (
       <Container style={styles.container}>
         <Header>
@@ -25,13 +49,13 @@ class projectsList extends Component {
         </Header>
         <Content>
           <List
-            dataArray={this.props.folders}
-            renderRow={(folder)=>
+            dataArray={this.props.projects}
+            renderRow={(project)=>
               <ListItem
-                button onPress={()=>Actions.folderEdit({folder})}
+                button onPress={()=>Actions.projectEdit({project})}
               >
                 <Body>
-                  <Text>{folder.title}</Text>
+                  <Text>{project.title}</Text>
                 </Body>
                 <Right>
                   <Icon name="arrow-forward" />
@@ -42,7 +66,7 @@ class projectsList extends Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={Actions.folderAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Button onPress={Actions.projectAdd} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
               <Icon active style={{ color: 'white' }} name="add" />
               <Text style={{ color: 'white' }} >{I18n.t('project')}</Text>
             </Button>
@@ -53,13 +77,5 @@ class projectsList extends Component {
   }
 }
 
-function bindAction(dispatch) {
-  return {
-  };
-}
 
-const mapStateToProps = state => ({
-  folders: state.updateDrawer.drawerProjects,
-});
-
-export default connect(mapStateToProps, bindAction)(projectsList);
+export default withProjects(ProjectList);

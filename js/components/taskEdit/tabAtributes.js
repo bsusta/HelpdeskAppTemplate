@@ -5,7 +5,7 @@ import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Labe
 import { ActivityIndicator } from 'react-native';
 import styles from './styles';
 import { connect } from 'react-redux';
-import { updateTask } from './taskEdit.gquery';
+import { updateTask, editedProjectsSubscription } from './taskEdit.gquery';
 import { Actions } from 'react-native-router-flux';
 import { withApollo, graphql } from 'react-apollo';
 import DatePicker from 'react-native-datepicker';
@@ -20,13 +20,23 @@ class TabAtributes extends Component {
       deadline:this.props.data.deadlineAt?date.toGMTString():null,
       assignedUserId:this.props.data.assignedUser?this.props.data.assignedUser.id:null,
       requesterUserId:this.props.data.requester?this.props.data.requester.id:null,
-      progress:this.props.data.status?this.props.data.status:'New',
+      progress:this.props.data.status?this.props.data.status.id:this.props.statuses[0].id,
       duration:this.props.data.duration?this.props.data.duration.toString():'0',
       company:this.props.data.company?this.props.data.company.id:null,
       project:this.props.data.project?this.props.data.project.id:this.props.projectList[0].id,
     }
     this.setWorkTime.bind(this);
   }
+  componentDidMount(){
+    this.props.subscribeToMoreProjects({
+      document: editedProjectsSubscription,
+      updateQuery: () => {
+        this.props.refetchProjects();
+        return;
+      },
+    });
+  }
+
   setWorkTime(input) {
     if(!/^\d*$/.test(input)){
       return;
@@ -47,14 +57,14 @@ class TabAtributes extends Component {
      let id = this.props.data.id;
      let assignedUserId = this.state.assignedUserId;
      let duration = this.state.duration==''?0:parseInt(this.state.duration);
-     let status= this.state.progress;
+     let statusId= this.state.progress;
      let requesterId=this.state.requesterUserId;
      let companyId=this.state.company;
      let projectId=this.state.project;
 
      client.mutate({
            mutation: updateTask,
-           variables: {title, description, id, assignedUserId,deadlineAt,duration,status,requesterId,companyId,projectId},
+           variables: {title, description, id, assignedUserId,deadlineAt,duration,statusId,requesterId,companyId,projectId},
          });
     Actions.pop();
    }
@@ -127,9 +137,10 @@ class TabAtributes extends Component {
               mode="dropdown"
               selectedValue={this.state.progress}
               onValueChange={(value)=>this.setState({progress:value})}>
-              <Item label="New" value="New" />
-              <Item label="Pending" value="Pending" />
-              <Item label="Done" value="Done" />
+              {
+                this.props.statuses.map((status)=>
+                <Item label={status.name} color={status.color} value={status.id} key={status.id} />)
+              }
             </Picker>
           </View>
           <Text note>{I18n.t('requester')}</Text>
@@ -201,9 +212,9 @@ class TabAtributes extends Component {
 }
 
 const mapStateToProps = state => ({
-  projectList: state.updateDrawer.drawerProjects,
   users: state.updateUsers.users,
   companies: state.updateCompanies.companies,
+  statuses:state.statuses.statuses,
 });
 function bindAction(dispatch) {
   return {

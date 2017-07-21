@@ -4,11 +4,21 @@ import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Labe
 import { withApollo, graphql } from 'react-apollo';
 import styles from './styles';
 import { connect } from 'react-redux';
-import { createTask, users, companies } from './taskAdd.gquery';
+import { createTask, users, companies,projects,editedTasksSubscription,editedProjectsSubscription } from './taskAdd.gquery';
 import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import I18n from '../../translations/';
+
+const withProjects = graphql(projects, {
+  props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
+    loadingProjects: loading,
+    projectList: allProjects,
+    projectsError: error,
+    refetchProjects:refetch,
+    subscribeToMoreProjects:subscribeToMore,
+  }),
+});
 
 class TabAtributes extends Component { // eslint-disable-line
   constructor(props) {
@@ -19,12 +29,22 @@ class TabAtributes extends Component { // eslint-disable-line
       deadline:null,
       assignedUserId:null,
       requesterUserId:null,
-      progress:'New',
+      progress:this.props.statuses[0].id,
       duration:'0',
       company:null,
       project:this.props.projectList[0].id,
     }
   }
+  componentDidMount(){
+    this.props.subscribeToMoreProjects({
+      document: editedProjectsSubscription,
+      updateQuery: () => {
+        this.props.refetchProjects();
+        return;
+      },
+    });
+  }
+
   setWorkTime(input) {
     if(!/^\d*$/.test(input)){
       return;
@@ -47,19 +67,25 @@ class TabAtributes extends Component { // eslint-disable-line
     let createdById= this.props.loggedUserId;
     let assignedUserId = this.state.assignedUserId;
     let duration = this.state.duration==''?0:parseInt(this.state.duration);
-    let status= this.state.progress;
+    let statusId= this.state.progress;
     let requesterId=this.state.requesterUserId;
     let companyId=this.state.company;
     let projectId=this.state.project;
 
     client.mutate({
           mutation: createTask,
-          variables: { title, description, assignedUserId, deadlineAt,createdById,duration,status,requesterId,companyId,projectId },
+          variables: { title, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId },
         });
     Actions.pop();
   }
 
   render() {
+    if(this.props.loadingProjects){
+      return <ActivityIndicator
+      animating size={ 'large' }
+      color='#007299' />
+    }
+
     return (
       <Container>
         <Content style={{ padding: 15 }}>
@@ -127,9 +153,9 @@ class TabAtributes extends Component { // eslint-disable-line
               mode="dropdown"
               selectedValue={this.state.progress}
               onValueChange={(value)=>this.setState({progress:value})}>
-              <Item label="New" value="New" />
-              <Item label="Pending" value="Pending" />
-              <Item label="Done" value="Done" />
+              {this.props.statuses.map((status)=>
+                <Item label={status.name} color={status.color} value={status.id} key={status.id} />)
+              }
             </Picker>
           </View>
           <Text note>{I18n.t('requester')}</Text>
@@ -200,13 +226,13 @@ class TabAtributes extends Component { // eslint-disable-line
   }
 }
 const mapStateToProps = state => ({
-  projectList: state.updateDrawer.drawerProjects,
   loggedUserId:state.logInUser.id,
   companies:state.updateCompanies.companies,
   users:state.updateUsers.users,
+  statuses:state.statuses.statuses,
 });
 function bindAction(dispatch) {
   return {
   };
 }
-export default withApollo(connect(mapStateToProps,bindAction)(TabAtributes));
+export default withProjects(withApollo(connect(mapStateToProps,bindAction)(TabAtributes)));

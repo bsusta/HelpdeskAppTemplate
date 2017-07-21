@@ -13,24 +13,24 @@ class TabComments extends Component { // eslint-disable-line
     super(props);
   }
   componentWillMount(){
-    this.props.data.subscribeToMore({
+    this.props.subscribeToMore({
       document: addedCommentsSubscription,
       updateQuery: () => {
-        this.props.data.refetch();
+        this.props.refetch();
         return;
       },
     });
 
   }
   render() { // eslint-disable-line
-    if(this.props.data.loading){
+    if(this.props.loading){
       return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
     }
     return (
       <Container>
         <Content padder style={{ marginTop: 0 }}>
           <List
-          dataArray={this.props.data.allComments}
+          dataArray={this.props.allComments}
           renderRow={data =>
             <ListItem avatar>
                     <Left>
@@ -47,6 +47,13 @@ class TabComments extends Component { // eslint-disable-line
           }
           >
         </List>
+        <Button
+          block
+          primary
+          style={styles.mb15}
+          onPress={this.props.getMore}>
+          <Text>Load more...</Text>
+          </Button>
       </Content>
 
       <Footer>
