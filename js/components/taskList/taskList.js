@@ -28,30 +28,6 @@ class TaskList extends Component {
     }
     return (
       <Container style={styles.container}>
-        <Header>
-          <Left>
-            <Button transparent onPress={this.props.openDrawer}>
-              <Icon name="menu" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>{this.props.projectId==null?I18n.t('taskListAllFolder'):this.props.projectName}</Title>
-          </Body>
-          <Right>
-            <Button transparent style={{ marginTop: 8 }} onPress={Actions.search}>
-              <Icon name="search" style={{ color: 'white' }} />
-            </Button>
-
-            <Button transparent style={{ marginTop: 8 }} onPress={Actions.messages}>
-              <Icon name="mail" style={{ color: 'white' }} />
-            </Button>
-
-            <Button transparent style={{ marginTop: 8 }} onPress={Actions.settings}>
-              <Icon name="settings" style={{ color: 'white' }} />
-            </Button>
-          </Right>
-        </Header>
-
         <Content>
           <List>
           {
@@ -63,12 +39,12 @@ class TaskList extends Component {
             primary
             style={styles.mb15}
             onPress={this.props.getMore}>
-            <Text>Load more...</Text>
+            <Text>{I18n.t('taskListLoadMore')}</Text>
             </Button>
         </Content>
         <Footer>
           <FooterTab>
-            <Button vertical onPress={Actions.folderAdd}>
+            <Button vertical onPress={Actions.projectAdd}>
               <Icon active style={{ color: 'white' }} name="md-add" />
               <Text style={{ color: 'white' }} >{I18n.t('project')}</Text>
             </Button>
@@ -88,8 +64,6 @@ class TaskList extends Component {
 
 function bindAction(dispatch) {
   return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
   };
 }
 

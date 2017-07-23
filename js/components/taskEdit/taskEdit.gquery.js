@@ -37,8 +37,10 @@ export const createComment = gql`
 
 
 export const comments = gql`
-  query Comments($id:ID!) {
+  query Comments($id:ID!,$after:String) {
        allComments (
+			 after: $after,
+       first: 10,
 				orderBy: id_DESC
 				filter:{
 					task:{
@@ -194,6 +196,36 @@ mutation updateSubtask($finished: Boolean,$id: ID!) {
 			id:$id
 		) {
 			id,
+		}
+	}
+`;
+
+export const projects = gql`
+  query Projects {
+       allProjects (orderBy: id_DESC) {
+		id
+    key: id
+		title
+		description
+		tasks{
+			id
+		}
+	 }
+  }
+`;
+export const editedProjectsSubscription = gql`
+	subscription {
+		Project(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
+			mutation
+			node {
+				id
+				key: id
+				title
+				description
+				tasks{
+					id
+				}
+			}
 		}
 	}
 `;

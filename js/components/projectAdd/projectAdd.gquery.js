@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-export const createFolder = gql`
+export const createProject = gql`
 	mutation createProject($title:String!,$description:String) {
 		createProject(
 			title:$title,
