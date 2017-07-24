@@ -20,7 +20,7 @@ class TabAtributes extends Component {
       deadline:this.props.data.deadlineAt?date.toGMTString():null,
       assignedUserId:this.props.data.assignedUser?this.props.data.assignedUser.id:null,
       requesterUserId:this.props.data.requester?this.props.data.requester.id:null,
-      progress:this.props.data.status?this.props.data.status.id:this.props.statuses[0].id,
+      status:'',
       duration:this.props.data.duration?this.props.data.duration.toString():'0',
       company:this.props.data.company?this.props.data.company.id:null,
       project:this.props.data.project?this.props.data.project.id:this.props.projectList[0].id,
@@ -57,7 +57,7 @@ class TabAtributes extends Component {
      let id = this.props.data.id;
      let assignedUserId = this.state.assignedUserId;
      let duration = this.state.duration==''?0:parseInt(this.state.duration);
-     let statusId= this.state.progress;
+     let statusId= this.state.status.id;
      let requesterId=this.state.requesterUserId;
      let companyId=this.state.company;
      let projectId=this.state.project;
@@ -70,6 +70,14 @@ class TabAtributes extends Component {
    }
 
   render() {
+
+    let statusButtonStyle={};
+    if(this.state.status=='' && this.props.data.status){
+      statusButtonStyle={backgroundColor:this.props.data.status.color};
+    }
+    else if (this.state.status!='') {
+      statusButtonStyle={backgroundColor:this.state.status.color};
+    }
     return (
       <Container>
         <Content style={{ padding: 15 }}>
@@ -129,20 +137,19 @@ class TabAtributes extends Component {
             onChangeText={ value => this.setWorkTime(value) }
           />
           </View>
+
           <Text note>{I18n.t('status')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader="Select one"
-              mode="dropdown"
-              selectedValue={this.state.progress}
-              onValueChange={(value)=>this.setState({progress:value})}>
-              {
-                this.props.statuses.map((status)=>
-                <Item label={status.name} color={status.color} value={status.id} key={status.id} />)
-              }
-            </Picker>
+          <Button rounded style={statusButtonStyle} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text>{this.state.status =='' && this.props.data.status ? this.props.data.status.name : this.state.status ==''?'Choose status':this.state.status.name}</Text></Button>
+          {
+            this.state.pickingStatus && this.props.statuses.map((status)=>
+            this.state.status!=status && !(this.props.data.status.id==status.id && this.state.status=='') &&
+            <Button rounded style={{backgroundColor:status.color}} onPress={()=>this.setState({status:status,pickingStatus:false})} key={status.id} >
+            <Text style={{color:'white'}}>{status.name}</Text>
+            </Button>)
+          }
           </View>
+
           <Text note>{I18n.t('requester')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Picker

@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker } from 'native-base';
+import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker, ListItem } from 'native-base';
 import { withApollo, graphql } from 'react-apollo';
 import styles from './styles';
 import { connect } from 'react-redux';
@@ -29,10 +29,11 @@ class TabAtributes extends Component { // eslint-disable-line
       deadline:null,
       assignedUserId:null,
       requesterUserId:null,
-      progress:this.props.statuses[0].id,
       duration:'0',
       company:null,
       project:this.props.projectList[0].id,
+      status:'',
+      pickingStatus:false,
     }
   }
   componentDidMount(){
@@ -67,7 +68,7 @@ class TabAtributes extends Component { // eslint-disable-line
     let createdById= this.props.loggedUserId;
     let assignedUserId = this.state.assignedUserId;
     let duration = this.state.duration==''?0:parseInt(this.state.duration);
-    let statusId= this.state.progress;
+    let statusId= this.state.status.id;
     let requesterId=this.state.requesterUserId;
     let companyId=this.state.company;
     let projectId=this.state.project;
@@ -107,57 +108,57 @@ class TabAtributes extends Component { // eslint-disable-line
           </View>
           <Text note>{I18n.t('assignedTo')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <Picker
-            supportedOrientations={['portrait', 'landscape']}
-            iosHeader="Select one"
-            mode="dropdown"
-            selectedValue={this.state.assignedUserId}
-            onValueChange={(value)=>{this.setState({assignedUserId : value})}}>
-            {
-              [{id:null,key:'',firstName:I18n.t('nobody')}].concat(this.props.users).map((user)=>
-                  (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
-                )
-            }
-          </Picker>
-          </View>
-          <Text note>{I18n.t('deadline')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <DatePicker
-            date={this.state.deadline}
-            style={{width:380}}
-            mode="datetime"
-            placeholder={I18n.t('deadline')}
-            showIcon={false}
-            androidMode="spinner"
-            format="DD.MM.YYYY HH:MM"
-            confirmBtnText={I18n.t('confirm')}
-            cancelBtnText={I18n.t('cancel')}
-            is24Hour={true}
-            onDateChange={(date) => {this.setState({deadline: date})}}
-          />
-          </View>
-
-          <Text note>{I18n.t('workHours')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <Input
-            value={this.state.duration}
-            keyboardType='numeric'
-            onChangeText={ value => this.setWorkTime(value) }
-          />
-          </View>
-          <Text note>{I18n.t('status')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Picker
               supportedOrientations={['portrait', 'landscape']}
               iosHeader="Select one"
               mode="dropdown"
-              selectedValue={this.state.progress}
-              onValueChange={(value)=>this.setState({progress:value})}>
-              {this.props.statuses.map((status)=>
-                <Item label={status.name} color={status.color} value={status.id} key={status.id} />)
+              selectedValue={this.state.assignedUserId}
+              onValueChange={(value)=>{this.setState({assignedUserId : value})}}>
+              {
+                [{id:null,key:'',firstName:I18n.t('nobody')}].concat(this.props.users).map((user)=>
+                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
+                  )
               }
             </Picker>
           </View>
+          <Text note>{I18n.t('deadline')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <DatePicker
+              date={this.state.deadline}
+              style={{width:380}}
+              mode="datetime"
+              placeholder={I18n.t('deadline')}
+              showIcon={false}
+              androidMode="spinner"
+              format="DD.MM.YYYY HH:MM"
+              confirmBtnText={I18n.t('confirm')}
+              cancelBtnText={I18n.t('cancel')}
+              is24Hour={true}
+              onDateChange={(date) => {this.setState({deadline: date})}}
+            />
+          </View>
+
+          <Text note>{I18n.t('workHours')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Input
+              value={this.state.duration}
+              keyboardType='numeric'
+              onChangeText={ value => this.setWorkTime(value) }
+            />
+          </View>
+          
+          <Text note>{I18n.t('status')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+          <Button rounded style={this.state.status==''?{}:{backgroundColor:this.state.status.color}} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text>{this.state.status==''?'Choose status':this.state.status.name}</Text></Button>
+          {
+            this.state.pickingStatus && this.props.statuses.map((status)=>
+            this.state.status!=status &&
+            <Button rounded style={{backgroundColor:status.color}} onPress={()=>this.setState({status:status,pickingStatus:false})} key={status.id} >
+            <Text style={{color:'white'}}>{status.name}</Text>
+            </Button>)
+          }
+          </View>
+
           <Text note>{I18n.t('requester')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Picker
