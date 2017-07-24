@@ -106,6 +106,51 @@ class TabAtributes extends Component { // eslint-disable-line
               onChangeText={ value => this.setState({taskDescription:value}) }
             />
           </View>
+          <Text note>{I18n.t('project')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Picker
+              supportedOrientations={['portrait', 'landscape']}
+              iosHeader={I18n.t('selectOne')}
+              mode="dropdown"
+              selectedValue={this.state.project}
+              onValueChange={(value)=>{this.setState({project : value})}}>
+              {
+                this.props.projectList.map((project)=>
+                    (<Item label={project.title?project.title:''} key={project.id} value={project.id} />)
+                  )
+              }
+            </Picker>
+          </View>
+          <Text note>{I18n.t('requester')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Picker
+              supportedOrientations={['portrait', 'landscape']}
+              iosHeader={I18n.t('selectOne')}
+              mode="dropdown"
+              selectedValue={this.state.requesterUserId}
+              onValueChange={(value)=>{this.setState({requesterUserId : value})}}>
+              {
+                [{id:null,key:'',firstName:I18n.t('nobody')}].concat(this.props.users).map((user)=>
+                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
+                  )
+              }
+            </Picker>
+          </View>
+          <Text note>{I18n.t('company')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Picker
+              supportedOrientations={['portrait', 'landscape']}
+              iosHeader={I18n.t('selectOne')}
+              mode="dropdown"
+              selectedValue={this.state.company}
+              onValueChange={(value)=>{this.setState({company : value})}}>
+              {
+                [{id:null,key:'',name:I18n.t('none')}].concat(this.props.companies).map((company)=>
+                    (<Item label={company.name?company.name:'id:'+company.id} key={company.id} value={company.id} />)
+                  )
+              }
+            </Picker>
+          </View>
           <Text note>{I18n.t('assignedTo')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Picker
@@ -157,52 +202,6 @@ class TabAtributes extends Component { // eslint-disable-line
             <Text style={{color:'white'}}>{status.name}</Text>
             </Button>)
           }
-          </View>
-
-          <Text note>{I18n.t('requester')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader={I18n.t('selectOne')}
-              mode="dropdown"
-              selectedValue={this.state.requesterUserId}
-              onValueChange={(value)=>{this.setState({requesterUserId : value})}}>
-              {
-                [{id:null,key:'',firstName:I18n.t('nobody')}].concat(this.props.users).map((user)=>
-                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
-                  )
-              }
-            </Picker>
-          </View>
-          <Text note>{I18n.t('company')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader={I18n.t('selectOne')}
-              mode="dropdown"
-              selectedValue={this.state.company}
-              onValueChange={(value)=>{this.setState({company : value})}}>
-              {
-                [{id:null,key:'',name:I18n.t('none')}].concat(this.props.companies).map((company)=>
-                    (<Item label={company.name?company.name:'id:'+company.id} key={company.id} value={company.id} />)
-                  )
-              }
-            </Picker>
-          </View>
-          <Text note>{I18n.t('project')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader={I18n.t('selectOne')}
-              mode="dropdown"
-              selectedValue={this.state.project}
-              onValueChange={(value)=>{this.setState({project : value})}}>
-              {
-                this.props.projectList.map((project)=>
-                    (<Item label={project.title?project.title:''} key={project.id} value={project.id} />)
-                  )
-              }
-            </Picker>
           </View>
         </Content>
       <Footer>

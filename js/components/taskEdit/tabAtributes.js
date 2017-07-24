@@ -97,6 +97,66 @@ class TabAtributes extends Component {
               onChangeText={ value => this.setState({taskDescription:value}) }
             />
           </View>
+
+          <Text note>{I18n.t('status')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+          <Button rounded style={statusButtonStyle} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text>{this.state.status =='' && this.props.data.status ? this.props.data.status.name : this.state.status ==''?'Choose status':this.state.status.name}</Text></Button>
+          {
+            this.state.pickingStatus && this.props.statuses.map((status)=>
+            this.state.status!=status && !(this.props.data.status.id==status.id && this.state.status=='') &&
+            <Button rounded style={{backgroundColor:status.color}} onPress={()=>this.setState({status:status,pickingStatus:false})} key={status.id} >
+            <Text style={{color:'white'}}>{status.name}</Text>
+            </Button>)
+          }
+          </View>
+
+          <Text note>{I18n.t('project')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Picker
+              supportedOrientations={['portrait', 'landscape']}
+              iosHeader={I18n.t('selectOne')}
+              mode="dropdown"
+              selectedValue={this.state.project}
+              onValueChange={(value)=>{this.setState({project : value})}}>
+              {
+                this.props.projectList.map((project)=>
+                    (<Item label={project.title?project.title:''} key={project.id} value={project.id} />)
+                  )
+              }
+            </Picker>
+          </View>
+
+          <Text note>{I18n.t('requester')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Picker
+              supportedOrientations={['portrait', 'landscape']}
+              iosHeader={I18n.t('selectOne')}
+              mode="dropdown"
+              selectedValue={this.state.requesterUserId}
+              onValueChange={(value)=>{this.setState({requesterUserId : value})}}>
+              {
+                [{id:null,key:'',firstName:I18n.t('nobody')}].concat(this.props.users).map((user)=>
+                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
+                  )
+              }
+            </Picker>
+          </View>
+          <Text note>{I18n.t('company')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Picker
+              supportedOrientations={['portrait', 'landscape']}
+              iosHeader={I18n.t('selectOne')}
+              mode="dropdown"
+              selectedValue={this.state.company}
+              onValueChange={(value)=>{this.setState({company : value})}}>
+              {
+                [{id:null,key:'',name:I18n.t('none')}].concat(this.props.companies).map((company)=>
+                    (<Item label={company.name?company.name:'id:'+company.id} key={company.id} value={company.id} />)
+                  )
+              }
+            </Picker>
+          </View>
+
           <Text note>{I18n.t('assignedTo')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
           <Picker
@@ -136,64 +196,6 @@ class TabAtributes extends Component {
             keyboardType='numeric'
             onChangeText={ value => this.setWorkTime(value) }
           />
-          </View>
-
-          <Text note>{I18n.t('status')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <Button rounded style={statusButtonStyle} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text>{this.state.status =='' && this.props.data.status ? this.props.data.status.name : this.state.status ==''?'Choose status':this.state.status.name}</Text></Button>
-          {
-            this.state.pickingStatus && this.props.statuses.map((status)=>
-            this.state.status!=status && !(this.props.data.status.id==status.id && this.state.status=='') &&
-            <Button rounded style={{backgroundColor:status.color}} onPress={()=>this.setState({status:status,pickingStatus:false})} key={status.id} >
-            <Text style={{color:'white'}}>{status.name}</Text>
-            </Button>)
-          }
-          </View>
-
-          <Text note>{I18n.t('requester')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader={I18n.t('selectOne')}
-              mode="dropdown"
-              selectedValue={this.state.requesterUserId}
-              onValueChange={(value)=>{this.setState({requesterUserId : value})}}>
-              {
-                [{id:null,key:'',firstName:I18n.t('nobody')}].concat(this.props.users).map((user)=>
-                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
-                  )
-              }
-            </Picker>
-          </View>
-          <Text note>{I18n.t('company')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader={I18n.t('selectOne')}
-              mode="dropdown"
-              selectedValue={this.state.company}
-              onValueChange={(value)=>{this.setState({company : value})}}>
-              {
-                [{id:null,key:'',name:I18n.t('none')}].concat(this.props.companies).map((company)=>
-                    (<Item label={company.name?company.name:'id:'+company.id} key={company.id} value={company.id} />)
-                  )
-              }
-            </Picker>
-          </View>
-          <Text note>{I18n.t('project')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader={I18n.t('selectOne')}
-              mode="dropdown"
-              selectedValue={this.state.project}
-              onValueChange={(value)=>{this.setState({project : value})}}>
-              {
-                this.props.projectList.map((project)=>
-                    (<Item label={project.title?project.title:''} key={project.id} value={project.id} />)
-                  )
-              }
-            </Picker>
           </View>
         </Content>
       <Footer>
