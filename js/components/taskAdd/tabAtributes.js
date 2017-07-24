@@ -68,7 +68,7 @@ class TabAtributes extends Component { // eslint-disable-line
     let createdById= this.props.loggedUserId;
     let assignedUserId = this.state.assignedUserId;
     let duration = this.state.duration==''?0:parseInt(this.state.duration);
-    let statusId= this.state.status.id;
+    let statusId= this.state.status!=''?this.state.status.id:'cj3odok71qrr10128le4rkzno';
     let requesterId=this.state.requesterUserId;
     let companyId=this.state.company;
     let projectId=this.state.project;
@@ -146,7 +146,7 @@ class TabAtributes extends Component { // eslint-disable-line
               onChangeText={ value => this.setWorkTime(value) }
             />
           </View>
-          
+
           <Text note>{I18n.t('status')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
           <Button rounded style={this.state.status==''?{}:{backgroundColor:this.state.status.color}} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text>{this.state.status==''?'Choose status':this.state.status.name}</Text></Button>
