@@ -13,6 +13,8 @@ $ cd HelpdeskAppTemplate/
 
 $ npm install
 
+$ yarn add react-native-i18n
+
 $ react-native upgrade
 
 $ react-native link
