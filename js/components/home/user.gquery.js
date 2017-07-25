@@ -102,7 +102,7 @@ export const tasks = gql`
 
 export const statuses = gql`
   query Statuses {
-       allStatuses (orderBy: id_DESC) {
+       allStatuses (orderBy: loadingPriority_ASC) {
 		id
     key: id
 		name

@@ -18,6 +18,8 @@ class SubtaskAdd extends Component {
     super(props);
     this.state = {
       subtaskName:'',
+      subtaskHeight:50,
+
     };
   }
 
@@ -48,6 +50,9 @@ class SubtaskAdd extends Component {
         <Text note>{I18n.t('title')}</Text>
         <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
           <Input
+            style={{height:Math.max(35, this.state.subtaskHeight)}}
+            multiline={true}
+            onChange={ event => this.setState({message:event.nativeEvent.text,subtaskHeight:event.nativeEvent.contentSize.height}) }
             value={this.state.subtaskName}
             onChangeText={ value => this.setState({subtaskName:value}) }
           />

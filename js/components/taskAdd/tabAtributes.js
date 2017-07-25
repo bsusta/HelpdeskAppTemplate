@@ -6,7 +6,7 @@ import styles from './styles';
 import { connect } from 'react-redux';
 import { createTask, users, companies,projects,editedTasksSubscription,editedProjectsSubscription } from './taskAdd.gquery';
 import { Actions } from 'react-native-router-flux';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator , Modal } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import I18n from '../../translations/';
 
@@ -34,6 +34,11 @@ class TabAtributes extends Component { // eslint-disable-line
       project:this.props.projectList[0].id,
       status:'',
       pickingStatus:false,
+      descriptionHeight:50,
+      repeated:{},
+      addingRepeatition:false,
+      startDate:null,
+      every:'0',
     }
   }
   componentDidMount(){
@@ -57,6 +62,18 @@ class TabAtributes extends Component { // eslint-disable-line
       this.setState({duration:input});
     }
   }
+  setEvery(input){
+    if(!/^\d*$/.test(input)){
+      return;
+    }
+    if(input.length==2 && input[0]=='0'){
+      this.setState({every:input[1]});
+    }
+    else{
+      this.setState({every:input});
+    }
+  }
+
   submitForm(){
     let deadlineAt=this.state.deadline!=null?this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z':null;
     if(deadlineAt=='--TZ'){
@@ -90,6 +107,67 @@ class TabAtributes extends Component { // eslint-disable-line
     return (
       <Container>
         <Content style={{ padding: 15 }}>
+
+        <Text note>{I18n.t('taskAddRepeatition')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+           <Button onPress={()=>this.setState({addingRepeatition:true})}>
+           <Text style={{ color: 'white' }} >{I18n.t('taskAddTaskAddRepeatition')}</Text>
+           </Button>
+          </View>
+          <Modal
+            animationType={"fade"}
+            transparent={false}
+            style={{flex:1}}
+            visible={this.state.addingRepeatition}
+            onRequestClose={() => this.setState({addingRepeatition:false})}
+            >
+            <Content style={{ padding: 15 }}>
+             <Text note>{I18n.t('taskAddStartDate')}</Text>
+             <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+               <DatePicker
+                 date={this.state.startDate}
+                 style={{width:380}}
+                 mode="datetime"
+                 placeholder={I18n.t('taskAddStartDate')}
+                 showIcon={false}
+                 androidMode="spinner"
+                 format="DD.MM.YYYY HH:MM"
+                 confirmBtnText={I18n.t('confirm')}
+                 cancelBtnText={I18n.t('cancel')}
+                 is24Hour={true}
+                 onDateChange={(date) => {this.setState({startDate: date})}}
+               />
+             </View>
+
+             <Text note>{I18n.t('taskAddEvery')}</Text>
+             <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+             <Input
+             keyboardType='numeric'
+             placeholder={ I18n.t('number')}
+             value={ this.state.every }
+             onChangeText={ value => this.setEvery(value) }
+             />
+             </View>
+
+            </Content>
+            <Footer>
+              <FooterTab>
+                <Button style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }} onPress={()=>this.setState({addingRepeatition:false,every:0})}>
+                  <Text style={{ color: 'white' }} >{I18n.t('back')}</Text>
+                </Button>
+              </FooterTab>
+
+              <FooterTab>
+                <Button style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}
+                onPress={()=>this.setState({addingRepeatition:false})}
+                >
+                  <Text style={{ color: 'white' }} >{I18n.t('save')}</Text>
+                </Button>
+              </FooterTab>
+          </Footer>
+
+          </Modal>
+
           <Text note>{I18n.t('taskAddTaskName')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
@@ -101,9 +179,11 @@ class TabAtributes extends Component { // eslint-disable-line
           <Text note>{I18n.t('taskAddDescription')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
+              style={{height:Math.max(35, this.state.descriptionHeight)}}
+              multiline={true}
+              onChange={ event => this.setState({taskDescription:event.nativeEvent.text,descriptionHeight:event.nativeEvent.contentSize.height}) }
               placeholder={I18n.t('taskAddDescriptionLabel')}
               value={ this.state.taskDescription }
-              onChangeText={ value => this.setState({taskDescription:value}) }
             />
           </View>
           <Text note>{I18n.t('project')}</Text>
@@ -194,12 +274,12 @@ class TabAtributes extends Component { // eslint-disable-line
 
           <Text note>{I18n.t('status')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <Button rounded style={this.state.status==''?{}:{backgroundColor:this.state.status.color}} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text>{this.state.status==''?'Choose status':this.state.status.name}</Text></Button>
+          <Button style={this.state.status==''?{flex:1}:{backgroundColor:this.state.status.color,flex:1}} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text style={{color:'white',flex:1,textAlign:'center'}}>{this.state.status==''?'Choose status':this.state.status.name}</Text></Button>
           {
             this.state.pickingStatus && this.props.statuses.map((status)=>
             this.state.status!=status &&
-            <Button rounded style={{backgroundColor:status.color}} onPress={()=>this.setState({status:status,pickingStatus:false})} key={status.id} >
-            <Text style={{color:'white'}}>{status.name}</Text>
+            <Button style={{backgroundColor:status.color}} onPress={()=>this.setState({status:status,pickingStatus:false})} key={status.id} >
+            <Text style={{color:'white',flex:1,textAlign:'center'}}>{status.name}</Text>
             </Button>)
           }
           </View>

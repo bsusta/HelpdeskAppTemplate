@@ -15,6 +15,7 @@ class TabComment extends Component { // eslint-disable-line
       super(props);
       this.state = {
         message:'',
+        messageHeight:50
       };
     }
 
@@ -34,11 +35,11 @@ class TabComment extends Component { // eslint-disable-line
           <Content style={{ padding: 15 }}>
               <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15}}>
               <Input
-                style={{height:100}}
+                style={{height:Math.max(35, this.state.messageHeight)}}
                 multiline={true}
+                onChange={ event => this.setState({message:event.nativeEvent.text,messageHeight:event.nativeEvent.contentSize.height}) }
                 placeholder={I18n.t('commentAddMessagePlaceholder')}
                 value={this.state.message}
-                onChangeText={ value => this.setState({message:value}) }
               />
             </View>
           </Content>

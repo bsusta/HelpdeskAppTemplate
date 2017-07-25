@@ -5,6 +5,7 @@ export default {
   confirm: 'Potvrdiť',
   save: 'Uložiť',
   cancel: 'Zrušiť',
+  back:'Späť',
   ok: 'OK',
   add: 'Pridať',
   delete:'Zmazať',
@@ -17,4 +18,5 @@ export default {
   search:'Vyhľadávať',
   all:'Všetky',
   logOut:'Ohlásiť',
+  number:'Číslo',
 };

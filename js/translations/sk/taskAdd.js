@@ -5,4 +5,8 @@ export default {
   taskAddTaskNameLabel: 'Napíšte názov úlohy',
   taskAddDescription: 'Popis úlohy',
   taskAddDescriptionLabel: 'Zadajte popis úlohy',
+  taskAddTaskAddRepeatition: 'Pridanie opakovania úlohy',
+  taskAddRepeatition:'Opakovanie',
+  taskAddEvery:'Každý',
+  taskAddStartDate:'Začiatok',
 };

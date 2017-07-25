@@ -1,16 +1,19 @@
 
 import React, { Component } from 'react';
-import { Right, Left, Container, Content, Card, CardItem, Text, Body, Footer, FooterTab, Button, Icon, CheckBox } from 'native-base';
+import { Right, Left, Container, Content, Card, CardItem, Text, Body, Footer, FooterTab, Button, Icon, CheckBox,Item, ListItem, List, View, Input } from 'native-base';
 import { withApollo } from 'react-apollo';
 import styles from './styles';
 import { Actions } from 'react-native-router-flux';
-import { ActivityIndicator, Alert } from 'react-native';
-import { changedSubtaskSubscription, deleteSubtask, updateSubtask } from './taskEdit.gquery';
+import { ActivityIndicator, Alert, Modal } from 'react-native';
+import { changedSubtaskSubscription, deleteSubtask, updateSubtask, createSubtask } from './taskEdit.gquery';
 import I18n from '../../translations/';
 
 class Subtasks extends Component { // eslint-disable-line
   constructor(props){
     super(props);
+    this.state={
+      subtaskName:'',
+    }
   }
   componentWillMount(){
     this.props.data.subscribeToMore({
@@ -19,6 +22,18 @@ class Subtasks extends Component { // eslint-disable-line
         this.props.data.refetch();
         return;
       },
+    });
+  }
+
+  submit(){
+    let name = this.state.subtaskName;
+    let taskId = this.props.id;
+    this.props.client.mutate({
+          mutation: createSubtask,
+          variables: { name,taskId },
+        });
+    this.setState({
+      subtaskName:'',
     });
   }
 
@@ -52,47 +67,46 @@ class Subtasks extends Component { // eslint-disable-line
     return (
       <Container>
         <Content padder style={{ marginTop: 0 }}>
+        <List>
         {
           this.props.data.allSubtasks.map((subtask)=>
-            <Card key={subtask.id}>
-            <CardItem>
-              <Left>
-                <Text note>{I18n.t('title')}</Text>
-              </Left>
-              <Right>
-                <Text>{subtask.name}</Text>
-              </Right>
-            </CardItem>
+            <ListItem thumbnail key={subtask.id}>
+            <Left>
+            </Left>
+              <CheckBox checked={subtask.finished} color='#3F51B5' onPress={()=>{this.changeSubtaskStatus(!subtask.finished,subtask.id)}} />
+            <Body>
+              <Text>{subtask.name}</Text>
+            </Body>
 
-              <CardItem>
-                <Left>
-                  <Button active block onPress={()=>this.deleteSubtask(subtask.id,subtask.name)}>
-                  <Icon name="trash" />
-                  <Text>{I18n.t('delete')}</Text>
-                  </Button>
-                </Left>
-                <Right>
-                  <Button active block onPress={()=>{this.changeSubtaskStatus(!subtask.finished,subtask.id)}}>
-                  <Text>{I18n.t('taskEditFinished')}</Text>
-                  {
-                    subtask.finished?<Text style={styles.checkboxText}>✓</Text>:<Text style={styles.checkboxText}>X</Text>
-                  }
-                  </Button>
-                </Right>
-              </CardItem>
-            </Card>
+            <Right>
+              <Button active block style={{backgroundColor:'white'}} onPress={()=>this.deleteSubtask(subtask.id,subtask.name)}>
+                <Icon name="trash" style={{color:'#3F51B5'}} />
+              </Button>
+            </Right>
+
+            </ListItem>
           )
         }
-
+        </List>
       </Content>
       <Footer>
-        <FooterTab>
-          <Button onPress={()=>Actions.subtaskAdd({id:this.props.id})} iconLeft style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
-            <Icon active style={{ color: 'white' }} name="md-add" />
-            <Text style={{ color: 'white' }} >{I18n.t('taskEditSubtask')}</Text>
-          </Button>
+        <FooterTab style={{flex:6,backgroundColor:'white'}}>
+        <Input
+          style={{flex:1,flexDirection:'column',borderColor:'#3F51B5',borderWidth:1}}
+          multiline={true}
+          onChange={ event => this.setState({message:event.nativeEvent.text,subtaskHeight:event.nativeEvent.contentSize.height}) }
+          value={this.state.subtaskName}
+          label={I18n.t('taskEditAddSubtask')}
+          onChangeText={ value => this.setState({subtaskName:value}) }
+        />
         </FooterTab>
-      </Footer>
+        <FooterTab style={{flex:1}}>
+        <Button onPress={this.submit.bind(this)} style={{ borderColor: 'white',flex:1, borderWidth: 0.5 }}>
+          <Icon active style={{ color: 'white' }} name="add" />
+        </Button>
+        </FooterTab>
+     </Footer>
+
       </Container>
     );
   }

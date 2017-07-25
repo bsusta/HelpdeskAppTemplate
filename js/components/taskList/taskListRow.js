@@ -17,7 +17,7 @@ class TaskListRow extends Component {
                 <Text numberOfLines={1} note>{I18n.t('assignedTo')}: {this.props.data.assignedUser?this.props.data.assignedUser.firstName:I18n.t('nobody')}</Text>
                 <Text numberOfLines={1} note>{I18n.t('deadline')}: {this.props.data.deadlineAt?this.props.data.deadlineAt:I18n.t('noDate')}</Text>
                 {
-                this.props.data.status&&<Item rounded style={{backgroundColor:this.props.data.status.color,flex:1,flexDirection:'column'}}>
+                this.props.data.status&&<Item style={{backgroundColor:this.props.data.status.color,flex:1,flexDirection:'column'}}>
                 <Text style={{color:'white',paddingLeft:10,paddingRight:10,flex:1,flexDirection:'column'}}>{this.props.data.status.name}</Text>
                 </Item>
                 }

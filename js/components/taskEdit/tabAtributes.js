@@ -22,6 +22,7 @@ class TabAtributes extends Component {
       requesterUserId:this.props.data.requester?this.props.data.requester.id:null,
       status:'',
       duration:this.props.data.duration?this.props.data.duration.toString():'0',
+      descriptionHeight:100,
       company:this.props.data.company?this.props.data.company.id:null,
       project:this.props.data.project?this.props.data.project.id:this.props.projectList[0].id,
     }
@@ -57,7 +58,7 @@ class TabAtributes extends Component {
      let id = this.props.data.id;
      let assignedUserId = this.state.assignedUserId;
      let duration = this.state.duration==''?0:parseInt(this.state.duration);
-     let statusId= this.state.status.id;
+     let statusId= this.state.status!=''?this.state.status.id:this.props.data.status.id;
      let requesterId=this.state.requesterUserId;
      let companyId=this.state.company;
      let projectId=this.state.project;
@@ -71,12 +72,12 @@ class TabAtributes extends Component {
 
   render() {
 
-    let statusButtonStyle={};
+    let statusButtonStyle={flex:1};
     if(this.state.status=='' && this.props.data.status){
-      statusButtonStyle={backgroundColor:this.props.data.status.color};
+      statusButtonStyle={backgroundColor:this.props.data.status.color,flex:1};
     }
     else if (this.state.status!='') {
-      statusButtonStyle={backgroundColor:this.state.status.color};
+      statusButtonStyle={backgroundColor:this.state.status.color,flex:1};
     }
     return (
       <Container>
@@ -92,20 +93,22 @@ class TabAtributes extends Component {
           <Text note>{I18n.t('taskAddDescription')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
-              placeholder={I18n.t('taskAddDescriptionLabel')}
+              style={{height:Math.max(35, this.state.descriptionHeight)}}
+              multiline={true}
+              onChange={ event => this.setState({taskDescription:event.nativeEvent.text,descriptionHeight:event.nativeEvent.contentSize.height}) }
               value={ this.state.taskDescription }
-              onChangeText={ value => this.setState({taskDescription:value}) }
+              placeholder={I18n.t('taskAddDescriptionLabel')}
             />
           </View>
 
           <Text note>{I18n.t('status')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <Button rounded style={statusButtonStyle} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text>{this.state.status =='' && this.props.data.status ? this.props.data.status.name : this.state.status ==''?'Choose status':this.state.status.name}</Text></Button>
+          <Button style={statusButtonStyle} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text style={{color:'white',flex:1,textAlign:'center'}}>{this.state.status =='' && this.props.data.status ? this.props.data.status.name : this.state.status ==''?'Choose status':this.state.status.name}</Text></Button>
           {
             this.state.pickingStatus && this.props.statuses.map((status)=>
             this.state.status!=status && !(this.props.data.status.id==status.id && this.state.status=='') &&
-            <Button rounded style={{backgroundColor:status.color}} onPress={()=>this.setState({status:status,pickingStatus:false})} key={status.id} >
-            <Text style={{color:'white'}}>{status.name}</Text>
+            <Button style={{backgroundColor:status.color,flex:1}} onPress={()=>this.setState({status:status,pickingStatus:false})} key={status.id} >
+            <Text style={{color:'white',flex:1,textAlign:'center'}}>{status.name}</Text>
             </Button>)
           }
           </View>

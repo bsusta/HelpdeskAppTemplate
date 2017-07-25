@@ -200,6 +200,18 @@ mutation updateSubtask($finished: Boolean,$id: ID!) {
 	}
 `;
 
+export const createSubtask = gql`
+	mutation createSubtask($name: String!,$taskId: ID!) {
+		createSubtask(
+      name:$name,
+      taskId:$taskId,
+		){
+      id,
+    }
+	}
+`;
+
+
 export const projects = gql`
   query Projects {
        allProjects (orderBy: id_DESC) {
