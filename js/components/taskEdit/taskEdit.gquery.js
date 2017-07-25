@@ -2,12 +2,50 @@ import gql from 'graphql-tag';
 import { taskFragment } from './task.fragments';
 import { commentFragment } from './comment.fragments';
 
+export const createRepeat = gql`
+	mutation createRepeat($every:Int!,$taskId:ID!,$repeated: REPEAT_REPEATED!,$startDate: DateTime!,$times: Int!) {
+		createRepeat(
+			every:$every
+			repeated:$repeated
+			startDate:$startDate
+			times:$times
+			taskId:$taskId
+		) {
+		  id
+		}
+	}
+`;
+
+export const updateRepeat = gql`
+	mutation updateRepeat($id: ID!,$every:Int!,$repeated: REPEAT_REPEATED!,$startDate: DateTime!,$times: Int!) {
+		updateRepeat(
+			id:$id
+			every:$every
+			repeated:$repeated
+			startDate:$startDate
+			times:$times
+		) {
+			id
+		}
+	}
+`;
+export const deleteRepeat = gql`
+	mutation ($id: ID!) {
+		deleteRepeat(
+			id: $id,
+		) {
+		  id
+		}
+	}
+`;
+
 export const updateTask = gql`
-	mutation updateTask($title: String!,$description: String,$id: ID!,$projectId:ID!,$assignedUserId: ID,$deadlineAt: DateTime,$duration:Int,$statusId:ID,$requesterId:ID,$companyId:ID) {
+	mutation updateTask($title: String!,$description: String,$id: ID!,$repeatId: ID,$projectId:ID!,$assignedUserId: ID,$deadlineAt: DateTime,$duration:Int,$statusId:ID,$requesterId:ID,$companyId:ID) {
 		updateTask(
       title: $title,
       description: $description,
 			id: $id,
+			repeatId:$repeatId,
 			assignedUserId: $assignedUserId,
 			deadlineAt: $deadlineAt,
 			duration: $duration,

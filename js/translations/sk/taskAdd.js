@@ -9,4 +9,9 @@ export default {
   taskAddRepeatition:'Opakovanie',
   taskAddEvery:'Každý',
   taskAddStartDate:'Začiatok',
+  taskAddRepetitionNumber:'Počet opakovaní',
+  taskAddRepetitionNumberPlaceholder:'Prázdne alebo 0 ak neobmedzene',
+  taskAddEmptyDate:'Nezadali ste dátum začiatku opakovania!',
+  taskAddEveryError:'Nezadali ste interval udalosti (1+)',
+  taskAddTimes:'-krát',
 };

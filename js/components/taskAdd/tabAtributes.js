@@ -1,10 +1,10 @@
 
 import React, { Component } from 'react';
-import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker, ListItem } from 'native-base';
+import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker, ListItem, Header,Title } from 'native-base';
 import { withApollo, graphql } from 'react-apollo';
 import styles from './styles';
 import { connect } from 'react-redux';
-import { createTask, users, companies,projects,editedTasksSubscription,editedProjectsSubscription } from './taskAdd.gquery';
+import { createTask, users, companies,projects,editedTasksSubscription,editedProjectsSubscription,createRepeat, updateRepeat } from './taskAdd.gquery';
 import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator , Modal } from 'react-native';
 import DatePicker from 'react-native-datepicker';
@@ -35,10 +35,12 @@ class TabAtributes extends Component { // eslint-disable-line
       status:'',
       pickingStatus:false,
       descriptionHeight:50,
-      repeated:{},
       addingRepeatition:false,
       startDate:null,
-      every:'0',
+      every:'',
+      repeated:'Day',
+      repetitionNumber:'',
+      errorMessage:'',
     }
   }
   componentDidMount(){
@@ -50,7 +52,18 @@ class TabAtributes extends Component { // eslint-disable-line
       },
     });
   }
+  finishRepetitionAdding(){
+    if(this.state.startDate==null){
+      this.setState({errorMessage:I18n.t('taskAddEmptyDate')});
+    }
+    else if(this.state.every==''){
+      this.setState({errorMessage:I18n.t('taskAddEveryError')});
+    }
+    else{
+      this.setState({addingRepeatition:false,errorMessage:''});
+    }
 
+  }
   setWorkTime(input) {
     if(!/^\d*$/.test(input)){
       return;
@@ -66,11 +79,22 @@ class TabAtributes extends Component { // eslint-disable-line
     if(!/^\d*$/.test(input)){
       return;
     }
-    if(input.length==2 && input[0]=='0'){
-      this.setState({every:input[1]});
+    if(input[0]=='0'){
+      this.setState({every:''});
     }
     else{
       this.setState({every:input});
+    }
+  }
+  setRepetitionNumber(input){
+    if(!/^\d*$/.test(input)){
+      return;
+    }
+    if(input.length==2 && input[0]=='0'){
+      this.setState({repetitionNumber:input[1]});
+    }
+    else{
+      this.setState({repetitionNumber:input});
     }
   }
 
@@ -79,6 +103,11 @@ class TabAtributes extends Component { // eslint-disable-line
     if(deadlineAt=='--TZ'){
       deadlineAt=null;
     }
+    let startDate=this.state.startDate!=null?this.state.startDate.substring(6,10)+'-'+this.state.startDate.substring(3,5)+'-'+this.state.startDate.substring(0,2)+'T'+this.state.startDate.substring(11)+'Z':null;
+    if(startDate=='--TZ'){
+      startDate=null;
+    }
+
     let title = this.state.taskName;
     let description = this.state.taskDescription;
     let client = this.props.client;
@@ -90,10 +119,35 @@ class TabAtributes extends Component { // eslint-disable-line
     let companyId=this.state.company;
     let projectId=this.state.project;
 
-    client.mutate({
-          mutation: createTask,
-          variables: { title, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId },
-        });
+    let every=parseInt(this.state.every);
+    let repeated=this.state.repeated;
+    let times=parseInt(this.state.repetitionNumber==''?0:this.state.repetitionNumber);
+    let repeatId=null;
+    if(startDate!=null){
+      client.mutate({
+            mutation: createRepeat,
+            variables: { every, repeated, startDate, times},
+          }).then((result)=>{
+            repeatId=result.data.createRepeat.id;
+            client.mutate({
+              mutation: createTask,
+              variables: { title, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId },
+            }).then((result2)=>{
+              client.mutate({
+                    mutation: updateRepeat,
+                    variables: {id:repeatId, taskId:result2.data.createTask.id},
+                  });
+            });
+          })
+
+    }    else{
+      client.mutate({
+        mutation: createTask,
+        variables: { title, repeatId, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId },
+      });
+    }
+
+
     Actions.pop();
   }
 
@@ -110,8 +164,8 @@ class TabAtributes extends Component { // eslint-disable-line
 
         <Text note>{I18n.t('taskAddRepeatition')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-           <Button onPress={()=>this.setState({addingRepeatition:true})}>
-           <Text style={{ color: 'white' }} >{I18n.t('taskAddTaskAddRepeatition')}</Text>
+          <Button block onPress={()=>this.setState({addingRepeatition:true})}>
+            <Text style={{ color: 'white' }} >{this.state.startDate==null ? I18n.t('taskAddTaskAddRepeatition') : (I18n.t('from')+' '+this.state.startDate +' '+I18n.t('every')+' '+this.state.every+' '+I18n.t(this.state.repeated.toLowerCase())+ ' '+ ((this.state.repetitionNumber==''||this.state.repetitionNumber=='0')?I18n.t('forever'): this.state.repetitionNumber + I18n.t('taskAddTimes')))}</Text>
            </Button>
           </View>
           <Modal
@@ -121,6 +175,12 @@ class TabAtributes extends Component { // eslint-disable-line
             visible={this.state.addingRepeatition}
             onRequestClose={() => this.setState({addingRepeatition:false})}
             >
+            <Header>
+              <Body>
+                <Title>{I18n.t('taskAddTaskAddRepeatition')}</Title>
+              </Body>
+            </Header>
+
             <Content style={{ padding: 15 }}>
              <Text note>{I18n.t('taskAddStartDate')}</Text>
              <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
@@ -141,31 +201,56 @@ class TabAtributes extends Component { // eslint-disable-line
 
              <Text note>{I18n.t('taskAddEvery')}</Text>
              <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-             <Input
-             keyboardType='numeric'
-             placeholder={ I18n.t('number')}
-             value={ this.state.every }
-             onChangeText={ value => this.setEvery(value) }
-             />
+               <Input
+               keyboardType='numeric'
+               placeholder={ I18n.t('number')}
+               value={ this.state.every }
+               onChangeText={ value => this.setEvery(value) }
+               />
              </View>
+
+             <Text note>{I18n.t('time')}</Text>
+             <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+               <Picker
+                 supportedOrientations={['portrait', 'landscape']}
+                 iosHeader={I18n.t('selectOne')}
+                 mode="dropdown"
+                 selectedValue={this.state.repeated}
+                 onValueChange={(value)=>{this.setState({repeated : value})}}>
+                 <Item label={I18n.t('day')} value={'Day'} />
+                 <Item label={I18n.t('week')} value={'Week'} />
+                 <Item label={I18n.t('month')} value={'Month'} />
+                 <Item label={I18n.t('year')} value={'Year'} />
+                </Picker>
+             </View>
+
+             <Text note>{I18n.t('taskAddRepetitionNumber')}</Text>
+             <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+               <Input
+               keyboardType='numeric'
+               placeholder={ I18n.t('taskAddRepetitionNumberPlaceholder')}
+               value={ this.state.repetitionNumber }
+               onChangeText={ value => this.setRepetitionNumber(value) }
+               />
+             </View>
+            <Text style={{color:'red'}}>{this.state.errorMessage}</Text>
 
             </Content>
             <Footer>
               <FooterTab>
-                <Button style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }} onPress={()=>this.setState({addingRepeatition:false,every:0})}>
-                  <Text style={{ color: 'white' }} >{I18n.t('back')}</Text>
+                <Button style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }} onPress={()=>this.setState({errorMessage:'',addingRepeatition:false, startDate:null, every:'0', repeated:'Day', repetitionNumber:''})}>
+                  <Text style={{ color: 'white' }} >{I18n.t('cancel')}</Text>
                 </Button>
               </FooterTab>
 
               <FooterTab>
                 <Button style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}
-                onPress={()=>this.setState({addingRepeatition:false})}
+                onPress={this.finishRepetitionAdding.bind(this)}
                 >
                   <Text style={{ color: 'white' }} >{I18n.t('save')}</Text>
                 </Button>
               </FooterTab>
-          </Footer>
-
+            </Footer>
           </Modal>
 
           <Text note>{I18n.t('taskAddTaskName')}</Text>

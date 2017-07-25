@@ -19,4 +19,12 @@ export default {
   all:'Všetky',
   logOut:'Ohlásiť',
   number:'Číslo',
+  time:'Čas',
+  day:'Deň',
+  week:'Týždeň',
+  month:'Mesiac',
+  year:'Rok',
+  from:'Od',
+  every:'každý',
+  forever:'navždy'
 };

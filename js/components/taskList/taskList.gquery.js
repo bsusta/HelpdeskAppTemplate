@@ -19,6 +19,13 @@ export const inboxTasks =  gql`
        {
     title
     description
+    repeat{
+      id
+      every
+      repeated
+      startDate
+      times
+    }
 		id
     key: id
     createdAt
@@ -88,6 +95,13 @@ export const closedProjectTasks =  gql`
 			surName
 			id
 		}
+    repeat{
+      id
+      every
+      repeated
+      startDate
+      times
+    }
     deadlineAt
     duration
     status{
@@ -139,6 +153,13 @@ export const activeProjectTasks =  gql`
       firstName
 			surName
       id
+    }
+    repeat{
+      id
+      every
+      repeated
+      startDate
+      times
     }
 		createdBy{
 			firstName
@@ -200,6 +221,13 @@ export const myProjectTasks =  gql`
 			surName
       id
     }
+    repeat{
+      id
+      every
+      repeated
+      startDate
+      times
+    }
 		createdBy{
 			firstName
 			surName
@@ -251,6 +279,13 @@ export const subscribeToMoreTasks = gql`
           id
           color
           name
+        }
+        repeat{
+          id
+          every
+          repeated
+          startDate
+          times
         }
 				requester{
 					firstName
