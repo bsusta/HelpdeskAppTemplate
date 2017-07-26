@@ -40,11 +40,13 @@ export const deleteRepeat = gql`
 `;
 
 export const updateTask = gql`
-	mutation updateTask($title: String!,$description: String,$id: ID!,$repeatId: ID,$projectId:ID!,$assignedUserId: ID,$deadlineAt: DateTime,$duration:Int,$statusId:ID,$requesterId:ID,$companyId:ID) {
+	mutation updateTask($pendingAt:DateTime,$closedAt:DateTime,$title: String!,$description: String,$id: ID!,$repeatId: ID,$projectId:ID!,$assignedUserId: ID,$deadlineAt: DateTime,$duration:Int,$statusId:ID,$requesterId:ID,$companyId:ID) {
 		updateTask(
       title: $title,
       description: $description,
 			id: $id,
+			pendingAt:$pendingAt
+			closedAt:$closedAt
 			repeatId:$repeatId,
 			assignedUserId: $assignedUserId,
 			deadlineAt: $deadlineAt,

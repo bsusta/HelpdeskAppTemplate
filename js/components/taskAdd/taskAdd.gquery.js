@@ -3,18 +3,20 @@ import { taskFragment } from './task.fragments';
 
 
 export const createTask = gql`
-	mutation CreateTask($title: String!,$repeatId:ID,$description: String,$createdById: ID!,$projectId:ID!,$assignedUserId: ID,$deadlineAt: DateTime,$duration:Int,$statusId: ID!,$requesterId:ID,$companyId:ID) {
+	mutation CreateTask($title: String!,$repeatId:ID,$description: String,$createdById: ID!,$projectId:ID!,$assignedUserId: ID,$deadlineAt: DateTime,$pendingAt:DateTime,$closedAt:DateTime,$duration:Int,$statusId: ID!,$requesterId:ID,$companyId:ID) {
 		createTask(
-			title: $title,
-			repeatId:$repeatId,
-      description: $description,
-			assignedUserId: $assignedUserId,
-			deadlineAt: $deadlineAt,
-			duration: $duration,
-			statusId: $statusId,
-			requesterId:$requesterId,
-			companyId:$companyId,
-			projectId:$projectId,
+			title: $title
+			repeatId:$repeatId
+      description: $description
+			assignedUserId: $assignedUserId
+			deadlineAt: $deadlineAt
+			duration: $duration
+			statusId: $statusId
+			pendingAt:$pendingAt
+			closedAt:$closedAt
+			requesterId:$requesterId
+			companyId:$companyId
+			projectId:$projectId
 			createdById:$createdById
 		) {
 		  ...TaskInfo

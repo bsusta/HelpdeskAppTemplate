@@ -15,6 +15,8 @@ export default {
   taxNumber:'Daňové číslo',
   vat:'VAT',
   zipCode:'PSČ',
-  note:'Poznámka'
+  note:'Poznámka',
+  pendingAt:'Prebieha do',
+  closedAt:'Uzavreté dňa',
 
 };

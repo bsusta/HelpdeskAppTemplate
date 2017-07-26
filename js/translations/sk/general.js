@@ -24,7 +24,5 @@ export default {
   week:'Týždeň',
   month:'Mesiac',
   year:'Rok',
-  from:'Od',
-  every:'každý',
-  forever:'navždy'
+  every:'Každý',
 };

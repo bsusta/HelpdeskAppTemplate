@@ -19,6 +19,7 @@
     "react": "15.4.2",
     "react-apollo": "^1.4.2",
     "react-native": "0.42.3",
+    "react-native-autocomplete-select": "^1.0.0",
     "react-native-code-push": "1.17.0-beta",
     "react-native-datepicker": "^1.6.0",
     "react-native-easy-grid": "^0.1.8",

@@ -18,6 +18,8 @@ export const inboxTasks =  gql`
        )
        {
     title
+    pendingAt
+    closedAt
     description
     repeat{
       id
@@ -83,6 +85,8 @@ export const closedProjectTasks =  gql`
     title
     description
 		id
+    pendingAt
+    closedAt
     key: id
     createdAt
     assignedUser{
@@ -148,6 +152,8 @@ export const activeProjectTasks =  gql`
     description
 		id
     key: id
+    pendingAt
+    closedAt
     createdAt
     assignedUser{
       firstName
@@ -214,6 +220,8 @@ export const myProjectTasks =  gql`
     title
     description
 		id
+    pendingAt
+    closedAt
     key: id
     createdAt
     assignedUser{
@@ -274,6 +282,8 @@ export const subscribeToMoreTasks = gql`
           id
         }
         deadlineAt
+        pendingAt
+        closedAt
         duration
         status{
           id

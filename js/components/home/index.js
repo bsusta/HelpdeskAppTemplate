@@ -128,6 +128,12 @@ class Home extends Component {
     );
   }
   render() {
+    if(this.props.loadingUsers || this.props.loadingStatuses || this.props.loadingCompanies){
+      return  (<ActivityIndicator
+      animating size={ 'large' }
+      color='#007299' />)
+    }
+
     return (
       <Container>
         <Content padder style={{ backgroundColor: '#FFF', padding: 20 }}>

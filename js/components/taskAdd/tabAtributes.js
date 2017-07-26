@@ -9,6 +9,7 @@ import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator , Modal } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import I18n from '../../translations/';
+import AutoComplete from 'react-native-autocomplete-select';
 
 const withProjects = graphql(projects, {
   props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
@@ -41,6 +42,9 @@ class TabAtributes extends Component { // eslint-disable-line
       repeated:'Day',
       repetitionNumber:'',
       errorMessage:'',
+      companyQuery:'',
+      pendingAt:null,
+      closedAt:null,
     }
   }
   componentDidMount(){
@@ -103,6 +107,16 @@ class TabAtributes extends Component { // eslint-disable-line
     if(deadlineAt=='--TZ'){
       deadlineAt=null;
     }
+    let pendingAt=this.state.pendingAt!=null?this.state.pendingAt.substring(6,10)+'-'+this.state.pendingAt.substring(3,5)+'-'+this.state.pendingAt.substring(0,2)+'T'+this.state.pendingAt.substring(11)+'Z':null;
+    if(pendingAt=='--TZ'){
+      pendingAt=null;
+    }
+    let closedAt=this.state.closedAt!=null?this.state.closedAt.substring(6,10)+'-'+this.state.closedAt.substring(3,5)+'-'+this.state.closedAt.substring(0,2)+'T'+this.state.closedAt.substring(11)+'Z':null;
+    if(closedAt=='--TZ'){
+      closedAt=null;
+    }
+
+
     let startDate=this.state.startDate!=null?this.state.startDate.substring(6,10)+'-'+this.state.startDate.substring(3,5)+'-'+this.state.startDate.substring(0,2)+'T'+this.state.startDate.substring(11)+'Z':null;
     if(startDate=='--TZ'){
       startDate=null;
@@ -131,7 +145,7 @@ class TabAtributes extends Component { // eslint-disable-line
             repeatId=result.data.createRepeat.id;
             client.mutate({
               mutation: createTask,
-              variables: { title, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId },
+              variables: { title, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId,closedAt, pendingAt },
             }).then((result2)=>{
               client.mutate({
                     mutation: updateRepeat,
@@ -143,7 +157,7 @@ class TabAtributes extends Component { // eslint-disable-line
     }    else{
       client.mutate({
         mutation: createTask,
-        variables: { title, repeatId, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId },
+        variables: { title, repeatId, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId,closedAt, pendingAt },
       });
     }
 
@@ -157,47 +171,48 @@ class TabAtributes extends Component { // eslint-disable-line
       animating size={ 'large' }
       color='#007299' />
     }
-
     return (
       <Container>
         <Content style={{ padding: 15 }}>
 
-        <Text note>{I18n.t('taskAddRepeatition')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <Button block onPress={()=>this.setState({addingRepeatition:true})}>
-            <Text style={{ color: 'white' }} >{this.state.startDate==null ? I18n.t('taskAddTaskAddRepeatition') : (I18n.t('from')+' '+this.state.startDate +' '+I18n.t('every')+' '+this.state.every+' '+I18n.t(this.state.repeated.toLowerCase())+ ' '+ ((this.state.repetitionNumber==''||this.state.repetitionNumber=='0')?I18n.t('forever'): this.state.repetitionNumber + I18n.t('taskAddTimes')))}</Text>
-           </Button>
-          </View>
-          <Modal
-            animationType={"fade"}
-            transparent={false}
-            style={{flex:1}}
-            visible={this.state.addingRepeatition}
-            onRequestClose={() => this.setState({addingRepeatition:false})}
-            >
-            <Header>
-              <Body>
-                <Title>{I18n.t('taskAddTaskAddRepeatition')}</Title>
-              </Body>
-            </Header>
+          <Text note>{I18n.t('taskAddRepeatition')}</Text>
+            <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
 
-            <Content style={{ padding: 15 }}>
-             <Text note>{I18n.t('taskAddStartDate')}</Text>
-             <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-               <DatePicker
-                 date={this.state.startDate}
-                 style={{width:380}}
-                 mode="datetime"
-                 placeholder={I18n.t('taskAddStartDate')}
-                 showIcon={false}
-                 androidMode="spinner"
-                 format="DD.MM.YYYY HH:MM"
-                 confirmBtnText={I18n.t('confirm')}
-                 cancelBtnText={I18n.t('cancel')}
-                 is24Hour={true}
-                 onDateChange={(date) => {this.setState({startDate: date})}}
-               />
-             </View>
+              <Button block iconLeft onPress={()=>this.setState({addingRepeatition:true})}>
+                <Icon active name="refresh" style={{ color: 'white' }} />
+                <Text style={{ color: 'white' }} >{this.state.startDate==null ? I18n.t('taskAddTaskAddRepeatition') : I18n.t('every')+' '+this.state.every+' '+I18n.t(this.state.repeated.toLowerCase())}</Text>
+              </Button>
+            </View>
+            <Modal
+              animationType={"fade"}
+              transparent={false}
+              style={{flex:1}}
+              visible={this.state.addingRepeatition}
+              onRequestClose={() => this.setState({addingRepeatition:false})}
+              >
+              <Header>
+                <Body>
+                  <Title>{I18n.t('taskAddTaskAddRepeatition')}</Title>
+                </Body>
+              </Header>
+
+              <Content style={{ padding: 15 }}>
+               <Text note>{I18n.t('taskAddStartDate')}</Text>
+               <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+                 <DatePicker
+                   date={this.state.startDate}
+                   style={{width:380}}
+                   mode="datetime"
+                   placeholder={I18n.t('taskAddStartDate')}
+                   showIcon={false}
+                   androidMode="spinner"
+                   format="DD.MM.YYYY HH:MM"
+                   confirmBtnText={I18n.t('confirm')}
+                   cancelBtnText={I18n.t('cancel')}
+                   is24Hour={true}
+                   onDateChange={(date) => {this.setState({startDate: date})}}
+                 />
+              </View>
 
              <Text note>{I18n.t('taskAddEvery')}</Text>
              <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
@@ -303,18 +318,13 @@ class TabAtributes extends Component { // eslint-disable-line
           </View>
           <Text note>{I18n.t('company')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader={I18n.t('selectOne')}
-              mode="dropdown"
-              selectedValue={this.state.company}
-              onValueChange={(value)=>{this.setState({company : value})}}>
-              {
-                [{id:null,key:'',name:I18n.t('none')}].concat(this.props.companies).map((company)=>
-                    (<Item label={company.name?company.name:'id:'+company.id} key={company.id} value={company.id} />)
-                  )
-              }
-            </Picker>
+          <AutoComplete
+            onSelect={(value)=>this.setState({companyQuery:value.name,company:value.id})}
+            suggestions={[{id:null,key:'',name:I18n.t('none')}].concat(this.props.companies)}
+            suggestionObjectTextProperty='name'
+            value={this.state.companyQuery}
+            onChangeText={(value)=>this.setState({companyQuery:value})}
+          />
           </View>
           <Text note>{I18n.t('assignedTo')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
@@ -345,6 +355,40 @@ class TabAtributes extends Component { // eslint-disable-line
               cancelBtnText={I18n.t('cancel')}
               is24Hour={true}
               onDateChange={(date) => {this.setState({deadline: date})}}
+            />
+          </View>
+
+          <Text note>{I18n.t('pendingAt')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <DatePicker
+              date={this.state.pendingAt}
+              style={{width:380}}
+              mode="datetime"
+              placeholder={I18n.t('pendingAt')}
+              showIcon={false}
+              androidMode="spinner"
+              format="DD.MM.YYYY HH:MM"
+              confirmBtnText={I18n.t('confirm')}
+              cancelBtnText={I18n.t('cancel')}
+              is24Hour={true}
+              onDateChange={(date) => {this.setState({pendingAt: date})}}
+            />
+          </View>
+
+          <Text note>{I18n.t('closedAt')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <DatePicker
+              date={this.state.closedAt}
+              style={{width:380}}
+              mode="datetime"
+              placeholder={I18n.t('closedAt')}
+              showIcon={false}
+              androidMode="spinner"
+              format="DD.MM.YYYY HH:MM"
+              confirmBtnText={I18n.t('confirm')}
+              cancelBtnText={I18n.t('cancel')}
+              is24Hour={true}
+              onDateChange={(date) => {this.setState({closedAt: date})}}
             />
           </View>
 

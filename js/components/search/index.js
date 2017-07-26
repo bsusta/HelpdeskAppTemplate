@@ -8,79 +8,101 @@ import TaskListRow from './taskListRow';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 import I18n from '../../translations/';
+import { graphql} from 'react-apollo';
+import TaskList from './taskList';
+import {taskNameFilter,taskAssignedUserFilter,taskRequesterFilter,taskCompanyFilter,taskProjectFilter,taskStatusFilter,taskCreatedByFilter,taskWorkHoursFilter,taskDescriptionFilter} from './search.gquery.js';
 
 class Search extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      filterCategory:null,
+      filterCategory:'title',
       displayed:[],
-      filterWord:''
+      filterWord:'',
+      wrapper:null,
     }
 }
 
-  filterDisplayed(){
+  async filterDisplayed(){
     let category=this.state.filterCategory;
-    let word= this.state.filterWord.toLowerCase();
-    this.setState({
-      displayed:this.props.taskList.filter((task)=>{
-        if(category==null){
-          let assignedUserFullname='';
-          let assignedUserReversed='';
-          let requesterUserFullname='';
-          let requesterUserReversed='';
-          let createdByUserFullname='';
-          let createdByUserReversed='';
-          if(task["assignedUser"]){
-            assignedUserFullname= (task["assignedUser"].firstName?task["assignedUser"].firstName:'')+' '+(task["assignedUser"].surName?task["assignedUser"].surName:'');
-            assignedUserReversed= (task["assignedUser"].surName?task["assignedUser"].surName:'')+' '+(task["assignedUser"].firstName?task["assignedUser"].firstName:'');
-          }
+    let word= this.state.filterWord;
+    let query='';
 
-          if(task["requester"]){
-            requesterUserFullname= (task["requester"].firstName?task["requester"].firstName:'')+' '+(task["requester"].surName?task["requester"].surName:'');
-            requesterUserReversed= (task["requester"].surName?task["requester"].surName:'')+' '+(task["requester"].firstName?task["requester"].firstName:'');
-          }
-          if(task["createdBy"]){
-            createdByUserFullname= (task["createdBy"].firstName?task["createdBy"].firstName:'')+' '+(task["createdBy"].surName?task["createdBy"].surName:'');
-            createdByUserReversed= (task["createdBy"].surName?task["createdBy"].surName:'')+' '+(task["createdBy"].firstName?task["createdBy"].firstName:'');
-          }
-
-          return assignedUserFullname.toLowerCase().includes(word)||assignedUserReversed.toLowerCase().includes(word)
-          ||requesterUserFullname.toLowerCase().includes(word)||requesterUserReversed.toLowerCase().includes(word)
-          ||createdByUserFullname.toLowerCase().includes(word)||createdByUserReversed.toLowerCase().includes(word)
-          ||(task["company"]?(task["company"].name?task["company"].name.toLowerCase().includes(word):false):false)
-          ||(task["project"]?(task["project"].title?task["project"].title.toLowerCase().includes(word):false):false)
-          ||(task["duration"]?task["duration"]==parseInt(word):false)
-          ||(task["title"]?task["title"].toLowerCase().includes(word):false)
-          ||(task["status"]?task["status"].toLowerCase().includes(word):false)
-          ||(task["description"]?task["description"].toLowerCase().includes(word):false);
-
-        }
-        else if(category=="assignedUser"||category=="requester"||category=="createdBy"){
-          if(!task[category]){
-            return false;
-          }
-          let fullname= (task[category].firstName?task[category].firstName:'')+' '+(task[category].surName?task[category].surName:'');
-          let fullnameReversed= (task[category].surName?task[category].surName:'')+' '+(task[category].firstName?task[category].firstName:'');
-          return fullname.toLowerCase().includes(word)||fullnameReversed.toLowerCase().includes(word);
-        }
-        switch (category) {
-          case "company":
-            return task[category]?(task[category].name?task[category].name.toLowerCase().includes(word):false):false;
-            break;
-          case "project":
-            return task[category]?(task[category].title?task[category].title.toLowerCase().includes(word):false):false;
-            break;
-          case "duration":
-            return task[category]?task[category]==parseInt(word):false;
-          break;
-          default:
-            return task[category]?task[category].toLowerCase().includes(word):false;
-            break;
-        }
-      })
-    });
+    switch(category){
+      case 'title':{
+        query=taskNameFilter;
+        break;
+      }
+      case 'assignedUser':{
+        query=taskAssignedUserFilter;
+        break;
+      }
+      case 'requester':{
+        query=taskRequesterFilter;
+        break;
+      }
+      case 'company':{
+        query=taskCompanyFilter;
+        break;
+      }
+      case 'project':{
+        query=taskProjectFilter;
+        break;
+      }
+      case 'status':{
+        query=taskStatusFilter;
+        break;
+      }
+      case 'createdBy':{
+        query=taskCreatedByFilter;
+        break;
+      }
+      case 'duration':{
+        query=taskWorkHoursFilter;
+        break;
+      }
+      case 'description':{
+        query=taskDescriptionFilter;
+        break;
+      }
+      default:return;
+    }
+    let wrapper= graphql(query,{
+            options:{
+              variables:{
+                after:null,
+                limit:10,
+                filter:category=='duration'?parseInt(word):word,
+              },
+            },
+            props: ({ data: { loading, allTasks, error, refetch, fetchMore,subscribeToMore } }) => ({
+              loading,
+              allTasks,
+              error,
+              refetch,
+              subscribeToMore,
+              getMore:()=>{
+                fetchMore(
+                  {
+                    variables:{
+                      after:allTasks.length==0?null:allTasks[allTasks.length-1].id,
+                      limit:this.props.numberOfTasks,
+                      filter:word,
+                    },
+                    updateQuery:(previousResult,{fetchMoreResult})=>{
+                      if(fetchMoreResult.allTasks.length==0){
+                        return previousResult;
+                      }
+                      return Object.assign({},previousResult, {
+                        allTasks: [...previousResult.allTasks, ...fetchMoreResult.allTasks]});
+                    }
+                  }
+                )
+              }
+            })
+          });
+      this.setState({wrapper:wrapper(TaskList)})
   }
 
   render() {
@@ -112,27 +134,25 @@ class Search extends Component {
                 mode="dropdown"
                 selectedValue={this.state.filterCategory}
                 onValueChange={(value)=>this.setState({filterCategory:value})}>
-                <Item label={I18n.t('all')} value={null} />
                 <Item label={I18n.t('title')} value="title" />
                 <Item label={I18n.t('assignedTo')} value="assignedUser" />
                 <Item label={I18n.t('requester')} value="requester" />
                 <Item label={I18n.t('company')} value="company" />
                 <Item label={I18n.t('project')} value="project" />
                 <Item label={I18n.t('status')} value="status" />
+                <Item label={I18n.t('workHours')} value="duration" />
                 <Item label={I18n.t('createdBy')} value="createdBy" />
                 <Item label={I18n.t('description')} value="description" />
-                <Item label={I18n.t('workHours')} value="duration" />
               </Picker>
             </Body>
           </ListItem>
+
           <Button onPress={this.filterDisplayed.bind(this)} primary block style={{ margin: 15 }}>
             <Text>{I18n.t('search')}</Text>
           </Button>
-          <List>
           {
-            this.state.displayed.map((data) => data.project.id==this.props.projectId||this.props.projectId==null?<TaskListRow data={data} key={data.id} />:null)
+            this.state.wrapper && <this.state.wrapper/>
           }
-          </List>
         </Content>
       </Container>
     );
