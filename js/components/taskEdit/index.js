@@ -54,6 +54,7 @@ class TaskEdit extends Component {
     const withData3 = graphql(subtasks,{options:{variables:{
       id:this.props.data.id,
     },
+    },
       props: ({ data: { loading, allSubtasks, error, refetch, subscribeToMore } }) => ({
         loading,
         allSubtasks,
@@ -61,7 +62,7 @@ class TaskEdit extends Component {
         refetch,
         subscribeToMore,
       })
-    }});
+    });
     HOCTabSubtasks=withData3(Subtasks);
 
     const withData2 = graphql(invoiceItems,{options:{variables:{

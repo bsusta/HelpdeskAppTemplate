@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { actions } from 'react-native-navigation-redux-helpers';
@@ -13,6 +12,10 @@ import styles from './styles';
 import I18n from '../../translations/';
 
 class TaskList extends Component {
+  constructor(props){
+    super(props);
+    this.state={items:10}
+  }
   componentDidMount(){
     this.props.subscribeToMore({
       document: subscribeToMoreTasks,
@@ -28,18 +31,21 @@ class TaskList extends Component {
     }
     return (
       <View style={{flex:1,flexDirection:'column'}}>
-          <List>
-          {
-            this.props.allTasks.map((data) => <TaskListRow style={{flex:1,flexDirection:'column'}} data={data} key={data.id} />)
-          }
-          </List>
+        <List>
+        {
+          this.props.allTasks.map((data) => <TaskListRow style={{flex:1,flexDirection:'column'}} data={data} key={data.id} />)
+        }
+        </List>
+      {
+        this.state.items==this.props.allTasks.length &&
         <Button
-          block
-          primary
-          style={styles.mb15}
-          onPress={this.props.getMore}>
-          <Text>{I18n.t('taskListLoadMore')}</Text>
-          </Button>
+        block
+        primary
+        style={styles.mb15}
+        onPress={this.props.getMore}>
+        <Text>{I18n.t('taskListLoadMore')}</Text>
+        </Button>
+      }
       </View>
     );
   }

@@ -22,7 +22,7 @@ class TaskListLoader extends Component {
             id:this.props.loggedUserId,
             status:'Done',
             after:null,
-            limit:this.props.numberOfTasks,
+            limit:10,
           },
         },
         props: ({ data: { loading, allTasks, error, refetch, fetchMore,subscribeToMore } }) => ({
@@ -38,7 +38,7 @@ class TaskListLoader extends Component {
                   id:this.props.loggedUserId,
                   statusId:'cj5b6hwro0m5d0161vwmgev4o',
                   after:allTasks.length==0?null:allTasks[allTasks.length-1].id,
-                  limit:this.props.numberOfTasks,
+                  limit:10,
                 },
                 updateQuery:(previousResult,{fetchMoreResult})=>{
                   if(fetchMoreResult.allTasks.length==0){

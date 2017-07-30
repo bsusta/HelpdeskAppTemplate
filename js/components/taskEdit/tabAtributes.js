@@ -1,6 +1,4 @@
-
 import React, { Component } from 'react';
-
 import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker,  ListItem, Header,Title } from 'native-base';
 import { ActivityIndicator, Modal } from 'react-native';
 import styles from './styles';
@@ -103,77 +101,76 @@ class TabAtributes extends Component {
     }
   }
 
-   submitForm(){
-     let deadlineAt=new Date(this.state.deadline)=="Invalid Date"?(this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z'):this.props.data.deadlineAt;
+  submitForm(){
+    let deadlineAt=new Date(this.state.deadline)=="Invalid Date"?(this.state.deadline.substring(6,10)+'-'+this.state.deadline.substring(3,5)+'-'+this.state.deadline.substring(0,2)+'T'+this.state.deadline.substring(11)+'Z'):this.props.data.deadlineAt;
 
-     let pendingAt=new Date(this.state.pendingAt)=="Invalid Date"?(this.state.pendingAt.substring(6,10)+'-'+this.state.pendingAt.substring(3,5)+'-'+this.state.pendingAt.substring(0,2)+'T'+this.state.pendingAt.substring(11)+'Z'):this.props.data.pendingAt;
+    let pendingAt=new Date(this.state.pendingAt)=="Invalid Date"?(this.state.pendingAt.substring(6,10)+'-'+this.state.pendingAt.substring(3,5)+'-'+this.state.pendingAt.substring(0,2)+'T'+this.state.pendingAt.substring(11)+'Z'):this.props.data.pendingAt;
 
-     let closedAt=new Date(this.state.closedAt)=="Invalid Date"?(this.state.closedAt.substring(6,10)+'-'+this.state.closedAt.substring(3,5)+'-'+this.state.closedAt.substring(0,2)+'T'+this.state.closedAt.substring(11)+'Z'):this.props.data.closedAt;
+    let closedAt=new Date(this.state.closedAt)=="Invalid Date"?(this.state.closedAt.substring(6,10)+'-'+this.state.closedAt.substring(3,5)+'-'+this.state.closedAt.substring(0,2)+'T'+this.state.closedAt.substring(11)+'Z'):this.props.data.closedAt;
 
-     let title = this.state.taskName;
-     let description = this.state.taskDescription;
-     let client = this.props.client;
-     let id = this.props.data.id;
-     let assignedUserId = this.state.assignedUserId;
-     let duration = this.state.duration==''?0:parseInt(this.state.duration);
-     let statusId= this.state.status!=''?this.state.status.id:this.props.data.status.id;
-     let requesterId=this.state.requesterUserId;
-     let companyId=this.state.company;
-     let projectId=this.state.project;
+    let title = this.state.taskName;
+    let description = this.state.taskDescription;
+    let client = this.props.client;
+    let id = this.props.data.id;
+    let assignedUserId = this.state.assignedUserId;
+    let duration = this.state.duration==''?0:parseInt(this.state.duration);
+    let statusId= this.state.status!=''?this.state.status.id:this.props.data.status.id;
+    let requesterId=this.state.requesterUserId;
+    let companyId=this.state.company;
+    let projectId=this.state.project;
+    let startDate=new Date(this.state.startDate)=="Invalid Date"?(this.state.startDate.substring(6,10)+'-'+this.state.startDate.substring(3,5)+'-'+this.state.startDate.substring(0,2)+'T'+this.state.startDate.substring(11)+'Z'):(this.props.data.repeat?this.props.data.repeat.startDate:null);
+    let every=parseInt(this.state.every);
+    let repeated=this.state.repeated;
+    let times=parseInt(this.state.repetitionNumber==''?0:this.state.repetitionNumber);
+    if(this.state.every!=''){
+      if(this.props.data.repeat){//update
+        client.mutate({
+          mutation: updateTask,
+          variables: {title, description, id, assignedUserId,deadlineAt,duration,statusId,requesterId,companyId,projectId,repeatId:this.props.data.repeat.id,closedAt,pendingAt},
+        });
+        client.mutate({
+          mutation: updateRepeat,
+          variables: {id:this.props.data.repeat.id,startDate,every, repeated, times},
+        });
 
-     let startDate=new Date(this.state.startDate)=="Invalid Date"?(this.state.startDate.substring(6,10)+'-'+this.state.startDate.substring(3,5)+'-'+this.state.startDate.substring(0,2)+'T'+this.state.startDate.substring(11)+'Z'):(this.props.data.repeat?this.props.data.repeat.startDate:null);
-     let every=parseInt(this.state.every);
-     let repeated=this.state.repeated;
-     let times=parseInt(this.state.repetitionNumber==''?0:this.state.repetitionNumber);
-     if(this.state.every!=''){
-       if(this.props.data.repeat){//update
-         client.mutate({
-               mutation: updateTask,
-               variables: {title, description, id, assignedUserId,deadlineAt,duration,statusId,requesterId,companyId,projectId,repeatId:this.props.data.repeat.id,closedAt,pendingAt},
-             });
-         client.mutate({
-               mutation: updateRepeat,
-               variables: {id:this.props.data.repeat.id,startDate,every, repeated, times},
-             });
+      }
+      else{//create
+        client.mutate({
+          mutation: createRepeat,
+          variables: { every, repeated, startDate, times,taskId:id},
+        }).then((result)=>{
+          repeatId=result.data.createRepeat.id;
+          client.mutate({
+            mutation: updateTask,
+            variables: {title, description, id, assignedUserId,deadlineAt,duration,statusId,requesterId,companyId,projectId,repeatId,closedAt,pendingAt},
+          });
+        });
 
-       }
-       else{//create
-         client.mutate({
-               mutation: createRepeat,
-               variables: { every, repeated, startDate, times,taskId:id},
-             }).then((result)=>{
-               repeatId=result.data.createRepeat.id;
-               client.mutate({
-                 mutation: updateTask,
-                 variables: {title, description, id, assignedUserId,deadlineAt,duration,statusId,requesterId,companyId,projectId,repeatId,closedAt,pendingAt},
-               });
-             });
+      }
+    }
+    else{
+      if(this.props.data.repeat){//delete
+        client.mutate({
+          mutation: deleteRepeat,
+          variables: { id:this.props.data.repeat.id},
+        });
+        client.mutate({
+          mutation: updateTask,
+          variables: {title, description, id, assignedUserId,deadlineAt,duration,statusId,requesterId,companyId,projectId,repeatId:null,closedAt,pendingAt},
+        });
 
-       }
-     }
-     else{
-       if(this.props.data.repeat){//delete
-         client.mutate({
-               mutation: deleteRepeat,
-               variables: { id:this.props.data.repeat.id},
-             });
-           client.mutate({
-             mutation: updateTask,
-             variables: {title, description, id, assignedUserId,deadlineAt,duration,statusId,requesterId,companyId,projectId,repeatId:null,closedAt,pendingAt},
-           });
-
-       }
-       else{//just update
-         client.mutate({
-               mutation: updateTask,
-               variables: {title, description, id, assignedUserId,deadlineAt,duration,statusId,requesterId,companyId,projectId,closedAt,pendingAt},
-             });
-       }
-     }
+      }
+      else{//just update
+        client.mutate({
+          mutation: updateTask,
+          variables: {title, description, id, assignedUserId,deadlineAt,duration,statusId,requesterId,companyId,projectId,closedAt,pendingAt},
+        });
+      }
+    }
 
 
     Actions.pop();
-   }
+  }
 
   render() {
 

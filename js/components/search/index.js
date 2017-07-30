@@ -87,7 +87,7 @@ class Search extends Component {
                   {
                     variables:{
                       after:allTasks.length==0?null:allTasks[allTasks.length-1].id,
-                      limit:this.props.numberOfTasks,
+                      limit:10,
                       filter:word,
                     },
                     updateQuery:(previousResult,{fetchMoreResult})=>{

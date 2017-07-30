@@ -15,7 +15,7 @@ import I18n from '../../translations/';
 
 const withData = graphql(units, {
   props: ({ data: { loading, allUnits, error, refetch, subscribeToMore } }) => ({
-    loadingUnits: loading,
+loadingUnits: loading,
     units: allUnits,
     usersError: error,
     refetch,

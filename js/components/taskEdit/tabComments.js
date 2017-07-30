@@ -11,6 +11,8 @@ import I18n from '../../translations/';
 class TabComments extends Component { // eslint-disable-line
   constructor(props){
     super(props);
+    this.state={items:10}
+
   }
   componentWillMount(){
     this.props.subscribeToMore({
@@ -47,6 +49,8 @@ class TabComments extends Component { // eslint-disable-line
           }
           >
         </List>
+        {
+          this.state.items==this.props.allComments.length &&
         <Button
           block
           primary
@@ -54,6 +58,7 @@ class TabComments extends Component { // eslint-disable-line
           onPress={this.props.getMore}>
           <Text>Load more...</Text>
           </Button>
+        }
       </Content>
 
       <Footer>

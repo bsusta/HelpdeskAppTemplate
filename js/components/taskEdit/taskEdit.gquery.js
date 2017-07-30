@@ -235,7 +235,7 @@ mutation updateSubtask($finished: Boolean,$id: ID!) {
       finished:$finished
 			id:$id
 		) {
-			id,
+			finished,
 		}
 	}
 `;

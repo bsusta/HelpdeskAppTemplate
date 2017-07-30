@@ -13,6 +13,10 @@ import styles from './styles';
 import I18n from '../../translations/';
 
 class TaskList extends Component {
+  constructor(props){
+    super(props);
+    this.state={items:10}
+  }
   componentDidMount(){
     this.props.subscribeToMore({
       document: subscribeToMoreTasks,
@@ -34,13 +38,16 @@ class TaskList extends Component {
             this.props.allTasks.map((data) => <TaskListRow data={data} key={data.id} />)
           }
           </List>
+          {
+            this.state.items==this.props.allTasks.length &&
           <Button
             block
             primary
             style={styles.mb15}
             onPress={this.props.getMore}>
             <Text>{I18n.t('taskListLoadMore')}</Text>
-            </Button>
+          </Button>
+          }
         </Content>
         <Footer>
           <FooterTab>

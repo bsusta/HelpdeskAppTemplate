@@ -5,8 +5,9 @@ import { withApollo } from 'react-apollo';
 import styles from './styles';
 import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator, Alert, Modal } from 'react-native';
-import { changedSubtaskSubscription, deleteSubtask, updateSubtask, createSubtask } from './taskEdit.gquery';
+import { changedSubtaskSubscription, deleteSubtask, updateSubtask, createSubtask, subtasks } from './taskEdit.gquery';
 import I18n from '../../translations/';
+import gql from 'graphql-tag';
 
 class Subtasks extends Component { // eslint-disable-line
   constructor(props){
@@ -16,10 +17,10 @@ class Subtasks extends Component { // eslint-disable-line
     }
   }
   componentWillMount(){
-    this.props.data.subscribeToMore({
+    this.props.subscribeToMore({
       document: changedSubtaskSubscription,
       updateQuery: () => {
-        this.props.data.refetch();
+        this.props.refetch();
         return;
       },
     });
@@ -29,9 +30,9 @@ class Subtasks extends Component { // eslint-disable-line
     let name = this.state.subtaskName;
     let taskId = this.props.id;
     this.props.client.mutate({
-          mutation: createSubtask,
-          variables: { name,taskId },
-        });
+      mutation: createSubtask,
+      variables: { name,taskId },
+    });
     this.setState({
       subtaskName:'',
     });
@@ -45,23 +46,17 @@ class Subtasks extends Component { // eslint-disable-line
         {text: I18n.t('cancel'), style: 'cancel'},
         {text: I18n.t('ok'), onPress: () =>{
           this.props.client.mutate({
-                mutation: deleteSubtask,
-                variables: { subtaskId},
-              });
+            mutation: deleteSubtask,
+            variables: { subtaskId},
+          });
         }},
       ],
       { cancelable: false }
     )
   }
-  changeSubtaskStatus(finished,id){
-    this.props.client.mutate({
-          mutation: updateSubtask,
-          variables: {finished,id},
-        });
-  }
 
   render() {
-    if(this.props.data.loading){
+    if(this.props.loading){
       return (<ActivityIndicator animating size={ 'large' } color='#007299' />);
     }
     return (
@@ -69,11 +64,31 @@ class Subtasks extends Component { // eslint-disable-line
         <Content padder style={{ marginTop: 0 }}>
         <List>
         {
-          this.props.data.allSubtasks.map((subtask)=>
+          this.props.allSubtasks.map((subtask)=>
             <ListItem thumbnail key={subtask.id}>
             <Left>
+            <CheckBox checked={subtask.finished} color='#3F51B5' onPress={()=>{
+                let newFinished=!subtask.finished;
+                this.props.client.mutate({
+                  mutation: updateSubtask,
+                  optimisticResponse: {
+                    updateSubtask:{
+                      finished: newFinished,
+                      __typename:'Subtask'
+                    }
+                  },
+                  variables: {finished:newFinished,id:subtask.id},
+                  update: (proxy, { data: { updateSubtask } }) => {
+                  let data = proxy.readQuery({ query:subtasks,variables:{id:this.props.id}});
+                  let index = data.allSubtasks.findIndex((element)=>element.id==subtask.id);
+                  data.allSubtasks[index].finished=updateSubtask.finished;
+                  proxy.writeQuery({ query:subtasks,variables:{id:this.props.id}, data });
+                },
+              });
+            }
+          }
+            />
             </Left>
-              <CheckBox checked={subtask.finished} color='#3F51B5' onPress={()=>{this.changeSubtaskStatus(!subtask.finished,subtask.id)}} />
             <Body>
               <Text>{subtask.name}</Text>
             </Body>
