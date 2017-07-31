@@ -174,100 +174,6 @@ class TabAtributes extends Component { // eslint-disable-line
     return (
       <Container>
         <Content style={{ padding: 15 }}>
-
-          <Text note>{I18n.t('taskAddRepeatition')}</Text>
-            <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-
-              <Button block iconLeft onPress={()=>this.setState({addingRepeatition:true})}>
-                <Icon active name="refresh" style={{ color: 'white' }} />
-                <Text style={{ color: 'white' }} >{this.state.startDate==null ? I18n.t('taskAddTaskAddRepeatition') : I18n.t('every')+' '+this.state.every+' '+I18n.t(this.state.repeated.toLowerCase())}</Text>
-              </Button>
-            </View>
-            <Modal
-              animationType={"fade"}
-              transparent={false}
-              style={{flex:1}}
-              visible={this.state.addingRepeatition}
-              onRequestClose={() => this.setState({addingRepeatition:false})}
-              >
-              <Header>
-                <Body>
-                  <Title>{I18n.t('taskAddTaskAddRepeatition')}</Title>
-                </Body>
-              </Header>
-
-              <Content style={{ padding: 15 }}>
-               <Text note>{I18n.t('taskAddStartDate')}</Text>
-               <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-                 <DatePicker
-                   date={this.state.startDate}
-                   style={{width:380}}
-                   mode="datetime"
-                   placeholder={I18n.t('taskAddStartDate')}
-                   showIcon={false}
-                   androidMode="spinner"
-                   format="DD.MM.YYYY HH:MM"
-                   confirmBtnText={I18n.t('confirm')}
-                   cancelBtnText={I18n.t('cancel')}
-                   is24Hour={true}
-                   onDateChange={(date) => {this.setState({startDate: date})}}
-                 />
-              </View>
-
-             <Text note>{I18n.t('taskAddEvery')}</Text>
-             <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-               <Input
-               keyboardType='numeric'
-               placeholder={ I18n.t('number')}
-               value={ this.state.every }
-               onChangeText={ value => this.setEvery(value) }
-               />
-             </View>
-
-             <Text note>{I18n.t('time')}</Text>
-             <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-               <Picker
-                 supportedOrientations={['portrait', 'landscape']}
-                 iosHeader={I18n.t('selectOne')}
-                 mode="dropdown"
-                 selectedValue={this.state.repeated}
-                 onValueChange={(value)=>{this.setState({repeated : value})}}>
-                 <Item label={I18n.t('day')} value={'Day'} />
-                 <Item label={I18n.t('week')} value={'Week'} />
-                 <Item label={I18n.t('month')} value={'Month'} />
-                 <Item label={I18n.t('year')} value={'Year'} />
-                </Picker>
-             </View>
-
-             <Text note>{I18n.t('taskAddRepetitionNumber')}</Text>
-             <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-               <Input
-               keyboardType='numeric'
-               placeholder={ I18n.t('taskAddRepetitionNumberPlaceholder')}
-               value={ this.state.repetitionNumber }
-               onChangeText={ value => this.setRepetitionNumber(value) }
-               />
-             </View>
-            <Text style={{color:'red'}}>{this.state.errorMessage}</Text>
-
-            </Content>
-            <Footer>
-              <FooterTab>
-                <Button style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }} onPress={()=>this.setState({errorMessage:'',addingRepeatition:false, startDate:null, every:'0', repeated:'Day', repetitionNumber:''})}>
-                  <Text style={{ color: 'white' }} >{I18n.t('cancel')}</Text>
-                </Button>
-              </FooterTab>
-
-              <FooterTab>
-                <Button style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}
-                onPress={this.finishRepetitionAdding.bind(this)}
-                >
-                  <Text style={{ color: 'white' }} >{I18n.t('save')}</Text>
-                </Button>
-              </FooterTab>
-            </Footer>
-          </Modal>
-
           <Text note>{I18n.t('taskAddTaskName')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
@@ -276,6 +182,19 @@ class TabAtributes extends Component { // eslint-disable-line
               onChangeText={ value => this.setState({taskName:value}) }
             />
           </View>
+
+          <Text note>{I18n.t('status')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Button style={this.state.status==''?{flex:1}:{backgroundColor:this.state.status.color,flex:1}} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text style={{color:'white',flex:1,textAlign:'center'}}>{this.state.status==''?'Choose status':this.state.status.name}</Text></Button>
+              {
+                  this.state.pickingStatus && this.props.statuses.map((status)=>
+                      this.state.status!=status &&
+                      <Button style={{backgroundColor:status.color}} onPress={()=>this.setState({status:status,pickingStatus:false})} key={status.id} >
+                        <Text style={{color:'white',flex:1,textAlign:'center'}}>{status.name}</Text>
+                      </Button>)
+              }
+          </View>
+
           <Text note>{I18n.t('taskAddDescription')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
@@ -401,17 +320,101 @@ class TabAtributes extends Component { // eslint-disable-line
             />
           </View>
 
-          <Text note>{I18n.t('status')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <Button style={this.state.status==''?{flex:1}:{backgroundColor:this.state.status.color,flex:1}} onPress={()=>this.setState({pickingStatus:!this.state.pickingStatus})}><Text style={{color:'white',flex:1,textAlign:'center'}}>{this.state.status==''?'Choose status':this.state.status.name}</Text></Button>
-          {
-            this.state.pickingStatus && this.props.statuses.map((status)=>
-            this.state.status!=status &&
-            <Button style={{backgroundColor:status.color}} onPress={()=>this.setState({status:status,pickingStatus:false})} key={status.id} >
-            <Text style={{color:'white',flex:1,textAlign:'center'}}>{status.name}</Text>
-            </Button>)
-          }
+
+
+          <Text note>{I18n.t('taskAddRepeatition')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 30, }}>
+            <Button block iconLeft onPress={()=>this.setState({addingRepeatition:true})}>
+              <Icon active name="refresh" style={{ color: 'white' }} />
+              <Text style={{ color: 'white' }} >{this.state.startDate==null ? I18n.t('taskAddTaskAddRepeatition') : I18n.t('every')+' '+this.state.every+' '+I18n.t(this.state.repeated.toLowerCase())}</Text>
+            </Button>
           </View>
+
+          <Modal
+              animationType={"fade"}
+              transparent={false}
+              style={{flex:1}}
+              visible={this.state.addingRepeatition}
+              onRequestClose={() => this.setState({addingRepeatition:false})}
+          >
+            <Header>
+              <Body>
+              <Title>{I18n.t('taskAddTaskAddRepeatition')}</Title>
+              </Body>
+            </Header>
+            <Content style={{ padding: 15 }}>
+              <Text note>{I18n.t('taskAddStartDate')}</Text>
+              <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+                <DatePicker
+                    date={this.state.startDate}
+                    style={{width:380}}
+                    mode="datetime"
+                    placeholder={I18n.t('taskAddStartDate')}
+                    showIcon={false}
+                    androidMode="spinner"
+                    format="DD.MM.YYYY HH:MM"
+                    confirmBtnText={I18n.t('confirm')}
+                    cancelBtnText={I18n.t('cancel')}
+                    is24Hour={true}
+                    onDateChange={(date) => {this.setState({startDate: date})}}
+                />
+              </View>
+              <Text note>{I18n.t('taskAddEvery')}</Text>
+              <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+                <Input
+                    keyboardType='numeric'
+                    placeholder={ I18n.t('number')}
+                    value={ this.state.every }
+                    onChangeText={ value => this.setEvery(value) }
+                />
+              </View>
+
+              <Text note>{I18n.t('time')}</Text>
+              <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+                <Picker
+                    supportedOrientations={['portrait', 'landscape']}
+                    iosHeader={I18n.t('selectOne')}
+                    mode="dropdown"
+                    selectedValue={this.state.repeated}
+                    onValueChange={(value)=>{this.setState({repeated : value})}}>
+                  <Item label={I18n.t('day')} value={'Day'} />
+                  <Item label={I18n.t('week')} value={'Week'} />
+                  <Item label={I18n.t('month')} value={'Month'} />
+                  <Item label={I18n.t('year')} value={'Year'} />
+                </Picker>
+              </View>
+
+              <Text note>{I18n.t('taskAddRepetitionNumber')}</Text>
+              <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+                <Input
+                    keyboardType='numeric'
+                    placeholder={ I18n.t('taskAddRepetitionNumberPlaceholder')}
+                    value={ this.state.repetitionNumber }
+                    onChangeText={ value => this.setRepetitionNumber(value) }
+                />
+              </View>
+              <Text style={{color:'red'}}>{this.state.errorMessage}</Text>
+
+            </Content>
+            <Footer>
+              <FooterTab>
+                <Button style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }} onPress={()=>this.setState({errorMessage:'',addingRepeatition:false, startDate:null, every:'0', repeated:'Day', repetitionNumber:''})}>
+                  <Text style={{ color: 'white' }} >{I18n.t('cancel')}</Text>
+                </Button>
+              </FooterTab>
+
+              <FooterTab>
+                <Button style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}
+                        onPress={this.finishRepetitionAdding.bind(this)}
+                >
+                  <Text style={{ color: 'white' }} >{I18n.t('save')}</Text>
+                </Button>
+              </FooterTab>
+            </Footer>
+          </Modal>
+
+
+
         </Content>
       <Footer>
         <FooterTab>
