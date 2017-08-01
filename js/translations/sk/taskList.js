@@ -1,7 +1,11 @@
 export default {
   taskListAllFolder: 'INBOX',
+  taskListRequestedFolder:'Zadané',
   taskListTabMy: 'Moje',
   taskListTabActive: 'Aktívne',
-  taskListTabClosed: 'Uzavreté',
   taskListLoadMore: 'Načítať ďaľšie...',
+  taskListTabNew: 'Nové',
+  taskListTabOpen: 'Otvorené',
+  taskListTabPending: 'Odložené',
+  taskListTabClosed: 'Uzavreté',
 };

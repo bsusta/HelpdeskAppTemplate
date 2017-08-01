@@ -3,7 +3,7 @@ export default {
   title: 'Názov',
   assignedTo:'Priradené komu',
   company:'Firma',
-  deadline:'Termín',
+  deadline:'Deadline',
   workHours: 'Pracovný čas',
   status: 'Status',
   requester: 'Vyžiadané od',
@@ -16,7 +16,7 @@ export default {
   vat:'VAT',
   zipCode:'PSČ',
   note:'Poznámka',
-  pendingAt:'Prebieha do',
+  pendingAt:'Odložené do',
   closedAt:'Uzavreté dňa',
 
 };

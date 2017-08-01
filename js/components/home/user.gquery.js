@@ -9,6 +9,10 @@ export const signinUser = gql`
 			user {
 			  id
 			  email
+				company{
+					id
+					name
+				}
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 const initialState = {
   id: null,
+  company:null,
 };
 export const ADD_USER= 'addLoggedInUser';
 
@@ -9,6 +10,7 @@ export default function logInUser(state = initialState, action){
       return {
         ...state,
         id: action.id,
+        company: action.company,
       }
     default:
       return state;

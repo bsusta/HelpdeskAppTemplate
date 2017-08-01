@@ -9,6 +9,12 @@ export const editedTasksSubscription = gql`
         status{
 					id
 				}
+				assignedUser{
+					id
+				}
+				requester{
+					id
+				}
 				project{
 					id
 					title
@@ -27,6 +33,12 @@ export const projects = gql`
 		description
 		tasks{
 			id
+			assignedUser{
+				id
+			}
+			requester{
+				id
+			}
 		}
 	 }
   }

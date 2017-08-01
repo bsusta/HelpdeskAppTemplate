@@ -27,7 +27,7 @@ class TabAtributes extends Component {
       deadline:this.props.data.deadlineAt?date.toGMTString():null,
       assignedUserId:this.props.data.assignedUser?this.props.data.assignedUser.id:null,
       requesterUserId:this.props.data.requester?this.props.data.requester.id:null,
-      status:this.props.data.status?this.props.data.status.id:this.props.statuses[0],
+      status:this.props.data.status?this.props.data.status:this.props.statuses[0],
       duration:this.props.data.duration?this.props.data.duration.toString():'0',
       descriptionHeight:100,
       company:this.props.data.company?this.props.data.company.id:null,

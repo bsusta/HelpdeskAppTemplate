@@ -26,6 +26,7 @@ const withProjects = graphql(projects, {
   }),
 });
 
+
 class SideBar extends Component {
   constructor(props) {
     super(props);
@@ -57,15 +58,32 @@ class SideBar extends Component {
   }
 
   render() {
-    let all={
-      title:I18n.t('taskListAllFolder'),
-      id:'INBOX',
-      tasks: new Array(4),
-    }
     if(this.props.loadingProjects){
       return <ActivityIndicator
       animating size={ 'large' }
       color='#007299' />
+    }
+    let countAll=0;
+    let countRequested=0;
+    this.props.projectList.map((project)=>{
+      project.tasks.map((task)=>{
+        if(task.assignedUser&&task.assignedUser.id==this.props.loggedUserId){
+          countAll++;
+        }
+        if(task.requester&&task.requester.id==this.props.loggedUserId){
+          countRequested++;
+        }
+      });
+    });
+    let all={
+      title:I18n.t('taskListAllFolder'),
+      id:'INBOX',
+      tasks: new Array(countAll),
+    }
+    let requested={
+      title:I18n.t('taskListRequestedFolder'),
+      id:'REQUESTED',
+      tasks: new Array(countRequested),
     }
     return (
       <Container>
@@ -80,7 +98,7 @@ class SideBar extends Component {
           <Right />
         </Header>
           <List
-            dataArray={[all].concat(this.props.projectList)} renderRow={data =>
+            dataArray={[all,requested].concat(this.props.projectList)} renderRow={data =>
               <ListItem button noBorder onPress={() => {this.props.closeDrawer(),Actions.taskList({projectId:data.id,projectName:data.title})}} >
                 <Left>
                   <Icon active name={'ios-color-filter-outline'} style={{ color: '#777', fontSize: 26, width: 30 }} />

@@ -23,7 +23,7 @@ class TaskAdd extends Component {
         </Header>
            <Tabs>
                <Tab heading={I18n.t('taskAddAttributes')}>
-                   <TabAtributes />
+                   <TabAtributes projectId={this.props.projectId} />
                </Tab>
            </Tabs>
       </Container>

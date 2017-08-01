@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
-
+import {taskFragment} from './fragments';
 export const inboxTasks =  gql`
-  query Tasks($id:ID!,$statusId:ID,$after: String, $limit: Int) {
+  query Tasks($id:ID!,$status:String,$after: String, $limit: Int) {
        allTasks (
          after: $after,
          first: $limit,
@@ -12,58 +12,38 @@ export const inboxTasks =  gql`
              id:$id
            }
            status:{
-             id_not:$statusId
+             name:$status
            }
          }
        )
        {
-    title
-    pendingAt
-    closedAt
-    description
-    repeat{
-      id
-      every
-      repeated
-      startDate
-      times
-    }
-		id
-    key: id
-    createdAt
-    assignedUser{
-      firstName
-			surName
-      id
-    }
-		createdBy{
-			firstName
-			surName
-			id
-		}
-    deadlineAt
-    duration
-    status{
-      id
-      color
-      name
-    }
-    requester{
-      id
-			firstName
-			surName
-    }
-    company{
-      id
-			name
-    }
-		project{
-			id
-			title
-		}
+    ...TaskData
 	 }
-  }
+ }${taskFragment}
 `;
+
+export const requestedTasks =  gql`
+  query Tasks($id:ID!,$status:String,$after: String, $limit: Int) {
+       allTasks (
+         after: $after,
+         first: $limit,
+         orderBy: createdAt_DESC,
+         filter:
+           {
+           requester:{
+             id:$id
+           }
+           status:{
+             name:$status
+           }
+         }
+       )
+       {
+    ...TaskData
+	 }
+ }${taskFragment}
+`;
+
 
 export const closedProjectTasks =  gql`
   query Tasks($id:ID!,$after: String, $limit: Int) {
@@ -82,53 +62,9 @@ export const closedProjectTasks =  gql`
          }
        )
        {
-    title
-    description
-		id
-    pendingAt
-    closedAt
-    key: id
-    createdAt
-    assignedUser{
-      firstName
-			surName
-      id
-    }
-		createdBy{
-			firstName
-			surName
-			id
-		}
-    repeat{
-      id
-      every
-      repeated
-      startDate
-      times
-    }
-    deadlineAt
-    duration
-    status{
-      id
-      color
-      name
-    }
-
-    requester{
-      id
-			firstName
-			surName
-    }
-    company{
-      id
-			name
-    }
-		project{
-			id
-			title
-		}
+    ...TaskData
 	 }
-  }
+  }${taskFragment}
 `;
 
 export const activeProjectTasks =  gql`
@@ -148,53 +84,9 @@ export const activeProjectTasks =  gql`
          }
        )
        {
-    title
-    description
-		id
-    key: id
-    pendingAt
-    closedAt
-    createdAt
-    assignedUser{
-      firstName
-			surName
-      id
-    }
-    repeat{
-      id
-      every
-      repeated
-      startDate
-      times
-    }
-		createdBy{
-			firstName
-			surName
-			id
-		}
-    deadlineAt
-    duration
-    status{
-      id
-      color
-      name
-    }
-
-    requester{
-      id
-			firstName
-			surName
-    }
-    company{
-      id
-			name
-    }
-		project{
-			id
-			title
-		}
+    ...TaskData
 	 }
-  }
+  }${taskFragment}
 `;
 
 export const myProjectTasks =  gql`
@@ -217,53 +109,9 @@ export const myProjectTasks =  gql`
          }
        )
        {
-    title
-    description
-		id
-    pendingAt
-    closedAt
-    key: id
-    createdAt
-    assignedUser{
-      firstName
-			surName
-      id
-    }
-    repeat{
-      id
-      every
-      repeated
-      startDate
-      times
-    }
-		createdBy{
-			firstName
-			surName
-			id
-		}
-    deadlineAt
-    duration
-    status{
-      id
-      color
-      name
-    }
-
-    requester{
-      id
-			firstName
-			surName
-    }
-    company{
-      id
-			name
-    }
-		project{
-			id
-			title
-		}
+    ...TaskData
 	 }
-  }
+  }${taskFragment}
 `;
 
 export const subscribeToMoreTasks = gql`
@@ -271,52 +119,8 @@ export const subscribeToMoreTasks = gql`
 		Task(filter: {mutation_in: [CREATED,UPDATED,DELETED]}) {
 			mutation
 			node {
-        createdAt
-        title
-        description
-    		id
-        key: id
-				assignedUser{
-          firstName
-					surName
-          id
-        }
-        deadlineAt
-        pendingAt
-        closedAt
-        duration
-        status{
-          id
-          color
-          name
-        }
-        repeat{
-          id
-          every
-          repeated
-          startDate
-          times
-        }
-				requester{
-					firstName
-					surName
-          id
-        }
-				createdBy{
-					firstName
-					surName
-          id
-        }
-        company{
-          id
-					name
-        }
-				project{
-					id
-					title
-				}
-
+        ...TaskData
 			}
 		}
-	}
+	}${taskFragment}
 `;

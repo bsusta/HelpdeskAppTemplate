@@ -11,157 +11,27 @@ import TaskList from './taskList';
 import styles from './styles';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import I18n from '../../translations/';
-
+import {withFilterNewRequested,withFilterOpenRequested,withFilterPendingRequested,withFilterClosedRequested,
+  withFilterNewInbox,withFilterOpenInbox,withFilterPendingInbox,withFilterClosedInbox,
+  withFilterProjectMy,withFilterProjectActive,withFilterProjectClosed} from './wrappers';
 class TaskListLoader extends Component {
   constructor(props){
     super(props);
     if(this.props.projectId=='INBOX'){
-      const withFilterInbox = graphql(inboxTasks,{
-        options:{
-          variables:{
-            id:this.props.loggedUserId,
-            status:'Done',
-            after:null,
-            limit:10,
-          },
-        },
-        props: ({ data: { loading, allTasks, error, refetch, fetchMore,subscribeToMore } }) => ({
-          loading,
-          allTasks,
-          error,
-          refetch,
-          subscribeToMore,
-          getMore:()=>{
-            fetchMore(
-              {
-                variables:{
-                  id:this.props.loggedUserId,
-                  statusId:'cj5b6hwro0m5d0161vwmgev4o',
-                  after:allTasks.length==0?null:allTasks[allTasks.length-1].id,
-                  limit:10,
-                },
-                updateQuery:(previousResult,{fetchMoreResult})=>{
-                  if(fetchMoreResult.allTasks.length==0){
-                    return previousResult;
-                  }
-                  return Object.assign({},previousResult, {
-                    allTasks: [...previousResult.allTasks, ...fetchMoreResult.allTasks]});
-                }
-              }
-            )
-          }
-        })
-      });
-      HOCInbox=withFilterInbox(TaskList);
+      HOCNewInbox=(withFilterNewInbox(userId=this.props.loggedUserId))(TaskList);
+      HOCOpenInbox=(withFilterOpenInbox(userId=this.props.loggedUserId))(TaskList);
+      HOCPendingInbox=(withFilterPendingInbox(userId=this.props.loggedUserId))(TaskList);
+      HOCClosedInbox=(withFilterClosedInbox(userId=this.props.loggedUserId))(TaskList);
     }
-    else{
-      const withFilterProjectActive = graphql(activeProjectTasks,{
-        options:{
-          variables:{
-            id:this.props.projectId,
-            after:null,
-            limit:10,
-          },
-        },
-        props: ({ data: { loading, allTasks, error, refetch, fetchMore,subscribeToMore } }) => ({
-          loading,
-          allTasks,
-          error,
-          refetch,
-          subscribeToMore,
-          getMore:()=>{
-            fetchMore(
-              {
-                variables:{
-                  id:this.props.projectId,
-                  after:allTasks.length==0?null:allTasks[allTasks.length-1].id,
-                  limit:10,
-                },
-                updateQuery:(previousResult,{fetchMoreResult})=>{
-                  if(fetchMoreResult.allTasks.length==0){
-                    return previousResult;
-                  }
-                  return Object.assign({},previousResult, {
-                    allTasks: [...previousResult.allTasks, ...fetchMoreResult.allTasks]});
-                }
-              }
-            )
-          }
-        })
-      });
-      const withFilterProjectMy = graphql(myProjectTasks,{
-        options:{
-          variables:{
-            id:this.props.projectId,
-            userId:this.props.loggedUserId,
-            after:null,
-            limit:10,
-          },
-        },
-        props: ({ data: { loading, allTasks, error, refetch, fetchMore,subscribeToMore } }) => ({
-          loading,
-          allTasks,
-          error,
-          refetch,
-          subscribeToMore,
-          getMore:()=>{
-            fetchMore(
-              {
-                variables:{
-                  id:this.props.projectId,
-                  after:allTasks.length==0?null:allTasks[allTasks.length-1].id,
-                  userId:this.props.loggedUserId,
-                  limit:10,
-                },
-                updateQuery:(previousResult,{fetchMoreResult})=>{
-                  if(fetchMoreResult.allTasks.length==0){
-                    return previousResult;
-                  }
-                  return Object.assign({},previousResult, {
-                    allTasks: [...previousResult.allTasks, ...fetchMoreResult.allTasks]});
-                }
-              }
-            )
-          }
-        })
-      });
-      const withFilterProjectClosed = graphql(closedProjectTasks,{
-        options:{
-          variables:{
-            id:this.props.projectId,
-            after:null,
-            limit:10,
-          },
-        },
-        props: ({ data: { loading, allTasks, error, refetch, fetchMore,subscribeToMore } }) => ({
-          loading,
-          allTasks,
-          error,
-          refetch,
-          subscribeToMore,
-          getMore:()=>{
-            fetchMore(
-              {
-                variables:{
-                  id:this.props.projectId,
-                  after:allTasks.length==0?null:allTasks[allTasks.length-1].id,
-                  limit:10,
-                },
-                updateQuery:(previousResult,{fetchMoreResult})=>{
-                  if(fetchMoreResult.allTasks.length==0){
-                    return previousResult;
-                  }
-                  return Object.assign({},previousResult, {
-                    allTasks: [...previousResult.allTasks, ...fetchMoreResult.allTasks]});
-                }
-              }
-            )
-          }
-        })
-      });
-      TabMy=withFilterProjectMy(TaskList);
-      TabActive=withFilterProjectActive(TaskList);
-      TabClosed=withFilterProjectClosed(TaskList);
+    else if(this.props.projectId=='REQUESTED'){
+      HOCNewRequested=(withFilterNewRequested(userId=this.props.loggedUserId))(TaskList);
+      HOCOpenRequested=(withFilterOpenRequested(userId=this.props.loggedUserId))(TaskList);
+      HOCPendingRequested=(withFilterPendingRequested(userId=this.props.loggedUserId))(TaskList);
+      HOCClosedRequested=(withFilterClosedRequested(userId=this.props.loggedUserId))(TaskList);
+    } else{
+      TabMy=withFilterProjectMy(this.props.projectId,this.props.loggedUserId)(TaskList);
+      TabActive=withFilterProjectActive(this.props.projectId)(TaskList);
+      TabClosed=withFilterProjectClosed(this.props.projectId)(TaskList);
       }
     }
 
@@ -175,7 +45,7 @@ class TaskListLoader extends Component {
               </Button>
             </Left>
             <Body>
-              <Title>{this.props.projectId=='INBOX'?I18n.t('taskListAllFolder'):this.props.projectName}</Title>
+              <Title>{I18n.t('taskListAllFolder')}</Title>
             </Body>
             <Right>
               <Button transparent style={{ marginTop: 8 }} onPress={Actions.search}>
@@ -189,9 +59,70 @@ class TaskListLoader extends Component {
               </Button>
             </Right>
           </Header>
-        <HOCInbox projectId={this.props.projectId} projectName={this.props.projectName}/>
-        </Container>)
+
+           <Tabs>
+             <Tab heading={I18n.t('taskListTabNew')}>
+               <HOCNewInbox projectId={null} />
+             </Tab>
+
+             <Tab heading={I18n.t('taskListTabOpen')}>
+               <HOCOpenInbox projectId={null} />
+             </Tab>
+
+               <Tab heading={I18n.t('taskListTabPending')}>
+                 <HOCPendingInbox projectId={null} />
+               </Tab>
+
+               <Tab heading={I18n.t('taskListTabClosed')}>
+                 <HOCClosedInbox projectId={null} />
+               </Tab>
+           </Tabs>
+        </Container>);
       }
+      if(this.props.projectId=='REQUESTED'){
+        return (<Container style={styles.container}>
+          <Header>
+            <Left>
+              <Button transparent onPress={this.props.openDrawer}>
+                <Icon name="menu" />
+              </Button>
+            </Left>
+            <Body>
+              <Title>{I18n.t('taskListRequestedFolder')}</Title>
+            </Body>
+            <Right>
+              <Button transparent style={{ marginTop: 8 }} onPress={Actions.search}>
+                <Icon name="search" style={{ color: 'white' }} />
+              </Button>
+              <Button transparent style={{ marginTop: 8 }} onPress={Actions.messages}>
+                <Icon name="mail" style={{ color: 'white' }} />
+              </Button>
+              <Button transparent style={{ marginTop: 8 }} onPress={Actions.settings}>
+                <Icon name="settings" style={{ color: 'white' }} />
+              </Button>
+            </Right>
+          </Header>
+
+           <Tabs>
+             <Tab heading={I18n.t('taskListTabNew')}>
+               <HOCNewRequested projectId={null} />
+             </Tab>
+
+             <Tab heading={I18n.t('taskListTabOpen')}>
+               <HOCOpenRequested projectId={null} />
+             </Tab>
+
+               <Tab heading={I18n.t('taskListTabPending')}>
+                 <HOCPendingRequested projectId={null} />
+               </Tab>
+
+               <Tab heading={I18n.t('taskListTabClosed')}>
+                 <HOCClosedRequested projectId={null} />
+               </Tab>
+           </Tabs>
+        </Container>);
+      }
+
       return (
         <Container style={styles.container}>
           <Header>
@@ -201,7 +132,7 @@ class TaskListLoader extends Component {
               </Button>
             </Left>
             <Body>
-              <Title>{this.props.projectId==null?I18n.t('taskListAllFolder'):this.props.projectName}</Title>
+              <Title>{this.props.projectName}</Title>
             </Body>
             <Right>
               <Button transparent style={{ marginTop: 8 }} onPress={Actions.search}>
@@ -218,15 +149,15 @@ class TaskListLoader extends Component {
 
              <Tabs>
                  <Tab heading={I18n.t('taskListTabMy')}>
-                   <TabMy projectId={this.props.projectId} projectName={this.props.projectName}/>
+                   <TabMy projectId={this.props.projectId}/>
                  </Tab>
 
                  <Tab heading={I18n.t('taskListTabActive')}>
-                   <TabActive projectId={this.props.projectId} projectName={this.props.projectName}/>
+                   <TabActive projectId={this.props.projectId}/>
                  </Tab>
 
                  <Tab heading={I18n.t('taskListTabClosed')}>
-                   <TabClosed projectId={this.props.projectId} projectName={this.props.projectName}/>
+                   <TabClosed projectId={this.props.projectId}/>
                  </Tab>
              </Tabs>
         </Container>

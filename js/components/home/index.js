@@ -70,7 +70,7 @@ class Home extends Component {
         const token = signedUser.token;
         const userId = signedUser.user.id;
         addTokenToUse(client, token);
-        this.props.setUser(userId);
+        this.props.setUser(id=userId,company=signedUser.user.company?signedUser.user.company:null);
         this.setState(
           {working:false}
         );
@@ -119,6 +119,7 @@ class Home extends Component {
       }
     ).catch(
       (error)=>{
+        console.log(error);
         this.setState({errorMessage:I18n.t('homeLoginError')});
         setTimeout(()=>this.setState({errorMessage:''}), 1500);
         this.setState(
@@ -187,7 +188,7 @@ function bindActions(dispatch) {
   return {
     openDrawer: () => dispatch(openDrawer()),
     updateDrawer: (drawerProjects,type) => dispatch({type,drawerProjects}),
-    setUser: (userId) => dispatch({type:ADD_USER,id:userId}),
+    setUser: (user,company) => dispatch({type:ADD_USER,id,company}),
     updateUsers: (users) => dispatch({type:UPDATE_USERS,users}),
     updateStatuses: (statuses) => dispatch({type:UPDATE_STATUSES,statuses}),
     updateCompanies: (companies) => dispatch({type:UPDATE_COMPANIES,companies}),

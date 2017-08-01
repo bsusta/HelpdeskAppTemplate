@@ -29,11 +29,11 @@ class TabAtributes extends Component { // eslint-disable-line
       taskDescription:'',
       deadline:null,
       assignedUserId:null,
-      requesterUserId:null,
+      requesterUserId:this.props.loggedUserId,
       duration:'0',
-      company:null,
-      project:this.props.projectList[0].id,
-      status:'',
+      company:this.props.userCompany?this.props.userCompany.id:null,
+      project:this.props.projectId?this.props.projectId:this.props.projectList[0].id,
+      status:this.props.statuses[0],
       pickingStatus:false,
       descriptionHeight:50,
       addingRepeatition:false,
@@ -42,7 +42,7 @@ class TabAtributes extends Component { // eslint-disable-line
       repeated:'Day',
       repetitionNumber:'',
       errorMessage:'',
-      companyQuery:'',
+      companyQuery:this.props.userCompany?this.props.userCompany.name:'',
       pendingAt:null,
       closedAt:null,
     }
@@ -439,6 +439,7 @@ class TabAtributes extends Component { // eslint-disable-line
 }
 const mapStateToProps = state => ({
   loggedUserId:state.logInUser.id,
+  userCompany:state.logInUser.company,
   companies:state.updateCompanies.companies,
   users:state.updateUsers.users,
   statuses:state.statuses.statuses,
