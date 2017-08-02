@@ -13,8 +13,7 @@ import navigateTo from '../../actions/sideBarNav';
 import styles from './style';
 import I18n from '../../translations/';
 import {projects,editedTasksSubscription,editedProjectsSubscription} from './sidebar.gquery';
-const drawerCover = require('../../../img/drawer-cover.png');
-const drawerImage = require('../../../img/logo-kitchen-sink.png');
+
 
 const withProjects = graphql(projects, {
   props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
