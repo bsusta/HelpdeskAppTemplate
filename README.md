@@ -100,3 +100,18 @@ Spustenie redux remote debbuger cez prehliadač po spustení simlulátora na adr
 http://localhost:8081/debugger-ui
 >>>>>>> 19ea4ba7d31d081890d633ab292a9cf704f82e91
 
+#### 4. Export apk
+
+##### Generating a signing key
+You can generate a private signing key using keytool. On Windows keytool must be run from C:\Program Files\Java\jdkx.x.x_x\bin.
+
+$ keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+
+Use a password when prompted
+
+Once the key is generated, use it to generate the installable build:
+react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/
+
+Generate the build using gradle
+cd android && gradlew assembleRelease
+
