@@ -4,10 +4,14 @@ import { connect } from 'react-redux';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-
+import Chance from 'chance';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
+import { withApollo} from 'react-apollo';
 import I18n from '../../translations/';
+import {createUser,createTask,createCompany} from 'query';
+
+
 
 class Settings extends Component {
   render() {
@@ -74,6 +78,14 @@ class Settings extends Component {
               <Icon name="arrow-forward" />
             </Right>
           </ListItem>
+          <Button onPress={()=>{
+            let chance = new Chance();
+            console.log(chance.string());
+          }}
+          style={{ flexDirection: 'row', borderColor: 'white', borderWidth: 0.5 }}>
+            <Text style={{ color: 'white' }} >TESTER</Text>
+          </Button>
+
         </Content>
         <Footer>
           <FooterTab>
@@ -99,4 +111,4 @@ class Settings extends Component {
     );
   }
 }
-export default Settings;
+export default withApollo(Settings);
