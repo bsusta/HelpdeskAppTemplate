@@ -1,4 +1,5 @@
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
+import devTools from 'remote-redux-devtools';
 import drawer from './drawer';
 import routes from './routes';
 import cardNavigation from './cardNavigation';
@@ -9,22 +10,28 @@ import updateDrawer from './drawerData';
 import logInUser from './user';
 import statuses from './statuses';
 
-export default client => createStore(
-	combineReducers({
-  apollo: client.reducer(),
-	drawer,
-	cardNavigation,
-	routes,
-	updateTaskList,
-	updateDrawer,
-	logInUser,
-	updateCompanies,
-	updateUsers,
-	statuses
-}),
-	{},
-	compose(
-		applyMiddleware(client.middleware()),
-		window.devToolsExtension ? window.devToolsExtension() : f => f,
-	)
-);
+const reducers = (client) => {
+  return (combineReducers({
+    apollo: client.reducer(),
+    drawer,
+    cardNavigation,
+    routes,
+    updateTaskList,
+    updateDrawer,
+    logInUser,
+    updateCompanies,
+    updateUsers,
+    statuses,
+  }));
+};
+
+const enhancer = (client) => {
+return (compose(
+applyMiddleware(client.middleware()),
+devTools({
+  name: 'HelpdeskAppTemplate', realtime: true,
+})
+));
+};
+
+export default client => createStore(reducers(client), {}, enhancer(client));
