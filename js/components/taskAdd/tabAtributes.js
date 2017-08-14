@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker, ListItem, Header,Title } from 'native-base';
+import { View, Card, CardItem, Body, Container, Content, Icon, Input, Item, Label, Text, Footer, FooterTab, Button, Picker,List, ListItem, Header,Title, Right, Left } from 'native-base';
 import { withApollo, graphql } from 'react-apollo';
 import styles from './styles';
 import { connect } from 'react-redux';
@@ -9,7 +9,7 @@ import { Actions } from 'react-native-router-flux';
 import { ActivityIndicator , Modal } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import I18n from '../../translations/';
-import AutoComplete from 'react-native-autocomplete-select';
+import moment from 'moment';
 
 const withProjects = graphql(projects, {
   props: ({ data: { loading, allProjects, error, refetch, subscribeToMore } }) => ({
@@ -28,10 +28,10 @@ class TabAtributes extends Component { // eslint-disable-line
       taskName:'',
       taskDescription:'',
       deadline:null,
-      assignedUserId:null,
-      requesterUserId:this.props.loggedUserId,
+      assignedTo:null,
+      requester:this.props.users[this.props.users.findIndex((item)=>item.id==this.props.loggedUserId)],
       duration:'0',
-      company:this.props.userCompany?this.props.userCompany.id:null,
+      company:this.props.userCompany?this.props.companies[this.props.companies.findIndex((item)=>item.id==this.props.userCompany.id)]:null,
       project:this.props.projectId?this.props.projectId:this.props.projectList[0].id,
       status:this.props.statuses[0],
       pickingStatus:false,
@@ -42,9 +42,13 @@ class TabAtributes extends Component { // eslint-disable-line
       repeated:'Day',
       repetitionNumber:'',
       errorMessage:'',
-      companyQuery:this.props.userCompany?this.props.userCompany.name:'',
       pendingAt:null,
-      closedAt:null,
+      selectingCompany:false,
+      filterWord:'',
+      selectingRequester:false,
+      filterWordRequester:'',
+      selectingAssignedTo:false,
+      filterWordAssignedTo:'',
     }
   }
   componentDidMount(){
@@ -111,26 +115,22 @@ class TabAtributes extends Component { // eslint-disable-line
     if(pendingAt=='--TZ'){
       pendingAt=null;
     }
-    let closedAt=this.state.closedAt!=null?this.state.closedAt.substring(6,10)+'-'+this.state.closedAt.substring(3,5)+'-'+this.state.closedAt.substring(0,2)+'T'+this.state.closedAt.substring(11)+'Z':null;
-    if(closedAt=='--TZ'){
-      closedAt=null;
-    }
-
 
     let startDate=this.state.startDate!=null?this.state.startDate.substring(6,10)+'-'+this.state.startDate.substring(3,5)+'-'+this.state.startDate.substring(0,2)+'T'+this.state.startDate.substring(11)+'Z':null;
     if(startDate=='--TZ'){
       startDate=null;
     }
 
+    let statusChangedAt = moment().format();
     let title = this.state.taskName;
     let description = this.state.taskDescription;
     let client = this.props.client;
     let createdById= this.props.loggedUserId;
-    let assignedUserId = this.state.assignedUserId;
+    let assignedUserId = this.state.assignedTo?this.state.assignedTo.id:null;
     let duration = this.state.duration==''?0:parseInt(this.state.duration);
     let statusId= this.state.status!=''?this.state.status.id:'cj3odok71qrr10128le4rkzno';
-    let requesterId=this.state.requesterUserId;
-    let companyId=this.state.company;
+    let requesterId=this.state.requester?this.state.requester.id:null;
+    let companyId=this.state.company.id;
     let projectId=this.state.project;
 
     let every=parseInt(this.state.every);
@@ -145,7 +145,7 @@ class TabAtributes extends Component { // eslint-disable-line
             repeatId=result.data.createRepeat.id;
             client.mutate({
               mutation: createTask,
-              variables: { title, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId,closedAt, pendingAt },
+              variables: { title, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId,statusChangedAt, pendingAt },
             }).then((result2)=>{
               client.mutate({
                     mutation: updateRepeat,
@@ -157,7 +157,7 @@ class TabAtributes extends Component { // eslint-disable-line
     }    else{
       client.mutate({
         mutation: createTask,
-        variables: { title, repeatId, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId,closedAt, pendingAt },
+        variables: { title, repeatId, description, assignedUserId, deadlineAt,createdById,duration,statusId,requesterId,companyId,projectId,statusChangedAt, pendingAt },
       });
     }
 
@@ -220,46 +220,53 @@ class TabAtributes extends Component { // eslint-disable-line
               }
             </Picker>
           </View>
+
           <Text note>{I18n.t('requester')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader={I18n.t('selectOne')}
-              mode="dropdown"
-              selectedValue={this.state.requesterUserId}
-              onValueChange={(value)=>{this.setState({requesterUserId : value})}}>
-              {
-                [{id:null,key:'',firstName:I18n.t('nobody')}].concat(this.props.users).map((user)=>
-                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
-                  )
-              }
-            </Picker>
+            <Button block style={{backgroundColor:'white'}} onPress={()=>this.setState({selectingRequester:true})}>
+              <Left>
+                <Text style={{textAlign:'left',color:'black'}}>{this.state.requester==null ? I18n.t('taskAddSelectUser') : (
+                  (this.state.requester.firstName||this.state.requester.surName)?<Text>
+                    {
+                    this.state.requester.firstName?
+                    this.state.requester.firstName+' ':
+                    ''+this.state.requester.surName?this.state.requester.surName:''
+                  }</Text>:
+                <Text>{this.state.requester.email}</Text>
+
+                )}</Text>
+              </Left>
+            </Button>
           </View>
-          <Text note>{I18n.t('company')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-          <AutoComplete
-            onSelect={(value)=>this.setState({companyQuery:value.name,company:value.id})}
-            suggestions={[{id:null,key:'',name:I18n.t('none')}].concat(this.props.companies)}
-            suggestionObjectTextProperty='name'
-            value={this.state.companyQuery}
-            onChangeText={(value)=>this.setState({companyQuery:value})}
-          />
-          </View>
+
+
           <Text note>{I18n.t('assignedTo')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader="Select one"
-              mode="dropdown"
-              selectedValue={this.state.assignedUserId}
-              onValueChange={(value)=>{this.setState({assignedUserId : value})}}>
-              {
-                [{id:null,key:'',firstName:I18n.t('nobody')}].concat(this.props.users).map((user)=>
-                    (<Item label={user.firstName?user.firstName:'id:'+user.id} key={user.id} value={user.id} />)
-                  )
-              }
-            </Picker>
+            <Button block style={{backgroundColor:'white'}} onPress={()=>this.setState({selectingAssignedTo:true})}>
+            <Left>
+              <Text style={{textAlign:'left',color:'black'}}>{this.state.assignedTo==null ? I18n.t('taskAddSelectUser') : (
+                (this.state.assignedTo.firstName||this.state.assignedTo.surName)?<Text>
+                  {
+                  this.state.assignedTo.firstName?
+                  this.state.assignedTo.firstName+' ':
+                  ''+this.state.assignedTo.surName?this.state.assignedTo.surName:''
+                }</Text>:
+              <Text>{this.state.assignedTo.email}</Text>
+
+              )}</Text>
+            </Left>
+            </Button>
           </View>
+
+          <Text note>{I18n.t('company')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+            <Button block style={{backgroundColor:'white'}} onPress={()=>this.setState({selectingCompany:true})}>
+              <Left>
+                <Text style={{textAlign:'left',color:'black'}}>{this.state.company==null ? I18n.t('taskAddCompanySelect') : this.state.company.name}</Text>
+              </Left>
+            </Button>
+          </View>
+
           <Text note>{I18n.t('deadline')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <DatePicker
@@ -294,23 +301,6 @@ class TabAtributes extends Component { // eslint-disable-line
             />
           </View>
 
-          <Text note>{I18n.t('closedAt')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <DatePicker
-              date={this.state.closedAt}
-              style={{width:380}}
-              mode="datetime"
-              placeholder={I18n.t('closedAt')}
-              showIcon={false}
-              androidMode="spinner"
-              format="DD.MM.YYYY HH:MM"
-              confirmBtnText={I18n.t('confirm')}
-              cancelBtnText={I18n.t('cancel')}
-              is24Hour={true}
-              onDateChange={(date) => {this.setState({closedAt: date})}}
-            />
-          </View>
-
           <Text note>{I18n.t('workHours')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
@@ -319,9 +309,6 @@ class TabAtributes extends Component { // eslint-disable-line
               onChangeText={ value => this.setWorkTime(value) }
             />
           </View>
-
-
-
           <Text note>{I18n.t('taskAddRepeatition')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 30, }}>
             <Button block iconLeft onPress={()=>this.setState({addingRepeatition:true})}>
@@ -335,8 +322,7 @@ class TabAtributes extends Component { // eslint-disable-line
               transparent={false}
               style={{flex:1}}
               visible={this.state.addingRepeatition}
-              onRequestClose={() => this.setState({addingRepeatition:false})}
-          >
+              onRequestClose={() => this.setState({addingRepeatition:false})}>
             <Header>
               <Body>
               <Title>{I18n.t('taskAddTaskAddRepeatition')}</Title>
@@ -413,7 +399,120 @@ class TabAtributes extends Component { // eslint-disable-line
             </Footer>
           </Modal>
 
+          <Modal
+              animationType={"fade"}
+              transparent={false}
+              style={{flex:1}}
+              visible={this.state.selectingCompany}
+              onRequestClose={() => this.setState({selectingCompany:false})}>
+            <Header>
+              <Body>
+              <Title>{I18n.t('taskAddCompanySelect')}</Title>
+              </Body>
+            </Header>
+            <Content style={{ padding: 15 }}>
 
+            <ListItem>
+              <Item rounded>
+                <Icon name="ios-search" />
+                <Input placeholder={I18n.t('search')} value={this.state.filterWord} onChangeText={((value)=>this.setState({filterWord:value}))} />
+              </Item>
+            </ListItem>
+
+            <List>
+            {
+              this.props.companies.map((company) =>
+              company.name.toLowerCase().includes(this.state.filterWord.toLowerCase()) && <ListItem button key={company.id} onPress={()=>this.setState({company:company,selectingCompany:false})} >
+                <Body>
+                  <Text>{company.name}</Text>
+                </Body>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+            )
+            }
+            </List>
+            </Content>
+          </Modal>
+
+          <Modal
+              animationType={"fade"}
+              transparent={false}
+              style={{flex:1}}
+              visible={this.state.selectingRequester}
+              onRequestClose={() => this.setState({selectingRequester:false})}>
+            <Header>
+              <Body>
+              <Title>{I18n.t('taskAddCompanySelectRequester')}</Title>
+              </Body>
+            </Header>
+            <Content style={{ padding: 15 }}>
+
+            <ListItem>
+              <Item rounded>
+                <Icon name="ios-search" />
+                <Input placeholder={I18n.t('search')} value={this.state.filterWordRequester} onChangeText={((value)=>this.setState({filterWordRequester:value}))} />
+              </Item>
+            </ListItem>
+
+            <List>
+            {
+              (([{id:null,firstName:I18n.t('nobody'), email:I18n.t('none')}]).concat(this.props.users)).map((user) =>
+              (user.email+user.firstName+' '+user.surName+' '+user.firstName).toLowerCase().includes(this.state.filterWordRequester.toLowerCase()) &&
+              <ListItem button key={user.id} onPress={()=>this.setState({requester:user,selectingRequester:false})} >
+                <Body>
+                {(user.firstName||user.surName)&& <Text>{user.firstName?user.firstName+' ':''+user.surName?user.surName:''}</Text> }
+                <Text note>{user.email}</Text>
+                </Body>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+            )
+            }
+            </List>
+            </Content>
+          </Modal>
+
+          <Modal
+              animationType={"fade"}
+              transparent={false}
+              style={{flex:1}}
+              visible={this.state.selectingAssignedTo}
+              onRequestClose={() => this.setState({selectingAssignedTo:false})}>
+            <Header>
+              <Body>
+              <Title>{I18n.t('taskAddCompanySelectAssignedTo')}</Title>
+              </Body>
+            </Header>
+            <Content style={{ padding: 15 }}>
+
+            <ListItem>
+              <Item rounded>
+                <Icon name="ios-search" />
+                <Input placeholder={I18n.t('search')} value={this.state.filterWordAssignedTo} onChangeText={((value)=>this.setState({filterWordAssignedTo:value}))} />
+              </Item>
+            </ListItem>
+
+            <List>
+            {
+              (([{id:null,firstName:I18n.t('nobody'), email:I18n.t('none')}]).concat(this.props.users)).map((user) =>
+              (user.email+user.firstName+' '+user.surName+' '+user.firstName).toLowerCase().includes(this.state.filterWordAssignedTo.toLowerCase()) &&
+              <ListItem button key={user.id} onPress={()=>this.setState({assignedTo:user,selectingAssignedTo:false})} >
+                <Body>
+                {(user.firstName||user.surName)&& <Text>{user.firstName?user.firstName+' ':''+user.surName?user.surName:''}</Text> }
+                <Text note>{user.email}</Text>
+                </Body>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+            )
+            }
+            </List>
+            </Content>
+          </Modal>
 
         </Content>
       <Footer>

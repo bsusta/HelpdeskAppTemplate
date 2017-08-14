@@ -1,9 +1,7 @@
 import gql from 'graphql-tag';
-import { taskFragment } from './task.fragments';
-
 
 export const createTask = gql`
-	mutation CreateTask($title: String!,$repeatId:ID,$description: String,$createdById: ID!,$projectId:ID!,$assignedUserId: ID,$deadlineAt: DateTime,$pendingAt:DateTime,$closedAt:DateTime,$duration:Int,$statusId: ID!,$requesterId:ID,$companyId:ID) {
+	mutation CreateTask($title: String!,$repeatId:ID,$description: String,$createdById: ID!,$projectId:ID!,$assignedUserId: ID,$deadlineAt: DateTime,$pendingAt:DateTime,$statusChangedAt:DateTime,$duration:Int,$statusId: ID!,$requesterId:ID,$companyId:ID) {
 		createTask(
 			title: $title
 			repeatId:$repeatId
@@ -13,16 +11,15 @@ export const createTask = gql`
 			duration: $duration
 			statusId: $statusId
 			pendingAt:$pendingAt
-			closedAt:$closedAt
+			statusChangedAt:$statusChangedAt
 			requesterId:$requesterId
 			companyId:$companyId
 			projectId:$projectId
 			createdById:$createdById
 		) {
-		  ...TaskInfo
+		  id
 		}
 	}
-	${taskFragment}
 `;
 
 export const createRepeat = gql`

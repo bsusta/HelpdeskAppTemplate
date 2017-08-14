@@ -14,4 +14,8 @@ export default {
   taskAddEmptyDate:'Nezadali ste dátum začiatku opakovania!',
   taskAddEveryError:'Nezadali ste interval udalosti (1+)',
   taskAddTimes:'-krát',
+  taskAddCompanySelect:'Vyberte firmu',
+  taskAddSelectUser:'Vyberte používateľa',
+  taskAddCompanySelectRequester:'Vyberte žiadateľa úlohy',
+  taskAddCompanySelectRequester:'Vyberte riešiteľa úlohy',
 };

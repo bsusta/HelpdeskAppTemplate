@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Input, Picker, Item, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { withApollo} from 'react-apollo';
+import {Modal} from 'react-native';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import styles from './styles';
 import {createUser} from './userAdd.gquery';
@@ -16,9 +17,12 @@ constructor(props) {
       firstName:'',
       surName:'',
       email:'',
-      company:null,
+      company:this.props.companies[0],
       password:'',
       note:'',
+      selectingCompany:false,
+      filterWord:'',
+
     };
     }
 
@@ -26,7 +30,7 @@ constructor(props) {
     let authProvider= { email: { email:this.state.email,password: this.state.password } }
     this.props.client.mutate({
           mutation: createUser,
-          variables: { firstName:this.state.firstName,surName:this.state.surName,companyId:this.state.company,note:this.state.note,active:true,authProvider },
+          variables: { firstName:this.state.firstName,surName:this.state.surName,companyId:this.state.company?this.state.company.id:null,note:this.state.note,active:true,authProvider },
         });
     Actions.pop();
   }
@@ -45,6 +49,7 @@ constructor(props) {
           </Body>
         </Header>
         <Content style={{ padding: 15 }}>
+
           <Text note>{I18n.t('settingsFirstName')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
           <Input
@@ -53,6 +58,7 @@ constructor(props) {
             onChangeText={(value)=>this.setState({firstName:value})}
           />
           </View>
+
           <Text note>{I18n.t('settingsSurName')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
           <Input
@@ -61,6 +67,7 @@ constructor(props) {
           onChangeText={(value)=>this.setState({surName:value})}
           />
           </View>
+
           <Text note>{I18n.t('homeMail')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
@@ -69,20 +76,16 @@ constructor(props) {
             onChangeText={(value)=>this.setState({email:value})}
             />
           </View>
+
           <Text note>{I18n.t('company')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Picker
-              supportedOrientations={['portrait', 'landscape']}
-              iosHeader={I18n.t('selectOne')}
-              mode="dropdown"
-              selectedValue={this.state.company}
-              onValueChange={(value)=>{this.setState({company:value})}}>
-              {
-                ([{id:null,key:null,name:I18n.t('none')}].concat(this.props.companies)).map((company)=>
-                  <Item label={company.name} value={company.id} key={company.key} />)
-              }
-            </Picker>
+            <Button block style={{backgroundColor:'white'}} onPress={()=>this.setState({selectingCompany:true})}>
+              <Left>
+                <Text style={{textAlign:'left',color:'black'}}>{this.state.company==null ? I18n.t('taskAddCompanySelect') : this.state.company.name}</Text>
+              </Left>
+            </Button>
           </View>
+
           <Text note>{I18n.t('homePass')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
@@ -92,6 +95,7 @@ constructor(props) {
             onChangeText={(value)=>this.setState({password:value})}
             />
           </View>
+
           <Text note>{I18n.t('settingsNote')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Input
@@ -104,6 +108,42 @@ constructor(props) {
              />
           </View>
 
+          <Modal
+              animationType={"fade"}
+              transparent={false}
+              style={{flex:1}}
+              visible={this.state.selectingCompany}
+              onRequestClose={() => this.setState({selectingCompany:false})}>
+            <Header>
+              <Body>
+              <Title>{I18n.t('taskAddCompanySelect')}</Title>
+              </Body>
+            </Header>
+            <Content style={{ padding: 15 }}>
+
+            <ListItem>
+              <Item rounded>
+                <Icon name="ios-search" />
+                <Input placeholder={I18n.t('search')} value={this.state.filterWord} onChangeText={((value)=>this.setState({filterWord:value}))} />
+              </Item>
+            </ListItem>
+
+            <List>
+            {
+              this.props.companies.map((company) =>
+              company.name.toLowerCase().includes(this.state.filterWord.toLowerCase()) && <ListItem button key={company.id} onPress={()=>this.setState({company:company,selectingCompany:false})} >
+                <Body>
+                  <Text>{company.name}</Text>
+                </Body>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+            )
+            }
+            </List>
+            </Content>
+          </Modal>
 
         </Content>
         <Footer>

@@ -4,7 +4,7 @@ export const taskFragment = gql`
 fragment TaskData on Task {
   title
   pendingAt
-  closedAt
+  statusChangedAt
   description
   repeat{
     id
