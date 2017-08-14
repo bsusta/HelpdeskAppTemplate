@@ -1,5 +1,4 @@
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
-import devTools from 'remote-redux-devtools';
 import drawer from './drawer';
 import routes from './routes';
 import cardNavigation from './cardNavigation';
@@ -28,9 +27,6 @@ const reducers = (client) => {
 const enhancer = (client) => {
 return (compose(
 applyMiddleware(client.middleware()),
-devTools({
-  name: 'HelpdeskAppTemplate', realtime: true,
-})
 ));
 };
 

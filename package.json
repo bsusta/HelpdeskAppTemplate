@@ -3,7 +3,6 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "postinstall": "remotedev-debugger [options]",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "eslint": "eslint",
     "test": "jest",
@@ -21,7 +20,6 @@
     "react": "15.4.2",
     "react-apollo": "^1.4.2",
     "react-native": "0.42.3",
-    "react-native-autocomplete-select": "^1.0.0",
     "react-native-code-push": "1.17.0-beta",
     "react-native-datepicker": "^1.6.0",
     "react-native-easy-grid": "^0.1.8",
@@ -35,7 +33,6 @@
     "redux-form": "^6.2.0",
     "redux-persist": "^3.2.2",
     "redux-thunk": "^2.1.0",
-    "remote-redux-devtools": "^0.5.0",
     "subscriptions-transport-ws": "^0.7.3"
   },
   "devDependencies": {
@@ -52,10 +49,7 @@
     "jest": "16.0.2",
     "jest-react-native": "16.1.0",
     "mocha": "^2.5.3",
-    "react-test-renderer": "15.4.2",
-    "remote-redux-devtools-on-debugger": "^0.4.7",
-    "remotedev-rn-debugger": "^0.8.2",
-    "remotedev-server": "^0.1.2"
+    "react-test-renderer": "15.4.2"
   },
   "keywords": [
     "android",
