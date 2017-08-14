@@ -27,7 +27,6 @@ export function withFilterNewRequested(userId){
             limit:10,
           },
           updateQuery:(previousResult,{fetchMoreResult})=>{
-            console.log(fetchMoreResult);
             if(fetchMoreResult.allTasks.length==0){
               return previousResult;
             }
@@ -181,7 +180,6 @@ export function withFilterNewInbox(userId){
             limit:10,
           },
           updateQuery:(previousResult,{fetchMoreResult})=>{
-            console.log(fetchMoreResult);
             if(fetchMoreResult.allTasks.length==0){
               return previousResult;
             }

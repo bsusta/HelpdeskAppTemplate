@@ -4,7 +4,7 @@ export default {
   assignedTo:'Priradené komu',
   company:'Firma',
   deadline:'Deadline',
-  workHours: 'Pracovný čas',
+  workHours: 'Odpracovaný čas',
   status: 'Status',
   requester: 'Vyžiadané od',
   createdBy: 'Vytvoril',

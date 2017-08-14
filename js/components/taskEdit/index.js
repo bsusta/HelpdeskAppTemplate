@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { actions } from 'react-native-navigation-redux-helpers';
-import { Tab, Tabs, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View } from 'native-base';
+import { Tab, Tabs, Footer, FooterTab, Container, Header, Title, Content, Button, Icon, Text, Left, Right, Body, List, ListItem, View , TabHeading} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import TabAtributes from './tabAtributes';
 import TabComments from './tabComments';
@@ -108,14 +108,14 @@ class TaskEdit extends Component {
                <Tab heading={I18n.t('taskEditTabAttributes')}>
                    <HOCTabAtributes data={this.props.data} />
                </Tab>
-               <Tab heading= {I18n.t('taskEditTabComments')}>
-                   <HOCTabComments id={this.props.data.id}/>
-               </Tab>
                <Tab heading={I18n.t('taskEditTabItems')}>
                    <HOCTabItems id={this.props.data.id}/>
                </Tab>
                <Tab heading={I18n.t('taskEditTabSubtasks')}>
                    <HOCTabSubtasks id={this.props.data.id}/>
+               </Tab>
+               <Tab heading={<TabHeading ><Icon name="ios-chatboxes-outline" /></TabHeading>}>
+               <HOCTabComments id={this.props.data.id}/>
                </Tab>
            </Tabs>
       </Container>

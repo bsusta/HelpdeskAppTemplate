@@ -1,5 +1,5 @@
 export default {
-  taskListAllFolder: 'INBOX',
+  taskListAllFolder: 'MOJE ÚLOHY',
   taskListRequestedFolder:'Zadané',
   taskListTabMy: 'Moje',
   taskListTabActive: 'Aktívne',

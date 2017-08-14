@@ -61,19 +61,19 @@ class TaskListLoader extends Component {
           </Header>
 
            <Tabs>
-             <Tab heading={I18n.t('taskListTabNew')}>
+             <Tab textStyle={{color:'#2DA3EC'}} heading={I18n.t('taskListTabNew')}>
                <HOCNewInbox projectId={null} />
              </Tab>
 
-             <Tab heading={I18n.t('taskListTabOpen')}>
+             <Tab textStyle={{color:'#68bc00'}} heading={I18n.t('taskListTabOpen')}>
                <HOCOpenInbox projectId={null} />
              </Tab>
 
-               <Tab heading={I18n.t('taskListTabPending')}>
+               <Tab textStyle={{color:'#ff9c00'}} heading={I18n.t('taskListTabPending')}>
                  <HOCPendingInbox projectId={null} />
                </Tab>
 
-               <Tab heading={I18n.t('taskListTabClosed')}>
+               <Tab textStyle={{color:'#b3b3b3'}} heading={I18n.t('taskListTabClosed')}>
                  <HOCClosedInbox projectId={null} />
                </Tab>
            </Tabs>
@@ -104,19 +104,19 @@ class TaskListLoader extends Component {
           </Header>
 
            <Tabs>
-             <Tab heading={I18n.t('taskListTabNew')}>
+             <Tab textStyle={{color:'#2DA3EC'}} heading={I18n.t('taskListTabNew')}>
                <HOCNewRequested projectId={null} />
              </Tab>
 
-             <Tab heading={I18n.t('taskListTabOpen')}>
+             <Tab textStyle={{color:'#68bc00'}} heading={I18n.t('taskListTabOpen')}>
                <HOCOpenRequested projectId={null} />
              </Tab>
 
-               <Tab heading={I18n.t('taskListTabPending')}>
+               <Tab textStyle={{color:'#ff9c00'}} heading={I18n.t('taskListTabPending')}>
                  <HOCPendingRequested projectId={null} />
                </Tab>
 
-               <Tab heading={I18n.t('taskListTabClosed')}>
+               <Tab textStyle={{color:'#b3b3b3'}} heading={I18n.t('taskListTabClosed')}>
                  <HOCClosedRequested projectId={null} />
                </Tab>
            </Tabs>

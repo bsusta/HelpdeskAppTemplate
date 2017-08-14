@@ -260,6 +260,15 @@ class TabAtributes extends Component {
             </Button>
           </View>
 
+          <Text note>{I18n.t('company')}</Text>
+          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
+          <Button block style={{backgroundColor:'white'}} onPress={()=>this.setState({selectingCompany:true})}>
+          <Left>
+          <Text style={{textAlign:'left',color:'black'}}>{this.state.company==null ? I18n.t('taskAddCompanySelect') : this.state.company.name}</Text>
+          </Left>
+          </Button>
+          </View>
+
           <Text note>{I18n.t('assignedTo')}</Text>
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Button block style={{backgroundColor:'white'}} onPress={()=>this.setState({selectingAssignedTo:true})}>
@@ -275,15 +284,6 @@ class TabAtributes extends Component {
 
               )}</Text>
             </Left>
-            </Button>
-          </View>
-
-          <Text note>{I18n.t('company')}</Text>
-          <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
-            <Button block style={{backgroundColor:'white'}} onPress={()=>this.setState({selectingCompany:true})}>
-              <Left>
-                <Text style={{textAlign:'left',color:'black'}}>{this.state.company==null ? I18n.t('taskAddCompanySelect') : this.state.company.name}</Text>
-              </Left>
             </Button>
           </View>
 

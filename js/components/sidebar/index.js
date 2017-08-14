@@ -100,7 +100,7 @@ class SideBar extends Component {
             dataArray={[all,requested].concat(this.props.projectList)} renderRow={data =>
               <ListItem button noBorder onPress={() => {this.props.closeDrawer(),Actions.taskList({projectId:data.id,projectName:data.title})}} >
                 <Left>
-                  <Icon active name={'ios-color-filter-outline'} style={{ color: '#777', fontSize: 26, width: 30 }} />
+                  <Icon active name={data.id=='REQUESTED'||data.id=='INBOX'?'ios-color-filter-outline':'ios-folder-outline'} style={{ color: '#777', fontSize: 26, width: 30 }} />
                   <Text style={styles.text}>{data.title}</Text>
                 </Left>
                 {(data.tasks.length>0) &&
