@@ -225,16 +225,14 @@ class TabAtributes extends Component { // eslint-disable-line
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Button block style={{backgroundColor:'white'}} onPress={()=>this.setState({selectingRequester:true})}>
               <Left>
-                <Text style={{textAlign:'left',color:'black'}}>{this.state.requester==null ? I18n.t('taskAddSelectUser') : (
-                  (this.state.requester.firstName||this.state.requester.surName)?<Text>
-                    {
-                    this.state.requester.firstName?
-                    this.state.requester.firstName+' ':
-                    ''+this.state.requester.surName?this.state.requester.surName:''
-                  }</Text>:
-                <Text>{this.state.requester.email}</Text>
-
-                )}</Text>
+                <Text style={{textAlign:'left',color:'black'}}>
+                {this.state.requester==null ? I18n.t('taskAddSelectUser') : (
+                  (this.state.requester.firstName||this.state.requester.surName)?
+                    (this.state.requester.firstName?
+                    (this.state.requester.firstName+' '):
+                    '')+this.state.requester.surName?this.state.requester.surName:''
+                  :this.state.requester.email)}
+                </Text>
               </Left>
             </Button>
           </View>
@@ -244,16 +242,14 @@ class TabAtributes extends Component { // eslint-disable-line
           <View style={{ borderColor: '#CCCCCC', borderWidth: 0.5, marginBottom: 15 }}>
             <Button block style={{backgroundColor:'white'}} onPress={()=>this.setState({selectingAssignedTo:true})}>
             <Left>
-              <Text style={{textAlign:'left',color:'black'}}>{this.state.assignedTo==null ? I18n.t('taskAddSelectUser') : (
-                (this.state.assignedTo.firstName||this.state.assignedTo.surName)?<Text>
-                  {
-                  this.state.assignedTo.firstName?
-                  this.state.assignedTo.firstName+' ':
-                  ''+this.state.assignedTo.surName?this.state.assignedTo.surName:''
-                }</Text>:
-              <Text>{this.state.assignedTo.email}</Text>
-
-              )}</Text>
+            <Text style={{textAlign:'left',color:'black'}}>
+            {this.state.assignedTo==null ? I18n.t('taskAddSelectUser') : (
+              (this.state.assignedTo.firstName||this.state.assignedTo.surName)?
+                (this.state.assignedTo.firstName?
+                (this.state.assignedTo.firstName+' '):
+                '')+this.state.assignedTo.surName?this.state.assignedTo.surName:''
+              :this.state.assignedTo.email)}
+            </Text>
             </Left>
             </Button>
           </View>
@@ -462,7 +458,9 @@ class TabAtributes extends Component { // eslint-disable-line
               (user.email+user.firstName+' '+user.surName+' '+user.firstName).toLowerCase().includes(this.state.filterWordRequester.toLowerCase()) &&
               <ListItem button key={user.id} onPress={()=>this.setState({requester:user,selectingRequester:false})} >
                 <Body>
-                {(user.firstName||user.surName)&& <Text>{user.firstName?user.firstName+' ':''+user.surName?user.surName:''}</Text> }
+                {
+                  (user.firstName || user.surName)?<Text>{((user.firstName?(user.firstName+' '):'')+ (user.surName?user.surName:''))}</Text>:null
+                }
                 <Text note>{user.email}</Text>
                 </Body>
                 <Right>
@@ -501,7 +499,9 @@ class TabAtributes extends Component { // eslint-disable-line
               (user.email+user.firstName+' '+user.surName+' '+user.firstName).toLowerCase().includes(this.state.filterWordAssignedTo.toLowerCase()) &&
               <ListItem button key={user.id} onPress={()=>this.setState({assignedTo:user,selectingAssignedTo:false})} >
                 <Body>
-                {(user.firstName||user.surName)&& <Text>{user.firstName?user.firstName+' ':''+user.surName?user.surName:''}</Text> }
+                {
+                  (user.firstName || user.surName)?<Text>{((user.firstName?(user.firstName+' '):'')+ (user.surName?user.surName:''))}</Text>:null
+                }
                 <Text note>{user.email}</Text>
                 </Body>
                 <Right>

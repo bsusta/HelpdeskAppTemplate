@@ -49,9 +49,10 @@ class usersList extends Component {
                 button onPress={()=>Actions.userEdit({user})}
               >
                 <Body>
-                  {(user.firstName || user.surName) && <Text>{user.firstName?user.firstName:''} {user.surName?user.surName:''}</Text>}
-                  {user.email  && <Text note>{user.email}</Text>}
-                  {!user.email && !user.firstName && !user.surName && <Text note>{user.email}</Text>}
+                {
+                  (user.firstName || user.surName)?<Text>{((user.firstName?(user.firstName+' '):'')+ (user.surName?user.surName:''))}</Text>:null
+                }
+                <Text note>{user.email}</Text>
                 </Body>
                 <Right>
                   <Icon name="arrow-forward" />

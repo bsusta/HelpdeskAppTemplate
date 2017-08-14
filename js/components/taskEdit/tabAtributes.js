@@ -484,7 +484,9 @@ class TabAtributes extends Component {
               (user.email+user.firstName+' '+user.surName+' '+user.firstName).toLowerCase().includes(this.state.filterWordRequester.toLowerCase()) &&
               <ListItem button key={user.id} onPress={()=>this.setState({requester:user,selectingRequester:false})} >
                 <Body>
-                {(user.firstName||user.surName)&& <Text>{user.firstName?user.firstName+' ':''+user.surName?user.surName:''}</Text> }
+                {
+                  (user.firstName || user.surName)?<Text>{((user.firstName?(user.firstName+' '):'')+ (user.surName?user.surName:''))}</Text>:null
+                }
                 <Text note>{user.email}</Text>
                 </Body>
                 <Right>
@@ -523,7 +525,9 @@ class TabAtributes extends Component {
               (user.email+user.firstName+' '+user.surName+' '+user.firstName).toLowerCase().includes(this.state.filterWordAssignedTo.toLowerCase()) &&
               <ListItem button key={user.id} onPress={()=>this.setState({assignedTo:user,selectingAssignedTo:false})} >
                 <Body>
-                {(user.firstName||user.surName)&& <Text>{user.firstName?user.firstName+' ':''+user.surName?user.surName:''}</Text> }
+                {
+                  (user.firstName || user.surName)?<Text>{((user.firstName?(user.firstName+' '):'')+ (user.surName?user.surName:''))}</Text>:null
+                }
                 <Text note>{user.email}</Text>
                 </Body>
                 <Right>
